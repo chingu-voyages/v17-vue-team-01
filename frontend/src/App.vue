@@ -27,34 +27,30 @@
 
       <template v-slot:extension>
         <v-tabs show-arrows center-active>
-          <v-tab>Events</v-tab>
-          <v-tab>Calendar</v-tab>
+          <v-tab to="/home">Home</v-tab>
+          <v-tab to="/events">Events</v-tab>
+          <v-tab to="/calendar">Calendar</v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
     </div>
     <v-content>
-      <HelloWorld />
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld";
-
 export default {
   name: "App",
 
   components: {
-    HelloWorld
   },
 
   data: () => ({
-    //
   })
 };
 </script>
 
 <style lang="scss">
-
 </style>
