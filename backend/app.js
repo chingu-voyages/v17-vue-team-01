@@ -39,16 +39,16 @@ mongoose.connect(db, {
 });
 
 app.get('/', (req, res) => {
-    return res.send("<h1>Hello World</h1>");
+    return res.sendFile(path.join(__dirname, 'public/index.html'));
+    //return res.send("<h1>Hello World</h1>");
 });
 // Bring in the Users route
-// const users = require('./routes/api/users');
-// app.use('/api/users', users);
+const users = require('./routes/api/users');
+app.use('/api/users', users);
 
-
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public/index.html'));
-// })
+//app.get('*', (req, res) => {
+    //res.sendFile(path.join(__dirname, 'public/index.html'));
+//})
 
 const PORT = process.env.PORT || 5000;
 
