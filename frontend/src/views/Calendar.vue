@@ -167,8 +167,6 @@ export default {
                     color: this.colors[i]
                 });
             }
-            console.log(dates);
-
             this.events = dates;
         },
         title(value) {
