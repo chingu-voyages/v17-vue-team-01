@@ -1,8 +1,7 @@
 <template>
   <v-app>
-    <div>
+    <v-sheet>
     <v-app-bar
-      color="blue darken-3"
       class="mainNav"
       dark
       src="https://images.unsplash.com/photo-1482775907821-a56ec43344fc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2552&q=80"
@@ -33,7 +32,7 @@
         </v-tabs>
       </template>
     </v-app-bar>
-    </div>
+    </v-sheet>
     <v-content>
       <router-view></router-view>
     </v-content>

@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
+  <v-sheet class="home">
     <Login/>
-  </div>
+  </v-sheet>
 </template>
 
 <script>
