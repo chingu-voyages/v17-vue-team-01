@@ -21,6 +21,7 @@ router.post('/register', (req, res) => {
     } = req.body
     if (password !== confirm_password) {
         return res.status(400).json({
+            success: false,
             msg: "Password do not match."
         });
     }
@@ -30,36 +31,38 @@ router.post('/register', (req, res) => {
     }).then(user => {
         if (user) {
             return res.status(400).json({
+                success: false,
                 msg: "Username is already taken."
             });
         }
-    })
-    // Check for the Unique Email
-    User.findOne({
-        email: email
-    }).then(user => {
-        if (user) {
-            return res.status(400).json({
-                msg: "Email is already registred. Did you forgot your password."
+        // Check for the Unique Email
+        User.findOne({
+            email: email
+        }).then(user => {
+            if (user) {
+                return res.status(400).json({
+                    success: false,
+                    msg: "Email is already registered. Did you forgot your password."
+                });
+            }
+            // The data is valid and now we can register the user
+            let newUser = new User({
+                name,
+                username,
+                password,
+                email
             });
-        }
-    });
-    // The data is valid and new we can register the user
-    let newUser = new User({
-        name,
-        username,
-        password,
-        email
-    });
-    // Hash the password
-    bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(newUser.password, salt, (err, hash) => {
-            if (err) throw err;
-            newUser.password = hash;
-            newUser.save().then(user => {
-                return res.status(201).json({
-                    success: true,
-                    msg: "Hurry! User is now registered."
+            // Hash the password
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(newUser.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    newUser.password = hash;
+                    newUser.save().then(user => {
+                        return res.status(201).json({
+                            success: true,
+                            msg: "Hurry! User is now registered."
+                        });
+                    });
                 });
             });
         });
@@ -77,8 +80,8 @@ router.post('/login', (req, res) => {
     }).then(user => {
         if (!user) {
             return res.status(404).json({
-                msg: "Username is not found.",
-                success: false
+                success: false,
+                msg: "Username is not found."
             });
         }
         // If there is user we are now going to compare the password
@@ -103,8 +106,8 @@ router.post('/login', (req, res) => {
                 })
             } else {
                 return res.status(404).json({
-                    msg: "Incorrect password.",
-                    success: false
+                    success: false,
+                    msg: "Incorrect password."
                 });
             }
         })
@@ -112,7 +115,23 @@ router.post('/login', (req, res) => {
 });
 
 /**
- * @route POST api/users/profile
+ * @route GET api/users/me
+ * @desc Return the User's Data
+ * @access Private
+ */
+router.get('/me', function(req, res) {
+    let token = req.headers['x-access-token'];
+    if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+    
+    jwt.verify(token, key, function(err, decoded) {
+      if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+      
+      res.status(200).send(decoded);
+    });
+  });
+
+/**
+ * @route GET api/users/profile
  * @desc Return the User's Data
  * @access Private
  */
@@ -123,4 +142,15 @@ router.get('/profile', passport.authenticate('jwt', {
         user: req.user
     });
 });
+
+/**
+ * @route GET api/users/logout
+ * @desc Login out the User, it is not needed as the logging out is done in the client side
+ * nonetheless, the endpoint is created
+ * @access Public
+ */
+router.get('/logout', function(req, res) {
+    res.status(200).send({ success: true, token: null });
+  });
+
 module.exports = router;
