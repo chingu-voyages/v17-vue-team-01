@@ -1,60 +1,56 @@
 <template>
   <v-app>
+    <div>
     <v-app-bar
-      app
-      color="primary"
+      color="blue darken-3"
+      class="mainNav"
       dark
+      src="https://images.unsplash.com/photo-1482775907821-a56ec43344fc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2552&q=80"
     >
-      <div class="d-flex align-center">
+      <template v-slot:img="{ props }">
         <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
-
-        <v-img
-          alt="Vuetify Name"
-          class="shrink mt-1 hidden-sm-and-down"
-          contain
-          min-width="100"
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-name-dark.png"
-          width="100"
-        />
-      </div>
+          v-bind="props"
+          gradient="to top right, rgba(12,93,156,1), rgba(44,113,165,.5)"
+        ></v-img>
+      </template>
+      <v-toolbar-title>Chingu-Time</v-toolbar-title>
 
       <v-spacer></v-spacer>
 
-      <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-        text
-      >
-        <span class="mr-2">Latest Release</span>
-        <v-icon>mdi-open-in-new</v-icon>
+      <v-btn icon>
+        <v-icon>mdi-cog</v-icon>
       </v-btn>
-    </v-app-bar>
 
+      <v-btn icon>
+        <v-icon>mdi-logout</v-icon>
+      </v-btn>
+
+      <template v-slot:extension>
+        <v-tabs show-arrows center-active>
+          <v-tab to="/home">Home</v-tab>
+          <v-tab to="/events">Events</v-tab>
+          <v-tab to="/calendar">Calendar</v-tab>
+        </v-tabs>
+      </template>
+    </v-app-bar>
+    </div>
     <v-content>
-      <HelloWorld/>
+      <router-view></router-view>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
-
 export default {
-  name: 'App',
+  name: "App",
 
   components: {
-    HelloWorld,
   },
 
   data: () => ({
-    //
-  }),
+  })
 };
 </script>
+
+<style lang="scss">
+</style>
