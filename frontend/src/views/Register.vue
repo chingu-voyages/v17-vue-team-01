@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div>
-      New User?
-      <v-btn to="/register">Register Here</v-btn>
-    </div>
+    <h1>New User</h1>
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-text-field
         v-model="username"
@@ -12,6 +9,8 @@
         label="username"
         required
       ></v-text-field>
+
+      <v-text-field v-model="email" :rules="emailRules" label="E-mail" required></v-text-field>
 
       <v-text-field
         v-model="password"
@@ -24,7 +23,7 @@
         @click:append="show1 = !show1"
       ></v-text-field>
 
-      <v-btn to="/events">login</v-btn>
+      <v-btn @click="create">Create Account</v-btn>
     </v-form>
   </div>
 </template>
@@ -32,15 +31,19 @@
 <script>
 export default {
   data() {
+    email: "";
+    emailRules: {
+      v => !!v || "E-mail is required",
+        v => /.+@.+\..+/.test(v) || "E-mail must be valid";
+    }
     return {
       show1: false,
       password: "Password",
       rules: {
-        required: value => !!value || "Required.",
-        min: v => v.length >= 8 || "Minimum 8 characters"
+        required: value => !!value || "Password is required",
+        min: v => v.length >= 8 || "Password must be at least 8 characters"
       }
     };
   }
 };
 </script>
-
