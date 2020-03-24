@@ -1,46 +1,55 @@
 <template>
-  <div>
-    <div>
-      New User?
-      <v-btn to="/register">Register Here</v-btn>
-    </div>
-    <v-form ref="form" v-model="valid" lazy-validation>
-      <v-text-field
-        v-model="username"
-        :counter="15"
-        :rules="[v => !!v || 'Enter username (must be less than 15 characters)']"
-        label="username"
-        required
-      ></v-text-field>
+    <v-card class="mx-auto" max-width="400">
+        <v-card-text>
+            <v-form ref="form" v-model="valid" lazy-validation>
+                <v-text-field
+                    v-model="username"
+                    :counter="15"
+                    :rules="[
+                        v =>
+                            !!v ||
+                            'Enter username (must be less than 15 characters)'
+                    ]"
+                    label="username"
+                    required
+                ></v-text-field>
 
-      <v-text-field
-        v-model="password"
-        :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-        :rules="[rules.required, rules.min]"
-        :type="show1 ? 'text' : 'password'"
-        name="input=10-1"
-        label="password"
-        counter
-        @click:append="show1 = !show1"
-      ></v-text-field>
-
-      <v-btn to="/events">login</v-btn>
-    </v-form>
-  </div>
+                <v-text-field
+                    v-model="password"
+                    :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                    :rules="[rules.required, rules.min]"
+                    :type="show1 ? 'text' : 'password'"
+                    name="input=10-1"
+                    label="password"
+                    counter
+                    @click:append="show1 = !show1"
+                ></v-text-field>
+            </v-form>
+        </v-card-text>
+        <v-card-actions>
+            <v-btn to="/events">login</v-btn>
+            <v-btn to="/register" class="leftMargin">Register Here</v-btn>
+        </v-card-actions>
+    </v-card>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-      show1: false,
-      password: "Password",
-      rules: {
-        required: value => !!value || "Required.",
-        min: v => v.length >= 8 || "Minimum 8 characters"
-      }
-    };
-  }
+    data() {
+        return {
+            show1: false,
+            password: "Password",
+            rules: {
+                required: value => !!value || "Required.",
+                min: v => v.length >= 8 || "Minimum 8 characters"
+            }
+        };
+    }
 };
 </script>
 
+<style lang="css">
+.leftMargin {
+    margin-left: 15px;
+}
+</style>
