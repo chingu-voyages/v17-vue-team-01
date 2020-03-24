@@ -114,6 +114,7 @@
 
 <script>
 import { getTodayDate } from "../plugins/util.js";
+import data from "../plugins/events.json";
 
 export default {
     data: () => ({
@@ -121,7 +122,7 @@ export default {
         weekdays: [1, 2, 3, 4, 5, 6, 0],
         type: "month",
         value: "",
-        events: [],
+        events: data,
         typeToLabel: {
             month: "Month",
             week: "Week",
@@ -142,33 +143,11 @@ export default {
         ]
     }),
     mounted() {
-        this.createEvents();
         this.today = getTodayDate();
         this.value = this.today;
         this.$refs.calendar.checkChange();
     },
     methods: {
-        createEvents() {
-            let dates = [];
-            for (let i = 0; i < 6; i++) {
-                let month = 3;
-                let date = 8 + 7 * i;
-                if (date > 31) {
-                    month = 4;
-                    date = date - 31;
-                }
-                if (date < 10) {
-                    date = "0" + date.toString();
-                }
-                dates.push({
-                    name: "Weekly V17 Meeting",
-                    start: `2020-` + month + `-` + date + ` 17:00`,
-                    end: `2020-` + month + `-` + date + ` 17:00`,
-                    color: this.colors[i]
-                });
-            }
-            this.events = dates;
-        },
         title(value) {
             let dateArray = value.split("-");
             var date = new Date(
