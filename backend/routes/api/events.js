@@ -6,7 +6,10 @@ const passport = require('passport');
 const key = require('../../config/keys').secret;
 const User = require('../../model/User');
 const Event = require('../../model/Event');
+<<<<<<< HEAD
+=======
 const mongoose = require('mongoose');
+>>>>>>> e1ecea6dbd3eae1da61351b5fb8b7f29ab0cd424
 
 /**
  * @route POST api/events/create
@@ -34,6 +37,9 @@ router.post('/create', (req, res) => {
       }); 
 
       newEvent.save().then(event => {
+        return res.status(201).json({
+            success: true,
+            msg: "Congrats, " + event.title + " event is created."
           User.findOneAndUpdate({
             _id: user_id
           },
@@ -53,6 +59,26 @@ router.post('/create', (req, res) => {
 
 /**
  * @route GET api/events/show
+<<<<<<< HEAD
+ * @desc Shows event
+ * @access Public
+ */
+router.get('/show', (req, res) => {
+  let event_id = req.body.event_id;
+  console.log(event_id);
+  Event.find( {_id: event_id}  ).then((result) => {
+    res.status(200).send(result);
+  })   
+});
+
+/**
+* @route POST api/events/add
+* @desc Adds user to event
+* @access Public
+*/
+router.post('/add', (req, res) => {
+  //todo
+=======
  * @desc Shows event and its users
  * @access Public
  */
@@ -121,6 +147,7 @@ router.post('/add', (req, res) => {
       msg: "Congrats, user " + username + " is in event " + event_id
   });
   });
+>>>>>>> e1ecea6dbd3eae1da61351b5fb8b7f29ab0cd424
 });
 
 
