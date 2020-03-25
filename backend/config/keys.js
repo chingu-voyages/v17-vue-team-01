@@ -1,6 +1,6 @@
 if (process.env.NODE_ENV === 'production') {
     module.exports = {
-        mongoURI: "mongodb://vue-team-v17:vue-team-v17@ds153113.mlab.com:53113/vue-team-v17",
+        mongoURI: "mongodb+srv://vue-team-v17:v17-secret@cluster0-quwyt.mongodb.net/vue-team-v17",
         secret: 'v17-secret'
     };
 } else {
