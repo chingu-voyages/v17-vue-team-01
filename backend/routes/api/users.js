@@ -17,7 +17,8 @@ router.post('/register', (req, res) => {
         username,
         email,
         password,
-        confirm_password
+        confirm_password,
+        defaultTZ
     } = req.body
     if (password !== confirm_password) {
         return res.status(400).json({
@@ -42,7 +43,7 @@ router.post('/register', (req, res) => {
             if (user) {
                 return res.status(400).json({
                     success: false,
-                    msg: "Email is already registered. Did you forgot your password."
+                    msg: "Email is already registered. Did you forget your password?"
                 });
             }
             // The data is valid and now we can register the user
@@ -50,7 +51,8 @@ router.post('/register', (req, res) => {
                 name,
                 username,
                 password,
-                email
+                email,
+                defaultTZ
             });
             // Hash the password
             bcrypt.genSalt(10, (err, salt) => {
@@ -60,7 +62,7 @@ router.post('/register', (req, res) => {
                     newUser.save().then(user => {
                         return res.status(201).json({
                             success: true,
-                            msg: "Hurry! User is now registered."
+                            msg: "Congrats! User is now registered."
                         });
                     });
                 });
@@ -101,7 +103,7 @@ router.post('/login', (req, res) => {
                         success: true,
                         token: `Bearer ${token}`,
                         user: user,
-                        msg: "Hurry! You are now logged in."
+                        msg: "Congrats! You are now logged in."
                     });
                 })
             } else {
@@ -115,31 +117,40 @@ router.post('/login', (req, res) => {
 });
 
 /**
- * @route GET api/users/me
+ * @route GET api/users/profile
  * @desc Return the User's Data
  * @access Private
  */
-router.get('/me', function(req, res) {
+router.get('/profile', function(req, res) {
     let token = req.headers['x-access-token'];
     if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
     
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
-      
-      res.status(200).send(decoded);
-    });
+      User.findOne({
+        username: decoded.username
+      }, { name: 1, username: 1, email: 1, defaultTZ: 1, events: 1 }).then(user => {
+          res.status(200).send(user);
+        })
+    })
   });
 
 /**
- * @route GET api/users/profile
- * @desc Return the User's Data
- * @access Private
+ * @route GET api/users/events
+ * @desc Shows the User's events, not needed, as the user's events are now in the profile :)
+ * @access Public
  */
-router.get('/profile', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    return res.json({
-        user: req.user
+router.get('/events', (req, res) => {
+    let token = req.headers['x-access-token'];
+    if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+    
+    jwt.verify(token, key, function(err, decoded) {
+      if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    
+      let user_id = decoded._id;
+      Event.find({ users: user_id } ).then((result) => {
+        res.status(200).send(result);
+      })       
     });
 });
 
