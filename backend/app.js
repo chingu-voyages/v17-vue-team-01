@@ -31,7 +31,9 @@ require('./config/passport')(passport);
 // Bring in the Database Config and connect with the database
 const db = require('./config/keys').mongoURI;
 mongoose.connect(db, {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useFindAndModify: false,
+    useUnifiedTopology: true
 }).then(() => {
     console.log(`Database connected successfully ${db}`)
 }).catch(err => {
@@ -46,9 +48,13 @@ app.get('/', (req, res) => {
 const users = require('./routes/api/users');
 app.use('/api/users', users);
 
-//app.get('*', (req, res) => {
-    //res.sendFile(path.join(__dirname, 'public/index.html'));
-//})
+// Bring in the Events route
+const events = require('./routes/api/events');
+app.use('/api/events', events);
+
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+})
 
 const PORT = process.env.PORT || 5000;
 
