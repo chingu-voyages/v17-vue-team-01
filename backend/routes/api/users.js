@@ -127,32 +127,18 @@ router.get('/profile', function(req, res) {
     
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
-<<<<<<< HEAD
-      
-      res.status(200).send(decoded);
-      res.json({
-        user: req.user
-      });
-    });
-=======
       User.findOne({
         username: decoded.username
       }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
     })
->>>>>>> e1ecea6dbd3eae1da61351b5fb8b7f29ab0cd424
   });
 
 /**
  * @route GET api/users/events
-<<<<<<< HEAD
  * @desc Return the User's Events
  * @access Private
-=======
- * @desc Shows the User's events, not needed, as the user's events are now in the profile :)
- * @access Public
->>>>>>> e1ecea6dbd3eae1da61351b5fb8b7f29ab0cd424
  */
 router.get('/events', (req, res) => {
     let token = req.headers['x-access-token'];
