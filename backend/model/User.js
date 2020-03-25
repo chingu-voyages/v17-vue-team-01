@@ -3,6 +3,12 @@ const Schema = mongoose.Schema;
 
 // Create the User Schema
 const UserSchema = new Schema({
+    events: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Event"
+        }
+      ],
     name: {
         type: String,
         required: true

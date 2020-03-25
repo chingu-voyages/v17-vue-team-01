@@ -42,7 +42,7 @@ router.post('/register', (req, res) => {
             if (user) {
                 return res.status(400).json({
                     success: false,
-                    msg: "Email is already registered. Did you forgot your password."
+                    msg: "Email is already registered. Did you forget your password?"
                 });
             }
             // The data is valid and now we can register the user
@@ -60,7 +60,7 @@ router.post('/register', (req, res) => {
                     newUser.save().then(user => {
                         return res.status(201).json({
                             success: true,
-                            msg: "Hurry! User is now registered."
+                            msg: "Congrats! User is now registered."
                         });
                     });
                 });
@@ -101,7 +101,7 @@ router.post('/login', (req, res) => {
                         success: true,
                         token: `Bearer ${token}`,
                         user: user,
-                        msg: "Hurry! You are now logged in."
+                        msg: "Congrats! You are now logged in."
                     });
                 })
             } else {
@@ -115,11 +115,11 @@ router.post('/login', (req, res) => {
 });
 
 /**
- * @route GET api/users/me
+ * @route GET api/users/profile
  * @desc Return the User's Data
  * @access Private
  */
-router.get('/me', function(req, res) {
+router.get('/profile', function(req, res) {
     let token = req.headers['x-access-token'];
     if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
     
@@ -127,19 +127,28 @@ router.get('/me', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       
       res.status(200).send(decoded);
+      res.json({
+        user: req.user
+      });
     });
   });
 
 /**
- * @route GET api/users/profile
- * @desc Return the User's Data
+ * @route GET api/users/events
+ * @desc Return the User's Events
  * @access Private
  */
-router.get('/profile', passport.authenticate('jwt', {
-    session: false
-}), (req, res) => {
-    return res.json({
-        user: req.user
+router.get('/events', (req, res) => {
+    let token = req.headers['x-access-token'];
+    if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+    
+    jwt.verify(token, key, function(err, decoded) {
+      if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    
+      let query = { user_id: decoded._id };
+      Event.find(query).then((result) => {
+        res.status(200).send(result);
+      })    
     });
 });
 
