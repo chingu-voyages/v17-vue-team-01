@@ -3,23 +3,22 @@ const Schema = mongoose.Schema;
 
 // Create the Event Schema
 const EventSchema = new Schema({
-    users: [
-        {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "User"
-        }
-      ],
-    name: {
+    title: {
         type: String,
-        required: true,
+        required: true
     },
     details: {
         type: String,
         required: true,
     },
-    date: {
-        type: Date,
-        default: Date.now
+    timezone: {
+        type: String,
+        required: true,
+        default: Date()
+    },
+    users: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
     }
 });
 

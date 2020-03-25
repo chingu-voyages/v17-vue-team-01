@@ -79,6 +79,8 @@ router.post('/add', (req, res) => {
   
     let user_id;
     User.find( {username: req.body.username} ,function(err, doc){
+      console.log(doc);
+      
       this.user_id = doc._id;
     });   
 

@@ -18,7 +18,7 @@ router.post('/register', (req, res) => {
         email,
         password,
         confirm_password,
-        defaultTZ
+        TZ
     } = req.body
     if (password !== confirm_password) {
         return res.status(400).json({
@@ -52,7 +52,7 @@ router.post('/register', (req, res) => {
                 username,
                 password,
                 email,
-                defaultTZ
+                TZ
             });
             // Hash the password
             bcrypt.genSalt(10, (err, salt) => {
@@ -129,7 +129,7 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         username: decoded.username
-      }, { name: 1, username: 1, email: 1, defaultTZ: 1, events: 1 }).then(user => {
+      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
     })
@@ -137,8 +137,8 @@ router.get('/profile', function(req, res) {
 
 /**
  * @route GET api/users/events
- * @desc Shows the User's events, not needed, as the user's events are now in the profile :)
- * @access Public
+ * @desc Return the User's Events
+ * @access Private
  */
 router.get('/events', (req, res) => {
     let token = req.headers['x-access-token'];
@@ -147,6 +147,10 @@ router.get('/events', (req, res) => {
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
     
+      let query = { user_id: decoded._id };
+      Event.find(query).then((result) => {
+        res.status(200).send(result);
+      })    
       let user_id = decoded._id;
       Event.find({ users: user_id } ).then((result) => {
         res.status(200).send(result);
