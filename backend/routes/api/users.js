@@ -18,7 +18,7 @@ router.post('/register', (req, res) => {
         email,
         password,
         confirm_password,
-        defaultTZ
+        TZ
     } = req.body
     if (password !== confirm_password) {
         return res.status(400).json({
@@ -52,7 +52,7 @@ router.post('/register', (req, res) => {
                 username,
                 password,
                 email,
-                defaultTZ
+                TZ
             });
             // Hash the password
             bcrypt.genSalt(10, (err, salt) => {
@@ -129,7 +129,7 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         username: decoded.username
-      }, { name: 1, username: 1, email: 1, defaultTZ: 1, events: 1 }).then(user => {
+      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
     })
