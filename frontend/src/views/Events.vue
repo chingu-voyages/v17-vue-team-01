@@ -1,109 +1,85 @@
 <template>
-  <v-card
-    max-width="70vw"
-    class="mx-auto"
-  >
-  <v-toolbar dense>
-      <v-app-bar-nav-icon></v-app-bar-nav-icon>
-
-      <v-toolbar-title>List of Events - 16th of March 2020</v-toolbar-title>
-
-      <v-spacer></v-spacer>
-
-      <v-btn icon>
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-heart</v-icon>
-      </v-btn>
-
-      <v-btn icon>
-        <v-icon>mdi-dots-vertical</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-list two-line>
-      <v-list-item-group
-        v-model="selected"
-        multiple
-        active-class="blue--text"
-      >
-        <template v-for="(item, index) in items">
-          <v-list-item :key="item.title">
-            <template v-slot:default="{ active, toggle }">
-              <v-list-item-content>
-                <v-list-item-title v-text="item.title"></v-list-item-title>
-                <v-list-item-subtitle class="text--primary" v-text="item.headline"></v-list-item-subtitle>
-                <v-list-item-subtitle v-text="item.subtitle"></v-list-item-subtitle>
-              </v-list-item-content>
-
-              <v-list-item-action>
-                <v-list-item-action-text v-text="item.action"></v-list-item-action-text>
-                <v-icon
-                  v-if="!active"
-                  color="grey lighten-1"
-                >
-                  Declined
-                </v-icon>
-
-                <v-icon
-                  v-else
-                  color="blue"
-                >
-                  Accepted
-                </v-icon>
-              </v-list-item-action>
-            </template>
-          </v-list-item>
-
-          <v-divider
-            v-if="index + 1 < items.length"
-            :key="index"
-          ></v-divider>
-        </template>
-      </v-list-item-group>
-    </v-list>
-  </v-card>
-
-  </div>
+    <v-sheet class="text-center">
+        <v-btn
+            x-large
+            color="deep-purple darken-3"
+            dark
+            class="createButton"
+            to="/create-event"
+            >Create new Event</v-btn
+        >
+        <v-card class="mx-auto" max-width="400" tile>
+            <v-toolbar color="deep-purple lighten-1" dark>
+                <v-toolbar-title>Pending Events</v-toolbar-title>
+            </v-toolbar>
+            <v-list :shaped="shaped">
+                <v-list-item-group v-model="item" v-if="items" color="primary">
+                    <v-list-item
+                        :inactive="inactive"
+                        v-for="(item, i) in items"
+                        :key="i"
+                    >
+                        <v-list-item-content class="text-left">
+                            <v-list-item-title
+                                ><v-btn
+                                    color="deep-purple lighten-1"
+                                    dark
+                                    :to="itemLink(item.link)"
+                                    >View</v-btn
+                                >
+                                {{ item.title }}</v-list-item-title
+                            >
+                            <v-list-item-subtitle> </v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
+                <v-list-item-group v-model="item" v-else color="primary">
+                    <v-list-item :inactive="inactive" :key="i">
+                        <v-list-item-content class="text-left">
+                            <v-list-item-title> None</v-list-item-title>
+                            <v-list-item-subtitle> </v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-card>
+    </v-sheet>
 </template>
 
 <script>
-  export default {
+export default {
     data: () => ({
-      selected: [2],
-      items: [
-        {
-          action: '15 min',
-          headline: 'Brunch this weekend?',
-          title: 'Ali Connors',
-          subtitle: "I'll be in your neighborhood doing errands this weekend. Do you want to hang out?",
-        },
-        {
-          action: '2 hr',
-          headline: 'Summer BBQ',
-          title: 'me, Scrott, Jennifer',
-          subtitle: "Wish I could come, but I'm out of town this weekend.",
-        },
-        {
-          action: '6 hr',
-          headline: 'Oui oui',
-          title: 'Sandra Adams',
-          subtitle: 'Do you have Paris recommendations? Have you ever been?',
-        },
-        {
-          action: '12 hr',
-          headline: 'Birthday gift',
-          title: 'Trevor Hansen',
-          subtitle: 'Have any ideas about what we should get Heidi for her birthday?',
-        },
-        {
-          action: '18hr',
-          headline: 'Recipe to try',
-          title: 'Britta Holt',
-          subtitle: 'We should eat this: Grate, Squash, Corn, and tomatillo Tacos.',
-        },
-      ],
+        items: [
+            {
+                title: "TEST-1",
+                link: 100
+            },
+            {
+                title: "TEST-2",
+                link: 200
+            },
+            {
+                title: "TEST-3",
+                link: 300
+            },
+            {
+                title: "TEST-4",
+                link: 400
+            }
+        ],
+        shaped: true,
+        inactive: true
     }),
-  }
+    methods: {
+        itemLink(number) {
+            return "/event/" + number;
+        }
+    }
+};
 </script>
+
+<style lang="scss">
+.createButton {
+    margin: 20px 0;
+}
+</style>
