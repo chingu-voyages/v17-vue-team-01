@@ -1,7 +1,16 @@
 <template>
     <v-card class="mx-auto" max-width="400">
         <v-card-text>
+            <h1>New User</h1>
             <v-form ref="form" v-model="valid" lazy-validation>
+                <v-text-field
+                    v-model="email"
+                    :rules="emailRules"
+                    label="E-mail"
+                    required
+                    class="topMargin"
+                ></v-text-field>
+
                 <v-text-field
                     v-model="username"
                     :counter="15"
@@ -27,8 +36,8 @@
             </v-form>
         </v-card-text>
         <v-card-actions>
-            <v-btn to="/events">login</v-btn>
-            <v-btn to="/register" class="leftMargin">Register Here</v-btn>
+            <v-btn @click="create">Create Account</v-btn>
+            <v-btn to="/home" class="leftMargin">Login</v-btn>
         </v-card-actions>
     </v-card>
 </template>
@@ -36,12 +45,18 @@
 <script>
 export default {
     data() {
+        email: "";
+        emailRules: {
+            v => !!v || "E-mail is required",
+                v => /.+@.+\..+/.test(v) || "E-mail must be valid";
+        }
         return {
             show1: false,
             password: "Password",
             rules: {
-                required: value => !!value || "Required.",
-                min: v => v.length >= 8 || "Minimum 8 characters"
+                required: value => !!value || "Password is required",
+                min: v =>
+                    v.length >= 8 || "Password must be at least 8 characters"
             }
         };
     }
@@ -51,5 +66,8 @@ export default {
 <style lang="css">
 .leftMargin {
     margin-left: 15px;
+}
+.topMargin {
+  margin-top: 10px;
 }
 </style>
