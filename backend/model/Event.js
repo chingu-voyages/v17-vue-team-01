@@ -11,8 +11,8 @@ const EventSchema = new Schema({
         type: String,
         required: true,
     },
-    timezone: {
-        type: String,
+    time: {
+        type: date,
         required: true,
         default: Date()
     },
