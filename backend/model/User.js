@@ -3,6 +3,12 @@ const Schema = mongoose.Schema;
 
 // Create the User Schema
 const UserSchema = new Schema({
+    events: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Event"
+        }
+      ],
     name: {
         type: String,
         required: true
@@ -18,6 +24,10 @@ const UserSchema = new Schema({
     password: {
         type: String,
         required: true
+    },
+    TZ: {
+        type: Number,
+        default: 0
     },
     date: {
         type: Date,
