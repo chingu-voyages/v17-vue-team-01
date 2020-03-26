@@ -1,5 +1,5 @@
 <template>
-    <v-sheet>
+    <v-row>
         <v-col v-if="!loginSuccess">
             <v-card class="mx-auto" max-width="400">
                 <v-card-text>
@@ -36,12 +36,12 @@
                 </v-card-text>
             </v-card>
         </v-col>
-        <Events />
-    </v-sheet>
+        <Events v-if="loginSuccess"/>
+    </v-row>
 </template>
 
 <script>
-import Events from './Events.vue'
+import Events from "./Events.vue";
 
 export default {
     components: {
@@ -74,7 +74,8 @@ export default {
                         response => (
                             (this.answer = response.data.msg),
                             (this.token = response.data.token.slice(7)),
-                            (this.loginSuccess = true)
+                            (this.loginSuccess = true),
+                            (this.$emit('loginevent', this.token))
                         )
                     )
                     .catch(
