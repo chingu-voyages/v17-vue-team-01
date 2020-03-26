@@ -31,13 +31,13 @@
                 <template v-slot:extension>
                     <v-tabs show-arrows center-active>
                         <v-tab to="/">Home</v-tab>
-                        <v-tab to="/calendar">Calendar</v-tab>
+                        <v-tab to="/calendar" v-if="user">Calendar</v-tab>
                     </v-tabs>
                 </template>
             </v-app-bar>
         </v-sheet>
         <v-content>
-            <router-view @loginevent="tokenReceived"></router-view>
+            <router-view @loginevent="tokenReceived" :user="user"></router-view>
         </v-content>
     </v-app>
 </template>
@@ -47,11 +47,21 @@ export default {
     name: "App",
     components: {},
     data: () => ({
-        user: {token: null}
+        user: null,
+        answer: null
     }),
     methods: {
         tokenReceived(value) {
-            console.log(value);
+            this.axios
+                .get("http://34.82.150.138:5000/api/users/profile", {
+                    headers: { "x-access-token": value }
+                })
+                .then(
+                    response => (
+                        this.user = response.data
+                    )
+                )
+                .catch(error => (this.answer = error));
         }
     }
 };

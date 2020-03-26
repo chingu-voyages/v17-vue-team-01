@@ -13,21 +13,25 @@
                 <v-toolbar-title>Pending Events</v-toolbar-title>
             </v-toolbar>
             <v-list :shaped="shaped">
-                <v-list-item-group v-model="item" v-if="items" color="primary">
+                <v-list-item-group
+                    v-model="event"
+                    v-if="user"
+                    color="primary"
+                >
                     <v-list-item
                         :inactive="inactive"
-                        v-for="(item, i) in items"
+                        v-for="(event, i) in events"
                         :key="i"
                     >
                         <v-list-item-content class="text-left">
-                            <v-list-item-title
-                                ><v-btn
+                            <v-list-item-title>
+                                <!-- <v-btn
                                     color="deep-purple lighten-1"
                                     dark
-                                    :to="itemLink(item.link)"
+                                    :to="eventLink(event.id)"
                                     >View</v-btn
-                                >
-                                {{ item.title }}</v-list-item-title
+                                > -->
+                                {{ event }}</v-list-item-title
                             >
                             <v-list-item-subtitle> </v-list-item-subtitle>
                         </v-list-item-content>
@@ -49,31 +53,20 @@
 <script>
 export default {
     data: () => ({
-        item: null,
-        items: [
-            {
-                title: "TEST-1",
-                link: 100
-            },
-            {
-                title: "TEST-2",
-                link: 200
-            },
-            {
-                title: "TEST-3",
-                link: 300
-            },
-            {
-                title: "TEST-4",
-                link: 400
-            }
-        ],
+        event: null,
+        events: null,
         shaped: true,
         inactive: true
     }),
+    props: {
+        user: Object
+    },
+    beforeUpdate() {
+        this.events = this.user.events
+    },
     methods: {
-        itemLink(number) {
-            return "/event/" + number;
+        eventLink(id) {
+            return "/event/" + id;
         }
     }
 };

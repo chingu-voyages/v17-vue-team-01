@@ -142,6 +142,9 @@ export default {
             "grey darken-1"
         ]
     }),
+    props: {
+        user: Object
+    },
     mounted() {
         this.today = getTodayDate();
         this.value = this.today;

@@ -36,7 +36,7 @@
                 </v-card-text>
             </v-card>
         </v-col>
-        <Events v-if="loginSuccess"/>
+        <Events v-if="loginSuccess" :user="user"/>
     </v-row>
 </template>
 
@@ -46,6 +46,9 @@ import Events from "./Events.vue";
 export default {
     components: {
         Events
+    },
+    props: {
+        user: Object
     },
     data() {
         return {
@@ -59,6 +62,11 @@ export default {
             token: null,
             loginSuccess: false
         };
+    },
+    mounted() {
+        if (this.user) {
+            this.loginSuccess = true;
+        }
     },
     methods: {
         processForm() {
@@ -75,7 +83,7 @@ export default {
                             (this.answer = response.data.msg),
                             (this.token = response.data.token.slice(7)),
                             (this.loginSuccess = true),
-                            (this.$emit('loginevent', this.token))
+                            this.$emit("loginevent", this.token)
                         )
                     )
                     .catch(
