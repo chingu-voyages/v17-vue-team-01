@@ -1,5 +1,5 @@
 <template>
-    <v-sheet class="text-center">
+    <v-col class="text-center">
         <v-btn
             x-large
             color="deep-purple darken-3"
@@ -43,12 +43,13 @@
                 </v-list-item-group>
             </v-list>
         </v-card>
-    </v-sheet>
+    </v-col>
 </template>
 
 <script>
 export default {
     data: () => ({
+        item: null,
         items: [
             {
                 title: "TEST-1",

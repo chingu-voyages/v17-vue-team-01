@@ -26,8 +26,7 @@
 
       <template v-slot:extension>
         <v-tabs show-arrows center-active>
-          <v-tab to="/home">Home</v-tab>
-          <v-tab to="/events">Events</v-tab>
+          <v-tab to="/">Home</v-tab>
           <v-tab to="/calendar">Calendar</v-tab>
         </v-tabs>
       </template>

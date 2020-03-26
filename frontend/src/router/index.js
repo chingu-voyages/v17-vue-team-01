@@ -7,11 +7,6 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: "/",
-        name: "Landing",
-        component: Home
-    },
-    {
-        path: "/home",
         name: "Home",
         component: Home
     },
@@ -23,11 +18,6 @@ const routes = [
         // which is lazy-loaded when the route is visited.
         component: () =>
             import(/* webpackChunkName: "about" */ "../views/Calendar.vue")
-    },
-    {
-        path: "/events",
-        name: "Events",
-        component: () => import("../views/Events.vue")
     },
     {
         path: "/register",
