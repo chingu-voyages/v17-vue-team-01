@@ -102,8 +102,8 @@ router.post('/login', (req, res) => {
                     res.status(200).json({
                         success: true,
                         token: `Bearer ${token}`,
-                        user: user,
-                        msg: "Congrats! You are now logged in."
+                        user: user.username,
+                        msg: "Congrats " + user.username + "! You are now logged in."
                     });
                 })
             } else {
