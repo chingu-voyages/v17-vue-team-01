@@ -38,7 +38,7 @@ The output contains the token to be saved in local storage
 + Get token from output and used it for me route:
 
 GET http://v17-vue-team-01.test:5000/api/users/profile with header key:x-access-token value:token from login
-+ Output should be the user information, togheter with its events:
++ Output should be the user information, together with its events:
 ```
 {
     "events": [
@@ -51,10 +51,6 @@ GET http://v17-vue-team-01.test:5000/api/users/profile with header key:x-access-
     "email": "vuechingu@gmail.com"
 }
 ```
-
-+ Get user events route is not needed as the user profile route already has that informationt, nevertheless it exists (it could be removed in a next commit)
-
-GET http://v17-vue-team-01.test:5000/api/users/events
 
 + Logout route not needed as the token should be deleted from local storage, nevertheless it exists
 

@@ -140,23 +140,19 @@ router.get('/profile', function(req, res) {
  * @desc Return the User's Events
  * @access Private
  */
-router.get('/events', (req, res) => {
-    let token = req.headers['x-access-token'];
-    if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+// router.get('/events', (req, res) => {
+//     let token = req.headers['x-access-token'];
+//     if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
     
-    jwt.verify(token, key, function(err, decoded) {
-      if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
-    
-      let query = { user_id: decoded._id };
-      Event.find(query).then((result) => {
-        res.status(200).send(result);
-      })    
-      let user_id = decoded._id;
-      Event.find({ users: user_id } ).then((result) => {
-        res.status(200).send(result);
-      })       
-    });
-});
+//     jwt.verify(token, key, function(err, decoded) {
+//       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+        
+//       let user_id = decoded._id;
+//       Event.find({ users: user_id } ).then((result) => {
+//         res.status(200).send(result);
+//       })       
+//     });
+// });
 
 /**
  * @route GET api/users/logout
