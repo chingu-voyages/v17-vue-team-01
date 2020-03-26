@@ -24,7 +24,7 @@
                     <v-icon>mdi-cog</v-icon>
                 </v-btn>
 
-                <v-btn icon>
+                <v-btn icon @click="logout">
                     <v-icon>mdi-logout</v-icon>
                 </v-btn>
 
@@ -62,6 +62,9 @@ export default {
                     )
                 )
                 .catch(error => (this.answer = error));
+        },
+        logout() {
+            this.user = null;
         }
     }
 };
