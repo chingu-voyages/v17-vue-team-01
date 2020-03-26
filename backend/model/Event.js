@@ -17,10 +17,17 @@ const EventSchema = new Schema({
         type: String,
         required: true,
     },
-    time: {
+    start_time: {
         type: Date,
         required: true,
     },
+    end_time: {
+        type: Date,
+        required: true,
+    },
+    color: {
+        type: String
+    }
 });
 
 module.exports = Event = mongoose.model('events', EventSchema);
