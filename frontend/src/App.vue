@@ -48,7 +48,6 @@ export default {
     components: {},
     data: () => ({
         user: null,
-        answer: null
     }),
     methods: {
         tokenReceived(value) {
@@ -61,7 +60,6 @@ export default {
                         this.user = response.data
                     )
                 )
-                .catch(error => (this.answer = error));
         },
         logout() {
             this.user = null;

@@ -62,7 +62,11 @@ export default {
         user: Object
     },
     beforeUpdate() {
-        this.events = this.user.events
+        if (this.user) {
+            this.events = this.user.events
+        } else {
+            this.events = null
+        }
     },
     methods: {
         eventLink(id) {

@@ -36,7 +36,7 @@
                 </v-card-text>
             </v-card>
         </v-col>
-        <Events v-if="loginSuccess" :user="user"/>
+        <Events v-if="loginSuccess" :user="user" />
     </v-row>
 </template>
 
@@ -63,9 +63,15 @@ export default {
             loginSuccess: false
         };
     },
-    mounted() {
-        if (this.user) {
-            this.loginSuccess = true;
+    watch: {
+        user: function(newer, older) {
+            console.log("new", newer, "older", older);
+            if (newer) {
+                this.loginSuccess = true;
+            } else {
+                this.loginSuccess = false;
+                this.answer = null;
+            }
         }
     },
     methods: {
