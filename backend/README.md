@@ -61,22 +61,16 @@ GET http://v17-vue-team-01.test:5000/api/users/logout
 + Create Event using postman
 
 POST http://v17-vue-team-01.test:5000/api/events/create with raw JSON :  
-current_timestamp comes from pre-request script in postman:
-```
-var current_timestamp = new Date();
-postman.setEnvironmentVariable("current_timestamp", current_timestamp.toISOString());
-```
+
 The user must be already logged in and the token also needs to be sent as header key:x-access-token value:token
 ```
 {
-	"name": "Chingu Event",
+	"title": "Chingu Event",
 	"details": "Test event created for chingu vue",
-	"start": "{{current_timestamp}}",
-    "end": "{{current_timestamp}}",
     "color": "blue"
-
+}
 ```
-The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted
+The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted. No dates are inserted, as event is not scheduled yet (only after the timeslots are insereted by each user, the event start and end will be filled)
 
 + Add a user to an event
 
@@ -104,6 +98,33 @@ A user needs to be logged, and event_id can be saved in local storage also (to b
 If user exists, it will be removed from event, and also event will be removed from user's events.  
 If username doesn't exist, it will fail with msg no user found.
 
++ Show event details
+
+GET http://v17-vue-team-01.test:5000/api/events/show with raw JSON:
+```
+{
+    "event_id": "5e7b755606c9f25fad22248f",
+}
+```
+A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
+If event exists, it will show event details togheter with its users:
+{
+    "users": [
+        "5e7dd9e3e6235cda68c6e026"
+    ],
+    "start": null,
+    "end": null,
+    "scheduled": false,
+    "_id": "5e7e3a15bb97888661788ba2",
+    "scheduled": false,
+    "title": "Changed title again",
+    "details": "Changed details again without title change",
+    "__v": 0,
+    "color": "blue"
+}
+If event doesn't exist, it will fail with msg no event found.
+
+
 + Update event details
 
 POST http://v17-vue-team-01.test:5000/api/events/update with raw JSON:
@@ -112,11 +133,14 @@ POST http://v17-vue-team-01.test:5000/api/events/update with raw JSON:
     "event_id": "5e7b755606c9f25fad22248f",
     "name": "New name",
     "details": "New details",
-    "date": "New date",
+    "start": "New start date",
+    "end": "New end date",
+    "color": "New color",
+    "scheduled": false
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
-If event exists, it will be updated with the new data, only if data is not empty(if empty it will not change).  
+If event exists, it will be updated with the new data, only if data is not empty (if empty it will not change). 
 If event doesn't exist, it will fail with msg no event found.
 
 + Delete event

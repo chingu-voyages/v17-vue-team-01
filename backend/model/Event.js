@@ -19,14 +19,18 @@ const EventSchema = new Schema({
     },
     start: {
         type: Date,
-        required: true,
+        default: null,
     },
     end: {
         type: Date,
-        required: true,
+        default: null,
+    },
+    scheduled: {
+        type: Boolean,
+        default: false,
     },
     color: {
-        type: String
+        type: String,
     }
 });
 
