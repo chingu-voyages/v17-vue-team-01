@@ -71,8 +71,10 @@ The user must be already logged in and the token also needs to be sent as header
 {
 	"name": "Chingu Event",
 	"details": "Test event created for chingu vue",
-	"date": "{{current_timestamp}}"
-}
+	"start": "{{current_timestamp}}",
+    "end": "{{current_timestamp}}",
+    "color": "blue"
+
 ```
 The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted
 

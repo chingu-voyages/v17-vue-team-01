@@ -146,7 +146,7 @@ router.post('/remove', (req, res) => {
     });   
 
     if (!user_id) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         msg: "User not found."
       });
@@ -202,14 +202,15 @@ router.post('/update', (req, res) => {
       event_id,
       title,
       details,
-      date,
+      start,
+      end
     } = req.body;
     //console.log(event_id);
 
     Event.findOneAndUpdate({
       _id: event_id,
     },
-    { title: title, details: details, date: date},function(err, doc){
+    { title: title, details: details, start: start, end: end},function(err, doc){
       if(err){
           console.log("Something wrong when updating data!");
       }
