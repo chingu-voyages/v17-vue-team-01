@@ -70,7 +70,7 @@ The user must be already logged in and the token also needs to be sent as header
     "color": "blue"
 }
 ```
-The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted. No dates are inserted, as event is not scheduled yet (only after the timeslots are insereted by each user, the event start and end will be filled)
+The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted. No dates are inserted, as event is not scheduled yet (only after the time slots are inserted by each user, the event start and end will be filled)
 
 + Add a user to an event
 
@@ -107,7 +107,7 @@ GET http://v17-vue-team-01.test:5000/api/events/show with raw JSON:
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
-If event exists, it will show event details togheter with its users:
+If event exists, it will show event details together with its users:
 {
     "users": [
         "5e7dd9e3e6235cda68c6e026"
