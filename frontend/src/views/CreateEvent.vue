@@ -217,7 +217,6 @@ export default {
                     eventDates: this.dates,
                     eventColor: this.color
                 };
-                console.log(this.createdEvent);
                 this.eventFirstValidate = true;
             }
         }
