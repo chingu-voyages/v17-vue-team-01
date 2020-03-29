@@ -129,7 +129,7 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         username: decoded.username
-      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
+      }, { name: 1, username: 1, email: 1, password: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
     })
@@ -149,24 +149,28 @@ router.post('/update', (req, res) => {
   
       let {
         user_id,
-        username
+        username,
+        password,
+        TZ
       } = req.body;
-      //console.log(user_id);
   
       User.findOneAndUpdate({
         _id: user_id,
       },
-      { username:username },function(err, doc){
+      { username: username, password:password, TZ:TZ },function(err, doc){
         if(err){
-            console.log("Something wrong when updating data!");
+            console.log("Something wrong when updating!");
         }
-        doc ? console.log("User updated!") : console.log("Nothing to change!");
+        doc ? console.log("Updated!") : console.log("Nothing to change!");
+        return res.status(200).json({
+            success: true,
+            msg: "Congrats, user is updated with " + `${username? username:""}` + `${password? password:""}`
+            + `${TZ? TZ:""}`  
+
       });
-  
-      return res.status(200).json({
-        success: true,
-        msg: "Congrats, user " + user.username + " is updated "
     });
+
+
     });   
   });
 

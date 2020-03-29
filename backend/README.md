@@ -31,9 +31,17 @@ POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
 	"username": "Vue",
 	"password": "test"
 }
+
+POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
+```
+{
+	"username": "Vue Chingu",
+	"password": "test"
+}
 ```
 Other options can be tried (wrong password, non existing user)  
 The output contains the token to be saved in local storage
+Add at least 2 users for test purpose
 
 + Get token from output and used it for me route:
 
