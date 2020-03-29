@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Events from "./Events.vue";
+import Events from "../components/Events";
 
 export default {
     components: {
