@@ -21,12 +21,12 @@
                     >
                         <v-list-item-content class="text-left">
                             <v-list-item-title>
-                                <!-- <v-btn
+                                <v-btn
                                     color="deep-purple lighten-1"
                                     dark
-                                    :to="eventLink(event.id)"
+                                    :to="eventLink(event)"
                                     >View</v-btn
-                                > -->
+                                >
                                 {{ event }}</v-list-item-title
                             >
                             <v-list-item-subtitle> </v-list-item-subtitle>
@@ -58,6 +58,8 @@ export default {
         user: Object
     },
     mounted() {
+        console.log(this.user);
+        
         if (this.user) {
             this.events = this.user.events;
         }
