@@ -57,9 +57,7 @@ export default {
     props: {
         user: Object
     },
-    mounted() {
-        console.log(this.user);
-        
+    mounted() {        
         if (this.user) {
             this.events = this.user.events;
         }

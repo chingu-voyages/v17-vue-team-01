@@ -37,7 +37,11 @@
             </v-app-bar>
         </v-sheet>
         <v-content>
-            <router-view @loginevent="tokenReceived" :user="user" :token="token"></router-view>
+            <router-view
+                @loginevent="tokenReceived"
+                :user="user"
+                :token="token"
+            ></router-view>
         </v-content>
     </v-app>
 </template>
@@ -50,22 +54,27 @@ export default {
         user: null,
         token: null
     }),
+    watch: {
+        user: function(newer, older) {
+            if (newer) {
+                localStorage.setItem("user", JSON.stringify(newer));
+            }
+        }
+    },
     methods: {
         tokenReceived(value) {
-            this.token = value,
+            this.token = value;
+            localStorage.setItem("token", value);
             this.axios
                 .get("http://34.82.150.138:5000/api/users/profile", {
                     headers: { "x-access-token": value }
                 })
-                .then(
-                    response => (
-                        this.user = response.data
-                    )
-                )
+                .then(response => (this.user = response.data));
         },
         logout() {
             this.user = null;
             this.token = null;
+            localStorage.clear();
         }
     }
 };
