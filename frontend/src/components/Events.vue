@@ -13,11 +13,7 @@
                 <v-toolbar-title>Pending Events</v-toolbar-title>
             </v-toolbar>
             <v-list :shaped="shaped">
-                <v-list-item-group
-                    v-model="event"
-                    v-if="user"
-                    color="primary"
-                >
+                <v-list-item-group v-model="event" v-if="user" color="primary">
                     <v-list-item
                         :inactive="inactive"
                         v-for="(event, i) in events"
@@ -25,12 +21,12 @@
                     >
                         <v-list-item-content class="text-left">
                             <v-list-item-title>
-                                <!-- <v-btn
+                                <v-btn
                                     color="deep-purple lighten-1"
                                     dark
-                                    :to="eventLink(event.id)"
+                                    :to="eventLink(event)"
                                     >View</v-btn
-                                > -->
+                                >
                                 {{ event }}</v-list-item-title
                             >
                             <v-list-item-subtitle> </v-list-item-subtitle>
@@ -61,11 +57,18 @@ export default {
     props: {
         user: Object
     },
+    mounted() {
+        console.log(this.user);
+        
+        if (this.user) {
+            this.events = this.user.events;
+        }
+    },
     beforeUpdate() {
         if (this.user) {
-            this.events = this.user.events
+            this.events = this.user.events;
         } else {
-            this.events = null
+            this.events = null;
         }
     },
     methods: {

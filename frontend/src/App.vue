@@ -37,7 +37,7 @@
             </v-app-bar>
         </v-sheet>
         <v-content>
-            <router-view @loginevent="tokenReceived" :user="user"></router-view>
+            <router-view @loginevent="tokenReceived" :user="user" :token="token"></router-view>
         </v-content>
     </v-app>
 </template>
@@ -48,9 +48,11 @@ export default {
     components: {},
     data: () => ({
         user: null,
+        token: null
     }),
     methods: {
         tokenReceived(value) {
+            this.token = value,
             this.axios
                 .get("http://34.82.150.138:5000/api/users/profile", {
                     headers: { "x-access-token": value }
@@ -63,6 +65,7 @@ export default {
         },
         logout() {
             this.user = null;
+            this.token = null;
         }
     }
 };
