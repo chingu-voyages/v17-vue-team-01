@@ -60,12 +60,19 @@ export default {
             },
             answer: null,
             token: null,
-            loginSuccess: false
+            loginSuccess: null
         };
+    },
+    mounted() {
+        if (this.user) {
+                this.loginSuccess = true;
+            } else {
+                this.loginSuccess = false;
+                this.answer = null;
+            }
     },
     watch: {
         user: function(newer, older) {
-            console.log("new", newer, "older", older);
             if (newer) {
                 this.loginSuccess = true;
             } else {

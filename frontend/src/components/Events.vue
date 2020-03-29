@@ -13,11 +13,7 @@
                 <v-toolbar-title>Pending Events</v-toolbar-title>
             </v-toolbar>
             <v-list :shaped="shaped">
-                <v-list-item-group
-                    v-model="event"
-                    v-if="user"
-                    color="primary"
-                >
+                <v-list-item-group v-model="event" v-if="user" color="primary">
                     <v-list-item
                         :inactive="inactive"
                         v-for="(event, i) in events"
@@ -61,11 +57,16 @@ export default {
     props: {
         user: Object
     },
+    mounted() {
+        if (this.user) {
+            this.events = this.user.events;
+        }
+    },
     beforeUpdate() {
         if (this.user) {
-            this.events = this.user.events
+            this.events = this.user.events;
         } else {
-            this.events = null
+            this.events = null;
         }
     },
     methods: {
