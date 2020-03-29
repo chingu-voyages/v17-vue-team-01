@@ -3,14 +3,20 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import vuetify from './plugins/vuetify';
+import axios from "axios";
+import VueAxios from "vue-axios";
 
 Vue.config.productionTip = false
+
+Vue.use(VueAxios, axios);
 
 new Vue({
   router,
   vuetify,
   render: h => h(App)
 }).$mount('#app')
+
+
 
 Vue.config.warnHandler = function(msg, vm, trace) {
     if (msg === "The .native modifier for v-on is only valid on components but it was used on <div>.") {
