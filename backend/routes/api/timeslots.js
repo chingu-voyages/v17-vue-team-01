@@ -33,7 +33,7 @@ router.post('/create', (req, res) => {
             _id: timeslot_id,
             day,
             time,
-          }); 
+          });
           newTimeslot.save();
           return res.status(201).json({
             success: true,
