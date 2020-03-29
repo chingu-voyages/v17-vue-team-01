@@ -4,7 +4,10 @@
   "description": "set up meetings with different timezones",
   "main": "app.js",
   "scripts": {
-    "dev": "nodemon app.js"
+    "client-install": "cd .. & npm install --prefix frontend",
+    "server": "nodemon app.js",
+    "client": "cd .. & npm run serve --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
   "author": "Ally Lee",
   "license": "MIT",
