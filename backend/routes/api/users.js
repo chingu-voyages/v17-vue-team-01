@@ -21,7 +21,7 @@ router.post('/register', (req, res) => {
         TZ
     } = req.body
     if (password !== confirm_password) {
-        return res.status(400).json({
+        return res.status(200).json({
             success: false,
             msg: "Password do not match."
         });
@@ -31,7 +31,7 @@ router.post('/register', (req, res) => {
         username: username
     }).then(user => {
         if (user) {
-            return res.status(400).json({
+            return res.status(200).json({
                 success: false,
                 msg: "Username is already taken."
             });
@@ -41,7 +41,7 @@ router.post('/register', (req, res) => {
             email: email
         }).then(user => {
             if (user) {
-                return res.status(400).json({
+                return res.status(200).json({
                     success: false,
                     msg: "Email is already registered. Did you forget your password?"
                 });
@@ -81,7 +81,7 @@ router.post('/login', (req, res) => {
         username: req.body.username
     }).then(user => {
         if (!user) {
-            return res.status(404).json({
+            return res.status(200).json({
                 success: false,
                 msg: "Username is not found."
             });
@@ -102,12 +102,12 @@ router.post('/login', (req, res) => {
                     res.status(200).json({
                         success: true,
                         token: `Bearer ${token}`,
-                        user: user,
-                        msg: "Congrats! You are now logged in."
+                        user: user.username,
+                        msg: "Congrats " + user.username + "! You are now logged in."
                     });
                 })
             } else {
-                return res.status(404).json({
+                return res.status(200).json({
                     success: false,
                     msg: "Incorrect password."
                 });
@@ -136,27 +136,39 @@ router.get('/profile', function(req, res) {
   });
 
 /**
- * @route GET api/users/events
- * @desc Return the User's Events
- * @access Private
+ * @route POST api/users/update
+ * @desc Update User
+ * @access Public
  */
-router.get('/events', (req, res) => {
+router.post('/update', (req, res) => {
     let token = req.headers['x-access-token'];
     if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
     
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
-    
-      let query = { user_id: decoded._id };
-      Event.find(query).then((result) => {
-        res.status(200).send(result);
-      })    
-      let user_id = decoded._id;
-      Event.find({ users: user_id } ).then((result) => {
-        res.status(200).send(result);
-      })       
+  
+      let {
+        user_id,
+        username
+      } = req.body;
+      //console.log(user_id);
+  
+      User.findOneAndUpdate({
+        _id: user_id,
+      },
+      { username:username },function(err, doc){
+        if(err){
+            console.log("Something wrong when updating data!");
+        }
+        doc ? console.log("User updated!") : console.log("Nothing to change!");
+      });
+  
+      return res.status(200).json({
+        success: true,
+        msg: "Congrats, user " + user.username + " is updated "
     });
-});
+    });   
+  });
 
 /**
  * @route GET api/users/logout
