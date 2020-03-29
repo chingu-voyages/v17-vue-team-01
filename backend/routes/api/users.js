@@ -103,7 +103,7 @@ router.post('/login', (req, res) => {
                         success: true,
                         token: `Bearer ${token}`,
                         user: user.username,
-                        msg: "Congrats " + user.username + "! You are now logged in."
+                        msg: "Congrats " + user.username + "! You are now logged in. And, your _id is " + user._id
                     });
                 })
             } else {

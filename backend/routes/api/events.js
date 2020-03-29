@@ -45,7 +45,7 @@ router.post('/create', (req, res) => {
           });
         return res.status(201).json({
             success: true,
-            msg: "Congrats, " + event.title + " event is created."
+            msg: "Congrats, " + event.title + " event is created under event_id of " + event._id
         });
       });    
     });
