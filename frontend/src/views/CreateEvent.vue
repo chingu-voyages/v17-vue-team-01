@@ -3,7 +3,7 @@
         <v-card class="mx-auto" max-width="700" v-if="!eventFirstValidate">
             <v-card-text>
                 <h1>Create a new Event!</h1>
-                <v-form ref="form" v-model="valid" lazy-validation >
+                <v-form ref="form" v-model="valid" lazy-validation>
                     <v-text-field
                         v-model="name"
                         :rules="nameRules"
@@ -61,6 +61,49 @@
             <v-card-text>
                 <h1>Select the times</h1>
                 <v-form ref="form" v-model="valid" lazy-validation>
+                    <template>
+                        <v-card class="mx-auto" max-width="200">
+                            <v-list shaped dense="true">
+                                <v-list-item-group v-model="model" multiple>
+                                    <template v-for="(item, i) in items">
+                                        <v-divider
+                                            v-if="!item"
+                                            :key="`divider-${i}`"
+                                        ></v-divider>
+
+                                        <v-list-item
+                                            v-else
+                                            :key="`item-${i}`"
+                                            :value="item"
+                                            active-class="deep-purple--text text--accent-4"
+                                        >
+                                            <template
+                                                v-slot:default="{
+                                                    active,
+                                                    toggle
+                                                }"
+                                            >
+                                                <v-list-item-content>
+                                                    <v-list-item-title
+                                                        v-text="item"
+                                                    ></v-list-item-title>
+                                                </v-list-item-content>
+
+                                                <v-list-item-action>
+                                                    <v-checkbox
+                                                        :input-value="active"
+                                                        :true-value="item"
+                                                        color="deep-purple accent-4"
+                                                        @click="toggle"
+                                                    ></v-checkbox>
+                                                </v-list-item-action>
+                                            </template>
+                                        </v-list-item>
+                                    </template>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-card>
+                    </template>
                     <br />
                     <v-row justify="center"
                         ><v-btn
@@ -87,7 +130,6 @@
                 <h3>{{ answer }}</h3>
             </v-card-text>
         </v-card>
-        
     </v-col>
 </template>
 
@@ -106,6 +148,9 @@ export default {
             eventDates: null,
             eventColor: null
         },
+        items: ["00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00","11:00","12:00","13:00",
+        "14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00","22:00","23:00"],
+        model: ["18:00"],
         nameRules: [v => !!v || "Name is required"]
     }),
     computed: {
