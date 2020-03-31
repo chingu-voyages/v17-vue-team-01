@@ -2,14 +2,14 @@
     <v-col class="text-center">
         <v-btn
             x-large
-            color="deep-purple darken-3"
+            color="blue darken-2"
             dark
             class="createButton"
             to="/create-event"
             >Create new Event</v-btn
         >
         <v-card class="mx-auto" max-width="400" tile>
-            <v-toolbar color="deep-purple lighten-1" dark>
+            <v-toolbar color="blue lighten-2">
                 <v-toolbar-title>Pending Events</v-toolbar-title>
             </v-toolbar>
             <v-list :shaped="shaped">
@@ -22,8 +22,7 @@
                         <v-list-item-content class="text-left">
                             <v-list-item-title>
                                 <v-btn
-                                    color="deep-purple lighten-1"
-                                    dark
+                                    color="blue lighten-2"
                                     :to="eventLink(event)"
                                     >View</v-btn
                                 >

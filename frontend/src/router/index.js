@@ -33,6 +33,15 @@ const routes = [
         component: () => import("../views/CreateEvent.vue")
     },
     {
+        path: "/settings",
+        name: "Settings",
+        beforeEnter: (to, from, next) => {
+            if (!localStorage.user) next({ name: "Login" });
+            else next();
+        },
+        component: () => import("../views/Settings.vue")
+    },
+    {
         path: "/event/:id",
         name: "Event",
         component: () => import("../views/Event.vue")

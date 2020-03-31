@@ -1,5 +1,6 @@
 <template>
-    <p>Route {{ url }}</p>
+    <p>Route {{ url }} <v-btn to="/" color="primary">Home</v-btn></p>
+    
 </template>
 
 <script>
