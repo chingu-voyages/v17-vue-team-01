@@ -20,10 +20,6 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon>
-                    <v-icon>mdi-cog</v-icon>
-                </v-btn>
-
                 <v-btn icon @click="logout">
                     <v-icon>mdi-logout</v-icon>
                 </v-btn>
@@ -32,6 +28,7 @@
                     <v-tabs show-arrows center-active>
                         <v-tab to="/">Home</v-tab>
                         <v-tab to="/calendar" v-if="user">Calendar</v-tab>
+                        <v-tab to="/settings" v-if="user">Settings</v-tab>
                     </v-tabs>
                 </template>
             </v-app-bar>
@@ -59,6 +56,12 @@ export default {
             if (newer) {
                 localStorage.setItem("user", JSON.stringify(newer));
             }
+        }
+    },
+    mounted() {
+        if (localStorage.getItem("user")) {
+            this.user = JSON.parse(localStorage.getItem("user"));
+            this.token = localStorage.getItem("token");
         }
     },
     methods: {
