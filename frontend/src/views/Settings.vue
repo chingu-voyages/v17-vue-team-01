@@ -2,7 +2,9 @@
     <v-sheet>
         <v-card class="mx-auto" max-width="400">
             <v-card-text>
-                <h1>Happy to see you!</h1>
+                <h1>Change User Information</h1>
+                <br />
+                <h3>Each Field can be set individually or left empty</h3>
                 <v-form
                     ref="form"
                     lazy-validation
@@ -12,20 +14,14 @@
                         v-model="email"
                         :rules="[rules.email, rules.emailtext]"
                         label="E-mail"
-                        required
                         class="topMargin"
                     ></v-text-field>
 
-                    <v-text-field
-                        v-model="name"
-                        label="Name"
-                        required
-                    ></v-text-field>
+                    <v-text-field v-model="name" label="Name"></v-text-field>
 
                     <v-text-field
                         v-model="username"
                         label="Username"
-                        required
                     ></v-text-field>
 
                     <v-text-field
@@ -33,7 +29,7 @@
                         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                         :rules="[rules.required]"
                         :type="show1 ? 'text' : 'password'"
-                        label="Password"
+                        label="New Password"
                         counter
                         @click:append="show1 = !show1"
                     ></v-text-field>
@@ -45,16 +41,23 @@
                         label="Select"
                         hide-details
                         single-line
-                        required
                     ></v-select>
+                    <br />
+                    <br />
+                    <v-text-field
+                        v-model="oldpassword"
+                        :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                        :rules="[rules.required]"
+                        :type="show1 ? 'text' : 'password'"
+                        label="Old Password"
+                        counter
+                        @click:append="show1 = !show1"
+                    ></v-text-field>
                 </v-form>
             </v-card-text>
             <v-card-actions>
                 <v-btn @click="processForm" color="primary"
-                    >Create Account</v-btn
-                >
-                <v-btn to="/" class="leftMargin" color="primary"
-                    >Login Here</v-btn
+                    >Update Information</v-btn
                 >
             </v-card-actions>
         </v-card>
@@ -71,8 +74,20 @@
 export default {
     data() {
         return {
+            answer: null,
+            token: null,
+            user: null,
+            username: null,
+            password: null,
+            oldpassword: null,
             show1: false,
             time: null,
+            rules: {
+                required: value => !!value || "Password is required",
+                email: v => !!v || "E-mail is required",
+                emailtext: v => /.+@.+\..+/.test(v) || "E-mail must be valid"
+            },
+            settings: {},
             zones: [
                 "Select Timezone",
                 "UTC +14:00 Samoa",
@@ -112,59 +127,66 @@ export default {
                 "UTC -10:00	Hawaii/USA",
                 "UTC -11:00	American Samoa",
                 "UTC -12:00	US Minor Outlying Islands"
-            ],
-            password: null,
-            rules: {
-                required: value => !!value || "Password is required",
-                email: v => !!v || "E-mail is required",
-                emailtext: v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-            },
-            answer: null
+            ]
         };
+    },
+    mounted() {
+        if (localStorage.getItem("user")) {
+            this.user = JSON.parse(localStorage.getItem("user"));
+            this.token = localStorage.getItem("token");
+        }
     },
     methods: {
         processForm() {
-            if (
-                !this.name ||
-                !this.email ||
-                !this.username ||
-                !this.password ||
-                !this.time
-            ) {
-                this.answer = "Please fill out all the fields.";
-            } else {
-                let direction = this.time.slice(4, 5);
-                let identifier = this.time.slice(5, 7);
-                let addition = this.time.slice(8, 10);
+            let confirmation = confirm("Confirm changes?");
+            if (confirmation == true) {
+                if (this.time) {
+                    let direction = this.time.slice(4, 5);
+                    let identifier = this.time.slice(5, 7);
+                    let addition = this.time.slice(8, 10);
 
-                let zone = Number(identifier + "." + addition);
-                if (direction == "-") {
-                    console.log("sucess");
-                    zone *= -1;
+                    let zone = Number(identifier + "." + addition);
+                    if (direction == "-") {
+                        console.log("sucess");
+                        zone *= -1;
+                    }
+                    this.settings.TZ = zone;
                 }
 
-                this.axios
-                    .post("http://34.82.150.138:5000/api/users/register", {
-                        name: this.name,
-                        email: this.email,
-                        username: this.username,
-                        password: this.password,
-                        confirm_password: this.password,
-                        TZ: zone
-                    })
-                    .then(response => (this.answer = response.data.msg))
-                    .catch(error => (console.log(error), this.answer = error));
+                if (this.name) {
+                    this.settings.name = this.name;
+                }
+
+                if (this.password) {
+                    this.settings.password = this.password;
+                    this.settings["confirm_password"] = this.password;
+                }
+
+                if (this.username) {
+                    this.settings.username = this.username;
+                }
+
+                if (this.email) {
+                    this.settings.email = this.email;
+                }
+
+                if (this.oldpassword) {
+                    this.settings.oldpassword = this.oldpassword;
+                } else {
+                    this.answer = "Please type in your old password.";
+                }
+
+                // this.axios
+                //     .post("http://34.82.150.138:5000/api/users/update", {
+                //          headers: { "x-access-token": this.token },
+                //          body: this.settings
+                //     })
+                //     .then(response => (this.answer = response.data.msg))
+                //     .catch(error => (console.log(error), this.answer = error));
             }
         }
     }
 };
 </script>
 
-<style lang="css">
-.leftMargin {
-    margin-left: 15px;
-}
-.topMargin {
-    margin-top: 10px;
-}
-</style>
+<style lang="scss"></style>

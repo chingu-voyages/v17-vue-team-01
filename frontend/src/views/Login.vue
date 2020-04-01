@@ -7,7 +7,7 @@
                     <v-form ref="form" lazy-validation>
                         <v-text-field
                             v-model="username"
-                            label="username"
+                            label="Username"
                             required
                         ></v-text-field>
 
@@ -16,7 +16,7 @@
                             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
                             :rules="[rules.required]"
                             :type="show1 ? 'text' : 'password'"
-                            label="password"
+                            label="Password"
                             counter
                             @click:append="show1 = !show1"
                         ></v-text-field>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Events from "./Events.vue";
+import Events from "../components/Events";
 
 export default {
     components: {
@@ -60,12 +60,24 @@ export default {
             },
             answer: null,
             token: null,
-            loginSuccess: false
+            loginSuccess: null
         };
+    },
+    mounted() {
+        if (this.user) {
+            this.loginSuccess = true;
+        } else {
+            this.loginSuccess = false;
+            this.answer = null;
+        }
+        if (localStorage.getItem("user")) {
+            this.user = JSON.parse(localStorage.getItem("user"));
+            this.loginSuccess = true;
+        }
+            
     },
     watch: {
         user: function(newer, older) {
-            console.log("new", newer, "older", older);
             if (newer) {
                 this.loginSuccess = true;
             } else {

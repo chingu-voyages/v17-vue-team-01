@@ -1,6 +1,5 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Login from "../views/Login.vue";
 
 Vue.use(VueRouter);
 
@@ -8,16 +7,16 @@ const routes = [
     {
         path: "/",
         name: "Login",
-        component: Login
+        component: () => import("../views/Login.vue")
     },
     {
         path: "/calendar",
         name: "Calendar",
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-        component: () =>
-            import(/* webpackChunkName: "about" */ "../views/Calendar.vue")
+        beforeEnter: (to, from, next) => {
+            if (!localStorage.user) next({ name: "Login" });
+            else next();
+        },
+        component: () => import("../views/Calendar.vue")
     },
     {
         path: "/register",
@@ -27,7 +26,20 @@ const routes = [
     {
         path: "/create-event",
         name: "CreateEvent",
+        beforeEnter: (to, from, next) => {
+            if (!localStorage.user) next({ name: "Login" });
+            else next();
+        },
         component: () => import("../views/CreateEvent.vue")
+    },
+    {
+        path: "/settings",
+        name: "Settings",
+        beforeEnter: (to, from, next) => {
+            if (!localStorage.user) next({ name: "Login" });
+            else next();
+        },
+        component: () => import("../views/Settings.vue")
     },
     {
         path: "/event/:id",

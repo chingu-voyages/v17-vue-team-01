@@ -20,10 +20,6 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon>
-                    <v-icon>mdi-cog</v-icon>
-                </v-btn>
-
                 <v-btn icon @click="logout">
                     <v-icon>mdi-logout</v-icon>
                 </v-btn>
@@ -32,12 +28,17 @@
                     <v-tabs show-arrows center-active>
                         <v-tab to="/">Home</v-tab>
                         <v-tab to="/calendar" v-if="user">Calendar</v-tab>
+                        <v-tab to="/settings" v-if="user">Settings</v-tab>
                     </v-tabs>
                 </template>
             </v-app-bar>
         </v-sheet>
         <v-content>
-            <router-view @loginevent="tokenReceived" :user="user"></router-view>
+            <router-view
+                @loginevent="tokenReceived"
+                :user="user"
+                :token="token"
+            ></router-view>
         </v-content>
     </v-app>
 </template>
@@ -48,21 +49,35 @@ export default {
     components: {},
     data: () => ({
         user: null,
+        token: null
     }),
+    watch: {
+        user: function(newer, older) {
+            if (newer) {
+                localStorage.setItem("user", JSON.stringify(newer));
+            }
+        }
+    },
+    mounted() {
+        if (localStorage.getItem("user")) {
+            this.user = JSON.parse(localStorage.getItem("user"));
+            this.token = localStorage.getItem("token");
+        }
+    },
     methods: {
         tokenReceived(value) {
+            this.token = value;
+            localStorage.setItem("token", value);
             this.axios
                 .get("http://34.82.150.138:5000/api/users/profile", {
                     headers: { "x-access-token": value }
                 })
-                .then(
-                    response => (
-                        this.user = response.data
-                    )
-                )
+                .then(response => (this.user = response.data));
         },
         logout() {
             this.user = null;
+            this.token = null;
+            localStorage.clear();
         }
     }
 };
