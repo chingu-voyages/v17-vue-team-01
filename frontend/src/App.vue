@@ -20,17 +20,14 @@
 
                 <v-spacer></v-spacer>
 
-                <v-btn icon @click="logout">
+                <v-btn icon large to="/settings" v-if="user">
+                    <v-icon>mdi-cog</v-icon>
+                </v-btn>
+
+                <v-btn icon large @click="logout">
                     <v-icon>mdi-logout</v-icon>
                 </v-btn>
 
-                <template v-slot:extension>
-                    <v-tabs show-arrows center-active>
-                        <v-tab to="/">Home</v-tab>
-                        <v-tab to="/calendar" v-if="user">Calendar</v-tab>
-                        <v-tab to="/settings" v-if="user">Settings</v-tab>
-                    </v-tabs>
-                </template>
             </v-app-bar>
         </v-sheet>
         <v-content>

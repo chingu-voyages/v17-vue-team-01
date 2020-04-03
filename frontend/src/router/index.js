@@ -10,15 +10,6 @@ const routes = [
         component: () => import("../views/Login.vue")
     },
     {
-        path: "/calendar",
-        name: "Calendar",
-        beforeEnter: (to, from, next) => {
-            if (!localStorage.user) next({ name: "Login" });
-            else next();
-        },
-        component: () => import("../views/Calendar.vue")
-    },
-    {
         path: "/register",
         name: "Register",
         component: () => import("../views/Register.vue")
@@ -26,19 +17,19 @@ const routes = [
     {
         path: "/create-event",
         name: "CreateEvent",
-        beforeEnter: (to, from, next) => {
-            if (!localStorage.user) next({ name: "Login" });
-            else next();
-        },
+        // beforeEnter: (to, from, next) => {
+        //     if (!localStorage.user) next({ name: "Login" });
+        //     else next();
+        // },
         component: () => import("../views/CreateEvent.vue")
     },
     {
         path: "/settings",
         name: "Settings",
-        beforeEnter: (to, from, next) => {
-            if (!localStorage.user) next({ name: "Login" });
-            else next();
-        },
+        // beforeEnter: (to, from, next) => {
+        //     if (!localStorage.user) next({ name: "Login" });
+        //     else next();
+        // },
         component: () => import("../views/Settings.vue")
     },
     {

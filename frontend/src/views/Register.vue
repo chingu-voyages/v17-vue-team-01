@@ -50,7 +50,7 @@
                 </v-form>
             </v-card-text>
             <v-card-actions>
-                <v-btn @click="processForm" color="primary"
+                <v-btn @click="processForm" color="success"
                     >Create Account</v-btn
                 >
                 <v-btn to="/" class="leftMargin" color="primary"
