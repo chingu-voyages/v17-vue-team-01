@@ -31,7 +31,7 @@ POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
 	"username": "Vue",
 	"password": "test"
 }
-
+```
 POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
 ```
 {
@@ -116,6 +116,7 @@ GET http://v17-vue-team-01.test:5000/api/events/show with raw JSON:
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
 If event exists, it will show event details together with its users:
+```
 {
     "users": [
         "5e7dd9e3e6235cda68c6e026"
@@ -130,6 +131,7 @@ If event exists, it will show event details together with its users:
     "__v": 0,
     "color": "blue"
 }
+```
 If event doesn't exist, it will fail with msg no event found.
 
 
