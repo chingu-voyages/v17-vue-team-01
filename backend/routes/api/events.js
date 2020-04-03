@@ -23,14 +23,14 @@ router.post('/create', (req, res) => {
       let {
         title,
         details,
-        date,
+        color,
       } = req.body;
       const user_id = decoded._id;
       let newEvent = new Event({
         users: [user_id],
         title,
         details,
-        date,
+        color,
       }); 
 
       newEvent.save().then(event => {
@@ -57,18 +57,25 @@ router.post('/create', (req, res) => {
  * @access Public
  */
 router.get('/show', (req, res) => {
-    let event_id = req.body.event_id;
-    //console.log(event_id);
-    Event.findOne( {_id: event_id}  ).then((result) => {
+  let token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  
+  jwt.verify(token, key, function(err, decoded) {
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
 
-      if (!result) {
-        return res.status(400).json({
-          success: false,
-          msg: "Event not found."
-        });
-      }
-      res.status(200).send(result);
-    })   
+      let event_id = req.body.event_id;
+      //console.log(event_id);
+      Event.findOne( {_id: event_id}  ).then((result) => {
+
+        if (!result) {
+          return res.status(400).json({
+            success: false,
+            msg: "Event not found."
+          });
+        }
+        res.status(200).send(result);
+      });      
+  }); 
 });
 
 /**
