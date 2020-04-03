@@ -56,8 +56,11 @@
                 </v-form>
             </v-card-text>
             <v-card-actions>
-                <v-btn @click="processForm" color="primary"
+                <v-btn @click="processForm" color="success"
                     >Update Information</v-btn
+                >
+                <v-btn to="/" color="primary"
+                    > Back Home</v-btn
                 >
             </v-card-actions>
         </v-card>

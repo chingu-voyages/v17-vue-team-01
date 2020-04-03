@@ -1,16 +1,8 @@
 <template>
-    <v-col class="text-center">
-        <v-btn
-            x-large
-            color="blue darken-2"
-            dark
-            class="createButton"
-            to="/create-event"
-            >Create new Event</v-btn
-        >
+    <v-row class="text-center">
         <v-card class="mx-auto" max-width="400" tile>
-            <v-toolbar color="blue lighten-2">
-                <v-toolbar-title>Pending Events</v-toolbar-title>
+            <v-toolbar color="orange lighten-2">
+                <v-toolbar-title>Pending Events </v-toolbar-title>
             </v-toolbar>
             <v-list :shaped="shaped">
                 <v-list-item-group v-model="event" v-if="user" color="primary">
@@ -22,7 +14,7 @@
                         <v-list-item-content class="text-left">
                             <v-list-item-title>
                                 <v-btn
-                                    color="blue lighten-2"
+                                    color="orange lighten-2"
                                     :to="eventLink(event)"
                                     >View</v-btn
                                 >
@@ -42,7 +34,51 @@
                 </v-list-item-group>
             </v-list>
         </v-card>
-    </v-col>
+        <v-col class="text-center" max-width="400">
+            <v-btn
+                large
+                color="blue darken-2"
+                dark
+                class="createButton"
+                to="/create-event"
+                >Create new Event</v-btn
+            >
+        </v-col>
+        <v-card class="mx-auto" max-width="400" tile>
+            <v-toolbar color="deep-purple lighten-2">
+                <v-toolbar-title>Set Events</v-toolbar-title>
+            </v-toolbar>
+            <v-list :shaped="shaped">
+                <v-list-item-group v-model="event" v-if="user" color="primary">
+                    <v-list-item
+                        :inactive="inactive"
+                        v-for="(event, i) in events"
+                        :key="i"
+                    >
+                        <v-list-item-content class="text-left">
+                            <v-list-item-title>
+                                <v-btn
+                                    color="deep-purple lighten-2"
+                                    :to="eventLink(event)"
+                                    >View</v-btn
+                                >
+                                {{ event }}</v-list-item-title
+                            >
+                            <v-list-item-subtitle> </v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
+                <v-list-item-group v-model="item" v-else color="primary">
+                    <v-list-item :inactive="inactive" :key="i">
+                        <v-list-item-content class="text-left">
+                            <v-list-item-title> None</v-list-item-title>
+                            <v-list-item-subtitle> </v-list-item-subtitle>
+                        </v-list-item-content>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-card>
+    </v-row>
 </template>
 
 <script>
@@ -56,7 +92,7 @@ export default {
     props: {
         user: Object
     },
-    mounted() {        
+    mounted() {
         if (this.user) {
             this.events = this.user.events;
         }
