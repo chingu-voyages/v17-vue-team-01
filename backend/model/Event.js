@@ -31,6 +31,10 @@ const EventSchema = new Schema({
     },
     color: {
         type: String,
+    },
+    possibleDays: {
+        type: Array,
+        required: true,
     }
 });
 
