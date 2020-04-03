@@ -53,148 +53,157 @@
             </v-card-text>
         </v-card>
         <br v-if="!eventFirstValidate" />
-        <v-card class="mx-auto" max-width="700" v-if="eventFirstValidate">
+        <v-card
+            class="mx-auto"
+            scrollable
+            max-width="1200"
+            v-if="eventFirstValidate"
+        >
             <v-card-text>
                 <h1>Select the times</h1>
                 <br />
                 <v-form ref="form" v-model="valid" lazy-validation>
                     <template>
-                        <v-row>
+                        <v-row align="center" justify="center" no-gutters>
                             <template v-for="(slot, i) in slots">
-                                <v-divider
-                                    v-if="!slot"
-                                    :key="`divider-${i}`"
-                                ></v-divider>
-                                <v-card
-                                    class="mx-auto"
-                                    max-width="160"
-                                    :key="`slot-${i}`"
-                                    :value="slot"
-                                >
-                                    <h2>{{ createdEvent.eventDates[i] }}</h2>
-                                    <v-container fluid>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="00:00"
-                                            value="0"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="01:00"
-                                            value="1"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="02:00"
-                                            value="2"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="03:00"
-                                            value="3"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="04:00"
-                                            value="4"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="05:00"
-                                            value="5"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="06:00"
-                                            value="6"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="07:00"
-                                            value="7"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="08:00"
-                                            value="8"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="09:00"
-                                            value="9"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="10:00"
-                                            value="10"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="11:00"
-                                            value="11"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="12:00"
-                                            value="12"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="13:00"
-                                            value="13"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="14:00"
-                                            value="14"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="15:00"
-                                            value="15"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="16:00"
-                                            value="16"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="17:00"
-                                            value="17"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="18:00"
-                                            value="18"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="19:00"
-                                            value="19"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="20:00"
-                                            value="20"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="21:00"
-                                            value="21"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="22:00"
-                                            value="22"
-                                        ></v-checkbox>
-                                        <v-checkbox
-                                            v-model="slotItems[i]"
-                                            label="23:00"
-                                            value="23"
-                                        ></v-checkbox>
-                                    </v-container>
-                                </v-card>
+                                <v-col :key="`slot-${i}`">
+                                    <v-card
+                                        class="mx-auto"
+                                        max-width="110"
+                                        :value="slot"
+                                    >
+                                        <h2 class="timeslotName">
+                                            {{
+                                                createdEvent.eventDates[
+                                                    i
+                                                ].slice(4, 10)
+                                            }}
+                                        </h2>
+                                        <v-col>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="00:00"
+                                                value="0"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="01:00"
+                                                value="1"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="02:00"
+                                                value="2"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="03:00"
+                                                value="3"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="04:00"
+                                                value="4"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="05:00"
+                                                value="5"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="06:00"
+                                                value="6"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="07:00"
+                                                value="7"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="08:00"
+                                                value="8"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="09:00"
+                                                value="9"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="10:00"
+                                                value="10"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="11:00"
+                                                value="11"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="12:00"
+                                                value="12"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="13:00"
+                                                value="13"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="14:00"
+                                                value="14"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="15:00"
+                                                value="15"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="16:00"
+                                                value="16"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="17:00"
+                                                value="17"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="18:00"
+                                                value="18"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="19:00"
+                                                value="19"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="20:00"
+                                                value="20"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="21:00"
+                                                value="21"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="22:00"
+                                                value="22"
+                                            ></v-checkbox>
+                                            <v-checkbox
+                                                v-model="slotItems[i]"
+                                                label="23:00"
+                                                value="23"
+                                            ></v-checkbox>
+                                        </v-col>
+                                    </v-card>
+                                    <br />
+                                </v-col>
                             </template>
                         </v-row>
                     </template>
@@ -239,6 +248,8 @@ export default {
             eventId: null,
             eventName: null,
             eventDates: null,
+            eventStart: null,
+            eventEnd: null,
             eventColor: null,
             eventTimeslots: {}
         },
@@ -259,45 +270,9 @@ export default {
         processFormFirst() {
             if (!this.name || !this.color || !this.dates) {
                 this.answer = "Please fill out all the fields.";
-            } else {
-                this.createdEvent = {
-                    eventName: this.name,
-                    eventDates: this.dateNames(),
-                    eventColor: this.color
-                };
-                console.log(this.createdEvent);
-
-                this.axios
-                    .post(
-                        "http://34.82.150.138:5000/api/events/create",
-                        {
-                            title: this.createdEvent.eventName,
-                            details: "Blahblah?",
-                            color: this.createdEvent.eventColor
-                        },
-                        {
-                            headers: {
-                                "x-access-token": localStorage.getItem("token")
-                            }
-                        }
-                    )
-                    .then(
-                        response =>
-                            (this.createdEvent.eventId = response.data.msg.slice(-24)),
-                    )
-                    .catch(
-                        error => (console.log(error), (this.answer = error))
-                    );
-
-                this.slots = this.createdEvent.eventDates.length;
-                for (let index = 0; index < this.slots; index++) {
-                    this.slotItems[index] = [this.createdEvent.eventDates[index]];
-                }
-
-                this.eventFirstValidate = true;
+                window.scrollBy(0, 200);
+                return;
             }
-        },
-        dateNames() {
             let dateSplit1 = this.dates[0].split("-");
             let dateSplit2 = this.dates[1].split("-");
             let d1 = new Date(
@@ -310,6 +285,62 @@ export default {
                 Number(dateSplit2[1]) - 1,
                 Number(dateSplit2[2])
             );
+
+            if (d1.getTime() > d2.getTime()) {
+                this.answer =
+                    "Please select the range with the earlier date first";
+                window.scrollBy(0, 200);
+            } else if (this.dateNames(d1, d2).length > 10) {
+                this.answer =
+                    "Currently only a range of 10 dates are selectable";
+                window.scrollBy(0, 200);
+            } else {
+                window.scrollTo(0, 0);
+                this.createdEvent = {
+                    eventName: this.name,
+                    eventDates: this.dateNames(d1, d2),
+                    eventColor: this.color,
+                    eventStart: this.dates[0],
+                    eventEnd: this.dates[1]
+                };
+
+                this.axios
+                    .post(
+                        "http://34.82.150.138:5000/api/events/create",
+                        {
+                            title: this.createdEvent.eventName,
+                            details: "",
+                            color: this.createdEvent.eventColor,
+                            // start: this.createdEvent.eventStart,
+                            // end: this.createdEvent.eventEnd
+                        },
+                        {
+                            headers: {
+                                "x-access-token": localStorage.getItem("token")
+                            }
+                        }
+                    )
+                    .then(
+                        response =>
+                            (this.createdEvent.eventId = response.data.msg.slice(
+                                -24
+                            ))
+                    )
+                    .catch(
+                        error => (console.log(error), (this.answer = error))
+                    );
+
+                this.slots = this.createdEvent.eventDates.length;
+                for (let index = 0; index < this.slots; index++) {
+                    this.slotItems[index] = [
+                        this.createdEvent.eventDates[index]
+                    ];
+                }
+
+                this.eventFirstValidate = true;
+            }
+        },
+        dateNames(d1, d2) {
             let oneDay = 24 * 3600 * 1000;
             let array = [];
             for (let i = d1.getTime(); i <= d2.getTime(); i += oneDay) {
@@ -320,3 +351,16 @@ export default {
     }
 };
 </script>
+<style lang="scss">
+.v-input--selection-controls {
+    margin-top: 0px;
+    padding-top: 4px;
+}
+.v-messages {
+    min-height: 0px;
+}
+.timeslotName {
+    text-align: center;
+    padding-top: 10px;
+}
+</style>
