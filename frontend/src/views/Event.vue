@@ -1,5 +1,8 @@
 <template>
-    <p>Route {{ url }} <v-btn to="/" color="primary">Home</v-btn></p>
+    <v-sheet>
+        <p>Route {{ url }} <v-btn to="/" color="primary">Home</v-btn></p>
+        <p>{{ event }}</p>
+    </v-sheet>
 </template>
 
 <script>
@@ -17,9 +20,7 @@ export default {
     mounted() {
         console.log(
             this.axios
-                .get("http://34.82.150.138:5000/api/events/show", {
-                    event_id: this.url
-                })
+                .get(`http://34.82.150.138:5000/api/events/show/${this.url}`)
                 .then(
                     response => (this.event = response.data),
                     console.log(this.event)
