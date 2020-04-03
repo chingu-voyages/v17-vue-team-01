@@ -64,46 +64,17 @@ router.post('/create', (req, res) => {
 router.post('/delete', (req, res) => {
   let timeslot_id = req.body.timeslot_id;
   //console.log(timeslot_id);
-  Timeslot.findOne( {_id: timeslot_id}  ).then((result) => {
+  Timeslot.findOneAndDelete( {_id: timeslot_id}  ).then((result) => {
     if(!result){
       return res.status(200).json({
         success: false,
         msg: "Timeslot not found!"
-    });
-    }
-    let users = result.users;
-    users.forEach(user =>
-      User.findOneAndUpdate({
-        _id: user._id,
-        timeslots: {$eq: timeslot_id}
-      },
-      { $pull: {timeslots: timeslot_id }} ,function(err, doc){
-        if(err){
-            console.log("Something wrong when updating data!");
-        }
-        doc ? console.log("Removed this timeslot from user!") : console.log("Timeslot not in this user!");
-      }));
-
-      let events = result.events;
-      events.forEach(event =>
-        Event.findOneAndUpdate({
-          _id: event_id,
-          timeslots: {$eq: timeslot_id}
-        },
-        { $pull: {timeslots: timeslot_id }} ,function(err, doc){
-          if(err){
-              console.log("Something wrong when updating data!");
-          }
-          doc ? console.log("Removed this timeslot from event!") : console.log("Timeslot not in this event!");
-        }));
-
-      Timeslot.findOneAndDelete( {_id: timeslot_id}  ).then((result) => {
-        res.status(200).json({
-          success: true,
-          msg: "Congrats, timeslot_id " + result.timeslot_id + " is deleted and removed from each user"
       });
-      }) 
-
+    }
+      res.status(200).json({
+        success: true,
+        msg: "Congrats, timeslot_id " + result._id + " is deleted"
+      });
   });
     
 });

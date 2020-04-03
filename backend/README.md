@@ -75,10 +75,11 @@ The user must be already logged in and the token also needs to be sent as header
 {
 	"title": "Chingu Event",
 	"details": "Test event created for chingu vue",
-    "color": "blue"
+    "color": "blue",
+    "possibleDays": ["2020-12-03", "2020-12-04"]
 }
 ```
-The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted. No dates are inserted, as event is not scheduled yet (only after the time slots are inserted by each user, the event start and end will be filled)
+The event is created, and user is automatically inserted in event users array, and user events array also gets event id inserted. No dates are inserted, as event is not scheduled yet (only after the time slots are inserted by each user, the event start and end will be filled). You need to also include and array with the possible days (start day and end day) to display the timeslots to choose.
 
 + Add a user to an event
 
@@ -92,6 +93,7 @@ POST http://v17-vue-team-01.test:5000/api/events/add with raw JSON:
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
 If user exists, it will be added to event, and also event will be in user's events.  
 If username doesn't exist, it will fail with msg no user found.
+Any user already in the event can add another user.
 
 + Remove a user from an event
 
@@ -105,32 +107,62 @@ POST http://v17-vue-team-01.test:5000/api/events/remove with raw JSON:
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
 If user exists, it will be removed from event, and also event will be removed from user's events.  
 If username doesn't exist, it will fail with msg no user found.
+Only the creator of the event can remove users.
 
 + Show event details
 
-GET http://v17-vue-team-01.test:5000/api/events/show with raw JSON:
-```
-{
-    "event_id": "5e7b755606c9f25fad22248f",
-}
-```
+GET http://v17-vue-team-01.test:5000/api/events/show/id:
+
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
-If event exists, it will show event details together with its users:
+If event exists, it will send two arrays, first with event details together with its users and the second with all timeslots for that event (for display):
 ```
-{
-    "users": [
-        "5e7dd9e3e6235cda68c6e026"
-    ],
-    "start": null,
-    "end": null,
-    "scheduled": false,
-    "_id": "5e7e3a15bb97888661788ba2",
-    "scheduled": false,
-    "title": "Changed title again",
-    "details": "Changed details again without title change",
-    "__v": 0,
-    "color": "blue"
-}
+[
+    {
+        "users": [
+            "5e8787294dfb2c0f8448f979",
+            "5e87b0fcdd4a782990b027d5",
+            "5e87ad4627e8d70a7c40ca87"
+        ],
+        "start": null,
+        "end": null,
+        "scheduled": false,
+        "possibleDays": [
+            "2020-12-03",
+            "2020-12-04"
+        ],
+        "_id": "5e878fa4af0fe51310e6d8b5",
+        "title": "Chingu Event2",
+        "details": "Test event created for chingu vue",
+        "color": "blue",
+        "__v": 0
+    },
+    [
+        {
+            "_id": "5e878ffeaf0fe51310e6d8b6",
+            "user": "5e8663771228fb2c5c187e5d",
+            "event": "5e878fa4af0fe51310e6d8b5",
+            "day": "2020-12-03",
+            "time": "0",
+            "__v": 0
+        },
+        {
+            "_id": "5e878ffeaf0fe51310e6d8b7",
+            "user": "5e8663771228fb2c5c187e5d",
+            "event": "5e878fa4af0fe51310e6d8b5",
+            "day": "2020-12-03",
+            "time": "1",
+            "__v": 0
+        },
+        {
+            "_id": "5e878ffeaf0fe51310e6d8b8",
+            "user": "5e8663771228fb2c5c187e5d",
+            "event": "5e878fa4af0fe51310e6d8b5",
+            "day": "2020-12-04",
+            "time": "1",
+            "__v": 0
+        },
+    ]
+]
 ```
 If event doesn't exist, it will fail with msg no event found.
 
@@ -165,3 +197,27 @@ A user needs to be logged, and event_id can be saved in local storage also (to b
 If event exists, it will be deleted, and each user of this event will have the event removed from its profile.  
 If event doesn't exist, it will fail with msg no event found.
 
+---
+
++ Create timeslots
+
+POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
+```
+{
+    "event_id": "5e878fa4af0fe51310e6d8b5",
+    "timeslots": [["2020-12-03","0","1"],["2020-12-04","1","2","3"]]
+}
+```
+A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
+Timeslots are saved with the user id, the event id, the day and the time of the day (hour).
+
++ Delete timeslot
+
+POST http://v17-vue-team-01.test:5000/api/timeslots/delete with raw JSON:
+```
+{
+    "timeslot_id": "5e878fa4af0fe51310e6d8b5"
+}
+```
+A user needs to be logged, and timeslot_id can be saved in local storage also (to be discussed)
+To be discussed the need of this route :)
