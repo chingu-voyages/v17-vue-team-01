@@ -60,6 +60,20 @@ GET http://v17-vue-team-01.test:5000/api/users/profile with header key:x-access-
 }
 ```
 
++ Update user details
+
+POST http://v17-vue-team-01.test:5000/api/users/update with raw JSON:
+```
+{
+	"username": "new username",
+    "name": "new Name",
+    "email": "new email",
+}
+```
+A user needs to be logged. 
+If user exists, it will be updated with the new data, only if data is not empty (if empty it will not change). 
+If user doesn't exist, it will fail with msg no user found.
+
 + Logout route not needed as the token should be deleted from local storage, nevertheless it exists
 
 GET http://v17-vue-team-01.test:5000/api/users/logout
@@ -195,7 +209,8 @@ POST http://v17-vue-team-01.test:5000/api/events/delete with raw JSON:
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
 If event exists, it will be deleted, and each user of this event will have the event removed from its profile.  
-If event doesn't exist, it will fail with msg no event found.
+If event doesn't exist, it will fail with msg no event found.  
+It will also delete all timeslots from this event.
 
 ---
 
@@ -205,11 +220,12 @@ POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
 ```
 {
     "event_id": "5e878fa4af0fe51310e6d8b5",
-    "timeslots": [["2020-12-03","0","1"],["2020-12-04","1","2","3"]]
+    "timeslots": [["2020-12-03","14","10"],["2020-12-04","0","1","2"]]
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
-Timeslots are saved with the user id, the event id, the day and the time of the day (hour).
+Timeslots are saved with the user id, the event id, the day and the time of the day (hour).  
+It will always save the hour as GMT. For instance, in this case, if the user has a TZ of GMT+1, it will save in timeslots as 13, 9, -1, 0 and 1 respectively. If TZ is GMT-5, it will save in timeslots as 19, 15, 5, 6 and 7, respectively.
 
 + Delete timeslot
 
