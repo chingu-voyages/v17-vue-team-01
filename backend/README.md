@@ -7,7 +7,7 @@ Vue-team-v17 Backend
 5. node app.js (nodemon app.js for development)
 
 
-+ Register using postman
++ Register users using postman (register at least 2 users for test purpose!)
 
 POST http://v17-vue-team-01.test:5000/api/users/register with raw JSON :
 ```
@@ -15,8 +15,15 @@ POST http://v17-vue-team-01.test:5000/api/users/register with raw JSON :
     "name": "Vue Chingu",
     "username": "Vue",
     "email": "vuechingu@gmail.com",
-    "password": "test",
-    "confirm_password": "test",
+    "password": "test1234",
+    "TZ": "-2"
+}
+
+{
+    "name": "Vue Chingu1",
+    "username": "Vue1",
+    "email": "vuechingu1@gmail.com",
+    "password": "test1234",
     "TZ": "-5"
 }
 ```
@@ -28,20 +35,13 @@ If no TZ provided, defaults to GMT
 POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
 ```
 {
-	"username": "Vue",
-	"password": "test"
-}
-```
-POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
-```
-{
-	"username": "Vue Chingu",
-	"password": "test"
+	"username": "Vue1",
+	"password": "test1234"
 }
 ```
 Other options can be tried (wrong password, non existing user)  
 The output contains the token to be saved in local storage
-Add at least 2 users for test purpose
+
 
 + Get token from output and used it for me route:
 
@@ -55,8 +55,8 @@ GET http://v17-vue-team-01.test:5000/api/users/profile with header key:x-access-
     "TZ": 0,
     "_id": "5e6fc635916da9a710d2f8c0",
     "name": "Vue Chingu",
-    "username": "Vue",
-    "email": "vuechingu@gmail.com"
+    "username": "Vue1",
+    "email": "vuechingu1@gmail.com"
 }
 ```
 
@@ -86,7 +86,7 @@ POST http://v17-vue-team-01.test:5000/api/events/add with raw JSON:
 ```
 {
     "event_id": "5e7b755606c9f25fad22248f",
-    "username": "Vue user"
+    "username": "Vue"
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
@@ -99,7 +99,7 @@ POST http://v17-vue-team-01.test:5000/api/events/remove with raw JSON:
 ```
 {
     "event_id": "5e7b755606c9f25fad22248f",
-    "username": "Vue user"
+    "username": "Vue"
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)

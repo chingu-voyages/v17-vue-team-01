@@ -129,7 +129,7 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         username: decoded.username
-      }, { name: 1, username: 1, email: 1, password: 1, TZ: 1, events: 1 }).then(user => {
+      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
     })
