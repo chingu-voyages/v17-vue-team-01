@@ -27,31 +27,46 @@ router.post('/create', (req, res) => {
       } = req.body;
 
       const user_id = decoded._id;
+      //console.log(decoded);
+      Event.findOne( {_id: event_id}  ).then((result) => {
+        if(!result){
+          return res.status(200).json({
+            success: false,
+            msg: "Event not found!"
+          });
+        }
+        User.findOne({_id: user_id}).then(function(user){
+          let userTZ = user.TZ;
+          //console.log(userTZ);
+          timeslots.forEach(timeslot => {
 
-      timeslots.forEach(timeslot => {
-
-        timeslot.forEach(tsContent => {
-          let day = timeslot[0];
-          if(tsContent != day){
-            let newTimeslot = new Timeslot({
-              user: user_id,
-              event: event_id,
-              day: day,
-              time: tsContent,
-            });
-  
-            newTimeslot.save().then(timeslot => {
-              console.log("Congrats, timeslot " + timeslot + " created");
-            
-            });
-          }
-        });      
+            timeslot.forEach(tsContent => {
+              let day = timeslot[0];
+              if(tsContent != day){
+                //change timeslot to GMT
+                
+                tsContent = parseInt(tsContent) - userTZ;
+                
+                let newTimeslot = new Timeslot({
+                  user: user_id,
+                  event: result._id,
+                  day: day,
+                  time: tsContent,
+                });
+      
+                newTimeslot.save().then(timeslot => {
+                  console.log("Congrats, timeslot " + timeslot + " created");
+                
+                });
+              }
+            });      
+          });
+        });
+        res.status(200).json({
+          success: true,
+          msg: "Congrats, timeslots created!"
+        });
       });
-
-      res.status(200).json({
-        success: true,
-        msg: "Congrats, timeslots created!"
-    });
     });
 });
 

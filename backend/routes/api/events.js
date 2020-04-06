@@ -325,6 +325,15 @@ router.post('/delete', (req, res) => {
           msg: "User is not the creator, cannot delete event!"
         });
       }
+
+      Timeslot.deleteMany({ event: event_id }, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
+        }
+      });
+
       let users = result.users;
       users.forEach(user =>
         User.findOneAndUpdate({
