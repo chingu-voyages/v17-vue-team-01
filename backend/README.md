@@ -227,6 +227,18 @@ A user needs to be logged, and event_id can be saved in local storage also (to b
 Timeslots are saved with the user id, the event id, the day and the time of the day (hour).  
 It will always save the hour as GMT. For instance, in this case, if the user has a TZ of GMT+1, it will save in timeslots as 13, 9, -1, 0 and 1 respectively. If TZ is GMT-5, it will save in timeslots as 19, 15, 5, 6 and 7, respectively.
 
++ Update timeslots
+
+POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
+```
+{
+    "event_id": "5e878fa4af0fe51310e6d8b5",
+    "timeslots": [["2020-12-03","15","1"],["2020-12-04","7","8","9"]]
+}
+```
+A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
+Update timeslots for a given user and event is the same as create new ones. The same route can be used, as it will search for all timeslots for this user and for event, will delete all timeslots found and create the new requested ones.
+
 + Delete timeslot
 
 POST http://v17-vue-team-01.test:5000/api/timeslots/delete with raw JSON:

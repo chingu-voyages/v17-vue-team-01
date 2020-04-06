@@ -35,31 +35,41 @@ router.post('/create', (req, res) => {
             msg: "Event not found!"
           });
         }
-        User.findOne({_id: user_id}).then(function(user){
-          let userTZ = user.TZ;
-          //console.log(userTZ);
-          timeslots.forEach(timeslot => {
+        //delete timeslots if exist to create new updated
+        Timeslot.deleteMany({ event: event_id, user: user_id }, function(err) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log("timeslots deleted");
+          }
+        
 
-            timeslot.forEach(tsContent => {
-              let day = timeslot[0];
-              if(tsContent != day){
-                //change timeslot to GMT
-                
-                tsContent = parseInt(tsContent) - userTZ;
-                
-                let newTimeslot = new Timeslot({
-                  user: user_id,
-                  event: result._id,
-                  day: day,
-                  time: tsContent,
-                });
-      
-                newTimeslot.save().then(timeslot => {
-                  console.log("Congrats, timeslot " + timeslot + " created");
-                
-                });
-              }
-            });      
+          User.findOne({_id: user_id}).then(function(user){
+            let userTZ = user.TZ;
+            //console.log(userTZ);
+            timeslots.forEach(timeslot => {
+
+              timeslot.forEach(tsContent => {
+                let day = timeslot[0];
+                if(tsContent != day){
+                  
+                  //change timeslot to GMT
+                  tsContent = parseInt(tsContent) - userTZ;
+                  
+                  let newTimeslot = new Timeslot({
+                    user: user_id,
+                    event: result._id,
+                    day: day,
+                    time: tsContent,
+                  });
+        
+                  newTimeslot.save().then(timeslot => {
+                    console.log("Congrats, timeslot created!");// + timeslot + " created");
+                  
+                  });
+                }
+              });      
+            });
           });
         });
         res.status(200).json({
