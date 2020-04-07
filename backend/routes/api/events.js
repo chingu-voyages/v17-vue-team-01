@@ -84,11 +84,16 @@ router.get('/show/:id', (req, res) => {
           let advisable_timeslots = [];
           candidate_timeslots = [];
           for(let i=0; i<possible_timeslots.length; i++) {
-            candidate_timeslots.push(possible_timeslots[i]["day"] + ":" + possible_timeslots[i]["time"]) 
+            candidate_timeslots.push([possible_timeslots[i]["day"], possible_timeslots[i]["time"]]); 
           }
+          for(let i=0; i<candidate_timeslots; i++) {
+            if() {
+              
+            }
+          }
+          
           console.log(`possible_timeslots for days and times: ${candidate_timeslots}`);
-          let findDuplicates = arr => arr.filter((item, index) => arr.indexOf(item) != index);
-          advisable_timeslots = findDuplicates(candidate_timeslots);
+
           console.log( `advisable_timeslots: ${advisable_timeslots}`);
           res.status(200).send([result, advisable_timeslots]);
         });
