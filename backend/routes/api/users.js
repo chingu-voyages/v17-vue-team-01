@@ -17,15 +17,15 @@ router.post('/register', (req, res) => {
         username,
         email,
         password,
-        confirm_password,
+        //confirm_password,
         TZ
     } = req.body
-    if (password !== confirm_password) {
-        return res.status(200).json({
-            success: false,
-            msg: "Password do not match."
-        });
-    }
+    // if (password !== confirm_password) {
+    //     return res.status(200).json({
+    //         success: false,
+    //         msg: "Password do not match."
+    //     });
+    // }
     // Check for the unique Username
     User.findOne({
         username: username

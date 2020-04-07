@@ -77,7 +77,7 @@ router.get('/show/:id', (req, res) => {
           });
         }
 
-        Timeslot.find().then((timeslots) => {
+        Timeslot.find({event:event_id}).then((timeslots) => {
 
           //console.log(timeslots);
           res.status(200).send([result, timeslots]);

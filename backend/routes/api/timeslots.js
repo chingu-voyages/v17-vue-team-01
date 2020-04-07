@@ -64,7 +64,7 @@ router.post('/create', (req, res) => {
                   });
         
                   newTimeslot.save().then(timeslot => {
-                    console.log("Congrats, timeslot created!");// + timeslot + " created");
+                    console.log(`Congrats, timeslot created with the timeslot_id of ${timeslot_id} !`);  // + timeslot + " created");
                   
                   });
                 }
