@@ -133,48 +133,95 @@ If event exists, it will send two arrays, first with event details together with
 [
     {
         "users": [
-            "5e8787294dfb2c0f8448f979",
-            "5e87b0fcdd4a782990b027d5",
-            "5e87ad4627e8d70a7c40ca87"
+            "5e8b6588c7b6371764362904",
+            "5e8b65a0c7b6371764362905"
         ],
         "start": null,
         "end": null,
         "scheduled": false,
         "possibleDays": [
-            "2020-12-03",
-            "2020-12-04"
+            "2020-05-03",
+            "2020-05-04"
         ],
-        "_id": "5e878fa4af0fe51310e6d8b5",
-        "title": "Chingu Event2",
+        "_id": "5e8b8811959be555ac463dee",
+        "title": "Event without timeslots",
         "details": "Test event created for chingu vue",
-        "color": "blue",
+        "color": "#090909",
         "__v": 0
     },
     [
         {
-            "_id": "5e878ffeaf0fe51310e6d8b6",
-            "user": "5e8663771228fb2c5c187e5d",
-            "event": "5e878fa4af0fe51310e6d8b5",
+            "_id": "5e8b8d0ca2a11d55c834bfda",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-05",
+            "time": "14",
+            "__v": 0
+        },
+        {
+            "_id": "5e8b8d0ca2a11d55c834bfdb",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-05",
+            "time": "15",
+            "__v": 0
+        },
+        {
+            "_id": "5e8b8d0ca2a11d55c834bfdc",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-06",
+            "time": "4",
+            "__v": 0
+        },
+        {
+            "_id": "5e8b8d0ca2a11d55c834bfdd",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-06",
+            "time": "5",
+            "__v": 0
+        },
+        {
+            "_id": "5e8bad33e8856c40d45b4fe3",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
             "day": "2020-12-03",
             "time": "0",
             "__v": 0
         },
         {
-            "_id": "5e878ffeaf0fe51310e6d8b7",
-            "user": "5e8663771228fb2c5c187e5d",
-            "event": "5e878fa4af0fe51310e6d8b5",
+            "_id": "5e8bad33e8856c40d45b4fe4",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
             "day": "2020-12-03",
-            "time": "1",
+            "time": "5",
             "__v": 0
         },
         {
-            "_id": "5e878ffeaf0fe51310e6d8b8",
-            "user": "5e8663771228fb2c5c187e5d",
-            "event": "5e878fa4af0fe51310e6d8b5",
+            "_id": "5e8bad33e8856c40d45b4fe5",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
             "day": "2020-12-04",
-            "time": "1",
+            "time": "-5",
             "__v": 0
         },
+        {
+            "_id": "5e8bad33e8856c40d45b4fe6",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-12-04",
+            "time": "-1",
+            "__v": 0
+        },
+        {
+            "_id": "5e8bad33e8856c40d45b4fe7",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-12-04",
+            "time": "2",
+            "__v": 0
+        }
     ]
 ]
 ```
