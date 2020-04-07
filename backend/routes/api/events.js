@@ -90,7 +90,7 @@ router.get('/show/:id', (req, res) => {
           for (let i = 0; i < candidate_timeslots.length; i++) { 
             for (let j = i + 1 ; j < candidate_timeslots.length; j++) {
                if (candidate_timeslots[i].equals(candidate_timeslots[j])) { 
-                 advisable_timeslots.push(names[j]) } } }
+                 advisable_timeslots.push(candidate_timeslots[j]) } } }
 
           console.log( `advisable_timeslots: ${advisable_timeslots}`);
           res.status(200).send([result, possible_timeslots, advisable_timeslots]);
