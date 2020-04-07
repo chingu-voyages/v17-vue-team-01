@@ -224,6 +224,7 @@ POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
+timeslots[0] of each array within the timeslots array is for the day and the rests are the respective timeslots associated with the day.
 Timeslots are saved with the user id, the event id, the day and the time of the day (hour).  
 It will always save the hour as GMT. For instance, in this case, if the user has a TZ of GMT+1, it will save in timeslots as 13, 9, -1, 0 and 1 respectively. If TZ is GMT-5, it will save in timeslots as 19, 15, 5, 6 and 7, respectively.
 
