@@ -147,26 +147,26 @@ router.post('/update', (req, res) => {
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
   
-      let {
-        user_id,
-        username
-      } = req.body;
-      //console.log(user_id);
+      let params = {};
+
+      for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
   
       User.findOneAndUpdate({
-        _id: user_id,
+        _id: decoded._id,
       },
-      { username:username },function(err, doc){
+      params,function(err, doc){
         if(err){
-            console.log("Something wrong when updating data!");
+            console.log("Something wrong when updating!");
         }
-        doc ? console.log("User updated!") : console.log("Nothing to change!");
+        doc ? console.log("Updated!") : console.log("User not found!");
+        return res.status(200).json({
+            success: true,
+            msg: "Congrats, user is updated!"  
+
       });
-  
-      return res.status(200).json({
-        success: true,
-        msg: "Congrats, user " + user.username + " is updated "
     });
+
+
     });   
   });
 

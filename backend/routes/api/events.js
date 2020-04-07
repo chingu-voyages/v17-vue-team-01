@@ -6,6 +6,7 @@ const passport = require('passport');
 const key = require('../../config/keys').secret;
 const User = require('../../model/User');
 const Event = require('../../model/Event');
+const Timeslot = require('../../model/Timeslot');
 const mongoose = require('mongoose');
 
 /**
@@ -23,21 +24,23 @@ router.post('/create', (req, res) => {
       let {
         title,
         details,
-        date,
+        color,
+        possibleDays,
       } = req.body;
       const user_id = decoded._id;
       let newEvent = new Event({
         users: [user_id],
         title,
         details,
-        date,
+        color,
+        possibleDays
       }); 
 
       newEvent.save().then(event => {
           User.findOneAndUpdate({
             _id: user_id
           },
-          { events: [event._id] },function(err, doc){
+          { $push: {events: [event._id]} },function(err, doc){
             if(err){
                 console.log("Something wrong when updating data!");
             }
@@ -56,19 +59,32 @@ router.post('/create', (req, res) => {
  * @desc Shows event and its users
  * @access Public
  */
-router.get('/show', (req, res) => {
-    let event_id = req.body.event_id;
-    //console.log(event_id);
-    Event.findOne( {_id: event_id}  ).then((result) => {
+router.get('/show/:id', (req, res) => {
+  let token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  
+  jwt.verify(token, key, function(err, decoded) {
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
 
-      if (!result) {
-        return res.status(400).json({
-          success: false,
-          msg: "Event not found."
+      let event_id = req.params.id;
+      //console.log(event_id);
+      Event.findOne( {_id: event_id}  ).then((result) => {
+
+        if (!result) {
+          return res.status(200).json({
+            success: false,
+            msg: "Event not found."
+          });
+        }
+
+        Timeslot.find().then((timeslots) => {
+
+          //console.log(timeslots);
+          res.status(200).send([result, timeslots]);
         });
-      }
-      res.status(200).send(result);
-    })   
+        
+      });      
+  }); 
 });
 
 /**
@@ -86,13 +102,13 @@ router.post('/add', (req, res) => {
   
     User.findOne( {username: req.body.username} ,function(err, doc){
       
-      const user_id = doc._id;
-      if (!user_id) {
-        return res.status(400).json({
+      if (!doc) {
+        return res.status(200).json({
           success: false,
           msg: "User not found."
         });
-      }
+      };
+      const user_id = doc._id;
       const username = req.body.username;
       const event_id = req.body.event_id;
   
@@ -105,23 +121,35 @@ router.post('/add', (req, res) => {
             console.log("Something wrong when updating data!");
         }
         doc ? console.log("Added this event to user's profile!") : console.log("Event already in this user!");
-      });
-  
-      Event.findOneAndUpdate({
-        _id: event_id,
-        users: {$ne: user_id}
-      },
-      { $push: {users: user_id }},function(err, doc){
-        if(err){
-            console.log("Something wrong when updating data!");
+
+        if(doc){
+          Event.findOneAndUpdate({
+            _id: event_id,
+            users: {$ne: user_id}
+          },
+          { $push: {users: user_id }},function(err, doc){
+            if(err){
+                console.log("Something wrong when updating data!");
+            }
+            doc ? console.log("Added this user to event!") : console.log("User already has this event!");
+          });
+
+          return res.status(200).json({
+            success: true,
+            msg: "Congrats, user " + username + " is in event " + event_id
+          });
         }
-        doc ? console.log("Added this user to event!") : console.log("User already has this event!");
+        else{
+          return res.status(200).json({
+            success: false,
+            msg: "User already has this event!"
+          });
+        }
       });
   
-      return res.status(200).json({
-        success: true,
-        msg: "Congrats, user " + username + " is in event " + event_id
-    });
+      
+  
+      
     });
     });   
     
@@ -142,48 +170,85 @@ router.post('/remove', (req, res) => {
   jwt.verify(token, key, function(err, decoded) {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
   
-    User.findOne( {username: req.body.username} ,function(err, doc){
-      
-      const user_id = doc._id;
-
-      if (!user_id) {
+    let event_id = req.body.event_id;
+    let user_id = decoded._id;
+    console.log(user_id);
+    Event.findOne( {_id: event_id}  ).then((result) => {
+      if(!result){
         return res.status(200).json({
           success: false,
-          msg: "User not found."
+          msg: "Event not found!"
         });
       }
-  
-      const username = req.body.username;
-      const event_id = req.body.event_id;
-  
-      User.findOneAndUpdate({
-        username: username,
-        events: {$eq: event_id}
-      },
-      { $pull: {events: event_id }},function(err, doc){
-        if(err){
-            console.log("Something wrong when updating data!");
+      //check if it is the first user of the event
+      if(result.users[0] != user_id){
+        return res.status(200).json({
+          success: false,
+          msg: "User is not the creator, cannot delete event!"
+        });
+      }
+
+      User.findOne( {username: req.body.username} ,function(err, doc){
+      
+        if (!doc) {
+          return res.status(200).json({
+            success: false,
+            msg: "User not found."
+          });
         }
-        doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
-      });
+        const user_id = doc._id;
+        const username = req.body.username;
+        const event_id = req.body.event_id;
   
-      Event.findOneAndUpdate({
-        _id: event_id,
-        users: {$eq: user_id}
-      },
-      { $pull: {users: user_id }} ,function(err, doc){
-        if(err){
-            console.log("Something wrong when updating data!");
-        }
-        doc ? console.log("Removed this user from event!") : console.log("User not in this event!");
-      });
+        User.findOneAndUpdate({
+          username: username,
+          events: {$eq: event_id}
+        },
+        { $pull: {events: event_id }},function(err, doc){
+          if(err){
+              console.log("Something wrong when updating data!");
+          }
+          doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
   
-      return res.status(200).json({
-        success: true,
-        msg: "Congrats, user " + username + " is removed from event " + event_id
+          if(doc){
+  
+            Event.findOneAndUpdate({
+              _id: event_id,
+              users: {$eq: user_id}
+            },
+            { $pull: {users: user_id }} ,function(err, doc){
+              if(err){
+                  console.log("Something wrong when updating data!");
+              }
+              doc ? console.log("Removed this user from event!") : console.log("User not in this event!");
+      
+            });
+  
+            return res.status(200).json({
+              success: true,
+              msg: "Congrats, user " + username + " is removed from event " + event_id
+            });
+          }
+          else{
+            return res.status(200).json({
+              success: false,
+              msg: "User not in this event!"
+            });
+          }
+        });
+    
+        
+    
+        
+      });
+      });   
+
+
+
+
+
     });
-    });
-    });   
+    
 
     
 });
@@ -236,36 +301,61 @@ router.post('/update', (req, res) => {
  * @access Public
  */
 router.post('/delete', (req, res) => {
-  let event_id = req.body.event_id;
-  //console.log(event_id);
-  Event.findOne( {_id: event_id}  ).then((result) => {
-    if(!result){
-      return res.status(200).json({
-        success: false,
-        msg: "Event not found!"
-    });
-    }
-    let users = result.users;
-    users.forEach(user =>
-      User.findOneAndUpdate({
-        _id: user._id,
-        events: {$eq: event_id}
-      },
-      { $pull: {events: event_id }} ,function(err, doc){
-        if(err){
-            console.log("Something wrong when updating data!");
+  let token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  
+  jwt.verify(token, key, function(err, decoded) {
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+
+    let user_id = decoded._id;
+
+    let event_id = req.body.event_id;
+    //console.log(event_id);
+    Event.findOne( {_id: event_id}  ).then((result) => {
+      if(!result){
+        return res.status(200).json({
+          success: false,
+          msg: "Event not found!"
+        });
+      }
+      //check if it is the first user of the event
+      if(result.users[0] != user_id){
+        return res.status(200).json({
+          success: false,
+          msg: "User is not the creator, cannot delete event!"
+        });
+      }
+
+      Timeslot.deleteMany({ event: event_id }, function(err, result) {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log(result);
         }
-        doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
-      }));
-
-      Event.findOneAndDelete( {_id: event_id}  ).then((result) => {
-        res.status(200).json({
-          success: true,
-          msg: "Congrats, event " + result.title + " is deleted and removed from each user"
       });
-      }) 
 
-  });
+      let users = result.users;
+      users.forEach(user =>
+        User.findOneAndUpdate({
+          _id: user._id,
+          events: {$eq: event_id}
+        },
+        { $pull: {events: event_id }} ,function(err, doc){
+          if(err){
+              console.log("Something wrong when updating data!");
+          }
+          doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
+        }));
+
+        Event.findOneAndDelete( {_id: event_id}  ).then((result) => {
+          res.status(200).json({
+            success: true,
+            msg: "Congrats, event " + result.title + " is deleted and removed from each user"
+        });
+        }) 
+
+    });
+  }); 
     
 });
 

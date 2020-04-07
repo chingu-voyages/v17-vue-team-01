@@ -52,6 +52,10 @@ app.use('/api/users', users);
 const events = require('./routes/api/events');
 app.use('/api/events', events);
 
+// Bring in the Timeslot route
+const timeslots = require('./routes/api/timeslots');
+app.use('/api/timeslots', timeslots);
+
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public/index.html'));
 })
