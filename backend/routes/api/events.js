@@ -77,10 +77,52 @@ router.get('/show/:id', (req, res) => {
           });
         }
 
-        Timeslot.find().then((timeslots) => {
+        let number_users = result.users.length;
+        console.log(number_users);
 
-          //console.log(timeslots);
-          res.status(200).send([result, timeslots]);
+        Timeslot.find({event:event_id}).then((timeslots) => {
+          //console.log(`event info: ${result}`);
+          //console.log(`timeslots: ${timeslots}`);
+          //find the advisable timeslots
+          let advisable_timeslots = [];
+          //find the advisable timeslots only for two or more users
+          if(number_users > 1){
+            /*candidate_timeslots = [];
+            for(let i=0; i<possible_timeslots.length; i++) {
+              candidate_timeslots.push([possible_timeslots[i]["day"] + possible_timeslots[i]["time"]]); 
+            }
+            console.log(`possible_timeslots for days and times: ${candidate_timeslots}`);
+            for (let i = 0; i < candidate_timeslots.length; i++) { 
+              for (let j = i + 1 ; j < candidate_timeslots.length; j++) {
+                if (candidate_timeslots[i] === candidate_timeslots[j]) { 
+                  console.log(`enter, timeslot the same`);
+                  advisable_timeslots.push(candidate_timeslots[j]) 
+                } 
+              } 
+            }*/
+            timeslots.forEach(timeslot => {
+              timeslots.forEach(tsContent => {
+                  if(tsContent.day == timeslot.day && tsContent.time == timeslot.time){
+                    console.log("entered, save in advised!");
+                    if(!advisable_timeslots.includes(tsContent)){
+                      console.log("not in the array already");
+                      advisable_timeslots.push(tsContent);
+                    }
+                    
+                  }
+              });
+            });  
+            if(advisable_timeslots.length == 0){
+              advisable_timeslots = "Still no advisable timeslots";
+            }
+          }
+          else{
+            advisable_timeslots = "Cannot advise timeslots for only one user";
+            console.log( `advisable_timeslots: ${advisable_timeslots}`);
+          }
+          console.log( `advisable_timeslots: ${advisable_timeslots}`);
+          res.status(200).send([result, timeslots, advisable_timeslots]);
+          
         });
         
       });      

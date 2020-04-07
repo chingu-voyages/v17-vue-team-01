@@ -133,48 +133,95 @@ If event exists, it will send two arrays, first with event details together with
 [
     {
         "users": [
-            "5e8787294dfb2c0f8448f979",
-            "5e87b0fcdd4a782990b027d5",
-            "5e87ad4627e8d70a7c40ca87"
+            "5e8b6588c7b6371764362904",
+            "5e8b65a0c7b6371764362905"
         ],
         "start": null,
         "end": null,
         "scheduled": false,
         "possibleDays": [
-            "2020-12-03",
-            "2020-12-04"
+            "2020-05-03",
+            "2020-05-04"
         ],
-        "_id": "5e878fa4af0fe51310e6d8b5",
-        "title": "Chingu Event2",
+        "_id": "5e8b8811959be555ac463dee",
+        "title": "Event without timeslots",
         "details": "Test event created for chingu vue",
-        "color": "blue",
+        "color": "#090909",
         "__v": 0
     },
     [
         {
-            "_id": "5e878ffeaf0fe51310e6d8b6",
-            "user": "5e8663771228fb2c5c187e5d",
-            "event": "5e878fa4af0fe51310e6d8b5",
+            "_id": "5e8b8d0ca2a11d55c834bfda",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-05",
+            "time": "14",
+            "__v": 0
+        },
+        {
+            "_id": "5e8b8d0ca2a11d55c834bfdb",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-05",
+            "time": "15",
+            "__v": 0
+        },
+        {
+            "_id": "5e8b8d0ca2a11d55c834bfdc",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-06",
+            "time": "4",
+            "__v": 0
+        },
+        {
+            "_id": "5e8b8d0ca2a11d55c834bfdd",
+            "user": "5e8b6588c7b6371764362904",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-05-06",
+            "time": "5",
+            "__v": 0
+        },
+        {
+            "_id": "5e8bad33e8856c40d45b4fe3",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
             "day": "2020-12-03",
             "time": "0",
             "__v": 0
         },
         {
-            "_id": "5e878ffeaf0fe51310e6d8b7",
-            "user": "5e8663771228fb2c5c187e5d",
-            "event": "5e878fa4af0fe51310e6d8b5",
+            "_id": "5e8bad33e8856c40d45b4fe4",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
             "day": "2020-12-03",
-            "time": "1",
+            "time": "5",
             "__v": 0
         },
         {
-            "_id": "5e878ffeaf0fe51310e6d8b8",
-            "user": "5e8663771228fb2c5c187e5d",
-            "event": "5e878fa4af0fe51310e6d8b5",
+            "_id": "5e8bad33e8856c40d45b4fe5",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
             "day": "2020-12-04",
-            "time": "1",
+            "time": "-5",
             "__v": 0
         },
+        {
+            "_id": "5e8bad33e8856c40d45b4fe6",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-12-04",
+            "time": "-1",
+            "__v": 0
+        },
+        {
+            "_id": "5e8bad33e8856c40d45b4fe7",
+            "user": "5e8b65a0c7b6371764362905",
+            "event": "5e8b8811959be555ac463dee",
+            "day": "2020-12-04",
+            "time": "2",
+            "__v": 0
+        }
     ]
 ]
 ```
@@ -224,8 +271,21 @@ POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
 }
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
+timeslots[0] of each array within the timeslots array is for the day and the rests are the respective timeslots associated with the day.
 Timeslots are saved with the user id, the event id, the day and the time of the day (hour).  
 It will always save the hour as GMT. For instance, in this case, if the user has a TZ of GMT+1, it will save in timeslots as 13, 9, -1, 0 and 1 respectively. If TZ is GMT-5, it will save in timeslots as 19, 15, 5, 6 and 7, respectively.
+
++ Update timeslots
+
+POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
+```
+{
+    "event_id": "5e878fa4af0fe51310e6d8b5",
+    "timeslots": [["2020-12-03","15","1"],["2020-12-04","7","8","9"]]
+}
+```
+A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
+Update timeslots for a given user and event is the same as create new ones. The same route can be used, as it will search for all timeslots for this user and for event, will delete all timeslots found and create the new requested ones.
 
 + Delete timeslot
 
