@@ -89,7 +89,7 @@ router.get('/show/:id', (req, res) => {
           if(number_users > 1){
             let candidate_timeslots = [];
             for(let i=0; i<timeslots.length; i++) {
-              candidate_timeslots.push(timeslots[i]["day"] + timeslots[i]["time"]); 
+              candidate_timeslots.push(timeslots[i]["day"] + 'T' + timeslots[i]["time"] + 'C' + 1); 
             }
             console.log(`possible_timeslots for days and times: ${candidate_timeslots}`);
            //console.log((candidate_timeslots.filter((timeslot, index) => candidate_timeslots.indexOf(timeslot) != index)));
@@ -97,23 +97,15 @@ router.get('/show/:id', (req, res) => {
             for (let i = 0; i < candidate_timeslots.length; i++) { 
               for (let j = i + 1 ; j < candidate_timeslots.length; j++) {
                 if (candidate_timeslots[i] == candidate_timeslots[j] && i != j) { 
-                  console.log(`matched one: ${candidate_timeslots[j]}`);
-                  advisable_timeslots.push(candidate_timeslots[j]) 
+                  candidate_timeslots[j] = candidate_timeslots[j].replace(/.$/, function(i) { return parseInt(i) + 1; });
+                  //get count from candidate timeslot and check if is equal to number of users
+                  if(parseInt(candidate_timeslots[j].slice(-1)) == number_users){
+                    console.log(`matched one: ${candidate_timeslots[j]}`);
+                    advisable_timeslots.push(candidate_timeslots[j]);
+                  }  
                 } 
               } 
             }
-            /* timeslots.forEach(timeslot => {
-              timeslots.forEach(tsContent => {
-                  if(tsContent.day == timeslot.day && tsContent.time == timeslot.time){
-                    console.log("entered, save in advised!");
-                    if(!advisable_timeslots.includes(tsContent)){
-                      console.log("not in the array already");
-                      advisable_timeslots.push(tsContent);
-                    }
-                    
-                  }
-              });
-            });  */
           
             if(advisable_timeslots.length == 0){
               advisable_timeslots = "Still no advisable timeslots";
@@ -229,7 +221,7 @@ router.post('/remove', (req, res) => {
       if(result.users[0] != user_id){
         return res.status(200).json({
           success: false,
-          msg: "User is not the creator, cannot delete event!"
+          msg: "User is not the creator, cannot remove users!"
         });
       }
 
@@ -245,6 +237,14 @@ router.post('/remove', (req, res) => {
         const username = req.body.username;
         const event_id = req.body.event_id;
   
+        Timeslot.deleteMany({ event: event_id, user: user_id }, function(err, result) {
+          if (err) {
+            console.log(err);
+          } else {
+            console.log(result);
+          }
+        });
+
         User.findOneAndUpdate({
           username: username,
           events: {$eq: event_id}
