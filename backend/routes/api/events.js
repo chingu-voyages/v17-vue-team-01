@@ -87,20 +87,22 @@ router.get('/show/:id', (req, res) => {
           let advisable_timeslots = [];
           //find the advisable timeslots only for two or more users
           if(number_users > 1){
-            /*candidate_timeslots = [];
-            for(let i=0; i<possible_timeslots.length; i++) {
-              candidate_timeslots.push([possible_timeslots[i]["day"] + possible_timeslots[i]["time"]]); 
+            let candidate_timeslots = [];
+            for(let i=0; i<timeslots.length; i++) {
+              candidate_timeslots.push(timeslots[i]["day"] + timeslots[i]["time"]); 
             }
             console.log(`possible_timeslots for days and times: ${candidate_timeslots}`);
+           //console.log((candidate_timeslots.filter((timeslot, index) => candidate_timeslots.indexOf(timeslot) != index)));
+          
             for (let i = 0; i < candidate_timeslots.length; i++) { 
               for (let j = i + 1 ; j < candidate_timeslots.length; j++) {
-                if (candidate_timeslots[i] === candidate_timeslots[j]) { 
-                  console.log(`enter, timeslot the same`);
+                if (candidate_timeslots[i] == candidate_timeslots[j] && i != j) { 
+                  console.log(`matched one: ${candidate_timeslots[j]}`);
                   advisable_timeslots.push(candidate_timeslots[j]) 
                 } 
               } 
-            }*/
-            timeslots.forEach(timeslot => {
+            }
+            /* timeslots.forEach(timeslot => {
               timeslots.forEach(tsContent => {
                   if(tsContent.day == timeslot.day && tsContent.time == timeslot.time){
                     console.log("entered, save in advised!");
@@ -111,7 +113,8 @@ router.get('/show/:id', (req, res) => {
                     
                   }
               });
-            });  
+            });  */
+          
             if(advisable_timeslots.length == 0){
               advisable_timeslots = "Still no advisable timeslots";
             }
