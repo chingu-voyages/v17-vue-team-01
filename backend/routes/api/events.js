@@ -27,6 +27,14 @@ router.post('/create', (req, res) => {
         color,
         possibleDays,
       } = req.body;
+
+      if (!title || !details || !color || !possibleDays) {
+        return res.status(200).json({
+            success: false,
+            msg: "Event creation failed, there are missing fields."
+        });
+    }
+
       const user_id = decoded._id;
       let newEvent = new Event({
         users: [user_id],
@@ -86,7 +94,7 @@ router.get('/show/:id', (req, res) => {
           //find the advisable timeslots
           let advisable_timeslots = [];
           //find the advisable timeslots only for two or more users
-          if(number_users > 1){
+          if(number_users > 1 && Object.keys(timeslots).length != 0){
             let candidate_timeslots = [];
             for(let i=0; i<timeslots.length; i++) {
               candidate_timeslots.push(timeslots[i]["day"] + 'T' + timeslots[i]["time"] + 'C' + 1); 
@@ -112,8 +120,8 @@ router.get('/show/:id', (req, res) => {
             }
           }
           else{
-            advisable_timeslots = "Cannot advise timeslots for only one user";
-            console.log( `advisable_timeslots: ${advisable_timeslots}`);
+            Object.keys(timeslots).length != 0 ? advisable_timeslots = "Cannot advise timeslots for only one user" : advisable_timeslots = "No timeslots inserted yet";
+            //console.log( `advisable_timeslots: ${advisable_timeslots}`);
           }
           console.log( `advisable_timeslots: ${advisable_timeslots}`);
           res.status(200).send([result, timeslots, advisable_timeslots]);
@@ -209,7 +217,7 @@ router.post('/remove', (req, res) => {
   
     let event_id = req.body.event_id;
     let user_id = decoded._id;
-    console.log(user_id);
+    //console.log(user_id);
     Event.findOne( {_id: event_id}  ).then((result) => {
       if(!result){
         return res.status(200).json({
@@ -236,52 +244,59 @@ router.post('/remove', (req, res) => {
         const user_id = doc._id;
         const username = req.body.username;
         const event_id = req.body.event_id;
-  
-        Timeslot.deleteMany({ event: event_id, user: user_id }, function(err, result) {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log(result);
-          }
-        });
+        if(result.users[0].toString(2) == doc._id.toString(2)){
+          return res.status(200).json({
+            success: false,
+            msg: "User is the creator, cannot remove himself! Can always delete the event"
+          });
+        }
+        else{
+          console.log("enters");
+          Timeslot.deleteMany({ event: event_id, user: user_id }, function(err, result) {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(result);
+            }
+          });
 
-        User.findOneAndUpdate({
-          username: username,
-          events: {$eq: event_id}
-        },
-        { $pull: {events: event_id }},function(err, doc){
-          if(err){
-              console.log("Something wrong when updating data!");
-          }
-          doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
-  
-          if(doc){
-  
-            Event.findOneAndUpdate({
-              _id: event_id,
-              users: {$eq: user_id}
-            },
-            { $pull: {users: user_id }} ,function(err, doc){
-              if(err){
-                  console.log("Something wrong when updating data!");
-              }
-              doc ? console.log("Removed this user from event!") : console.log("User not in this event!");
-      
-            });
-  
-            return res.status(200).json({
-              success: true,
-              msg: "Congrats, user " + username + " is removed from event " + event_id
-            });
-          }
-          else{
-            return res.status(200).json({
-              success: false,
-              msg: "User not in this event!"
-            });
-          }
-        });
+          User.findOneAndUpdate({
+            username: username,
+            events: {$eq: event_id}
+          },
+          { $pull: {events: event_id }},function(err, doc){
+            if(err){
+                console.log("Something wrong when updating data!");
+            }
+            doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
     
+            if(doc){
+    
+              Event.findOneAndUpdate({
+                _id: event_id,
+                users: {$eq: user_id}
+              },
+              { $pull: {users: user_id }} ,function(err, doc){
+                if(err){
+                    console.log("Something wrong when updating data!");
+                }
+                doc ? console.log("Removed this user from event!") : console.log("User not in this event!");
+        
+              });
+    
+              return res.status(200).json({
+                success: true,
+                msg: "Congrats, user " + username + " is removed from event " + event_id
+              });
+            }
+            else{
+              return res.status(200).json({
+                success: false,
+                msg: "User not in this event!"
+              });
+            }
+          });
+        }
         
     
         

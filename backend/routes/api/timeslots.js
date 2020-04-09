@@ -26,6 +26,13 @@ router.post('/create', (req, res) => {
         timeslots
       } = req.body;
 
+      if (!event_id || !timeslots) {
+        return res.status(200).json({
+            success: false,
+            msg: "Timeslots creation failed, there are missing fields."
+        });
+    }
+
       const user_id = decoded._id;
       //console.log(decoded);
       Event.findOne( {_id: event_id}  ).then((result) => {
@@ -35,6 +42,7 @@ router.post('/create', (req, res) => {
             msg: "Event not found!"
           });
         }
+
         //delete timeslots if exist to create new updated
         Timeslot.deleteMany({ event: event_id, user: user_id }, function(err) {
           if (err) {

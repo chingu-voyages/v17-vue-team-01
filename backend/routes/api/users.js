@@ -19,7 +19,15 @@ router.post('/register', (req, res) => {
         password,
         //confirm_password,
         TZ
-    } = req.body
+    } = req.body;
+
+    if (!name || !username || !email || !password) {
+        return res.status(200).json({
+            success: false,
+            msg: "Registration failed, there are missing fields."
+        });
+    }
+
     // if (password !== confirm_password) {
     //     return res.status(200).json({
     //         success: false,
@@ -128,7 +136,7 @@ router.get('/profile', function(req, res) {
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
-        username: decoded.username
+        _id: decoded._id
       }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
@@ -148,6 +156,13 @@ router.post('/update', (req, res) => {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
   
       let params = {};
+
+      if (Object.keys(req.body).length == 0) {
+        return res.status(200).json({
+            success: false,
+            msg: "Update failed, there are no fields to update."
+        });
+      }
 
       for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
   
