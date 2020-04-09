@@ -122,13 +122,14 @@ A user needs to be logged, and event_id can be saved in local storage also (to b
 If user exists, it will be removed from event, and also event will be removed from user's events.  
 If username doesn't exist, it will fail with msg no user found.
 Only the creator of the event can remove users.
+It will also delete timeslots for this user of this event.
 
 + Show event details
 
 GET http://v17-vue-team-01.test:5000/api/events/show/id:
 
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
-If event exists, it will send two arrays, first with event details together with its users and the second with all timeslots for that event (for display):
+If event exists, it will send three arrays, first with event details together with its users, the second with all timeslots for that event (for display), and the third array, either a string with information (no advisable timeslots for only one user, or still no advisable timeslots), or the array with advisable timeslots for schedule:
 ```
 [
     {
@@ -222,10 +223,17 @@ If event exists, it will send two arrays, first with event details together with
             "time": "2",
             "__v": 0
         }
+    ],
+    [
+        "2020-12-03T15C2",
+        "2020-12-03T19C2",
+        "2020-12-04T6C2",
+        "2020-12-04T8C2"
     ]
 ]
 ```
-If event doesn't exist, it will fail with msg no event found.
+If event doesn't exist, it will fail with msg no event found.  
+Tha advisable timeslots array will contain the days and times that all users from the event have already selected.
 
 
 + Update event details
