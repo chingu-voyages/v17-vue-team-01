@@ -170,6 +170,17 @@ router.post('/update', (req, res) => {
         _id: decoded._id,
       },
       params,function(err, doc){
+
+        //console.log(doc);
+        // Hash the password
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(params.password, salt, (err, hash) => {
+                if (err) throw err;
+                params.password = hash;
+                doc.password = hash;
+                doc.save();
+            });
+        });
         if(err){
             console.log("Something wrong when updating!");
         }
