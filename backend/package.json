@@ -3,8 +3,12 @@
   "version": "1.0.0",
   "description": "set up meetings with different timezones",
   "main": "app.js",
+  "engines": {
+    "node": "13.x"
+  },
   "scripts": {
     "client-install": "cd .. & npm install --prefix frontend",
+    "start": "node app.js",
     "server": "nodemon app.js",
     "client": "cd .. & npm run serve --prefix frontend",
     "dev": "concurrently \"npm run server\" \"npm run client\""
