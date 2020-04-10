@@ -17,21 +17,29 @@ router.post('/register', (req, res) => {
         username,
         email,
         password,
-        confirm_password,
+        //confirm_password,
         TZ
-    } = req.body
-    if (password !== confirm_password) {
-        return res.status(400).json({
+    } = req.body;
+
+    if (!name || !username || !email || !password) {
+        return res.status(200).json({
             success: false,
-            msg: "Password do not match."
+            msg: "Registration failed, there are missing fields."
         });
     }
+
+    // if (password !== confirm_password) {
+    //     return res.status(200).json({
+    //         success: false,
+    //         msg: "Password do not match."
+    //     });
+    // }
     // Check for the unique Username
     User.findOne({
         username: username
     }).then(user => {
         if (user) {
-            return res.status(400).json({
+            return res.status(200).json({
                 success: false,
                 msg: "Username is already taken."
             });
@@ -41,7 +49,7 @@ router.post('/register', (req, res) => {
             email: email
         }).then(user => {
             if (user) {
-                return res.status(400).json({
+                return res.status(200).json({
                     success: false,
                     msg: "Email is already registered. Did you forget your password?"
                 });
@@ -81,7 +89,7 @@ router.post('/login', (req, res) => {
         username: req.body.username
     }).then(user => {
         if (!user) {
-            return res.status(404).json({
+            return res.status(200).json({
                 success: false,
                 msg: "Username is not found."
             });
@@ -102,12 +110,12 @@ router.post('/login', (req, res) => {
                     res.status(200).json({
                         success: true,
                         token: `Bearer ${token}`,
-                        user: user,
-                        msg: "Congrats! You are now logged in."
+                        user: user.username,
+                        msg: "Congrats " + user.username + "! You are now logged in. And, your _id is " + user._id
                     });
                 })
             } else {
-                return res.status(404).json({
+                return res.status(200).json({
                     success: false,
                     msg: "Incorrect password."
                 });
@@ -128,7 +136,7 @@ router.get('/profile', function(req, res) {
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
-        username: decoded.username
+        _id: decoded._id
       }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
           res.status(200).send(user);
         })
@@ -136,27 +144,57 @@ router.get('/profile', function(req, res) {
   });
 
 /**
- * @route GET api/users/events
- * @desc Return the User's Events
- * @access Private
+ * @route POST api/users/update
+ * @desc Update User
+ * @access Public
  */
-router.get('/events', (req, res) => {
+router.post('/update', (req, res) => {
     let token = req.headers['x-access-token'];
     if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
     
     jwt.verify(token, key, function(err, decoded) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
-    
-      let query = { user_id: decoded._id };
-      Event.find(query).then((result) => {
-        res.status(200).send(result);
-      })    
-      let user_id = decoded._id;
-      Event.find({ users: user_id } ).then((result) => {
-        res.status(200).send(result);
-      })       
+  
+      let params = {};
+
+      if (Object.keys(req.body).length == 0) {
+        return res.status(200).json({
+            success: false,
+            msg: "Update failed, there are no fields to update."
+        });
+      }
+
+      for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
+  
+      User.findOneAndUpdate({
+        _id: decoded._id,
+      },
+      params,function(err, doc){
+
+        //console.log(doc);
+        // Hash the password
+        bcrypt.genSalt(10, (err, salt) => {
+            bcrypt.hash(params.password, salt, (err, hash) => {
+                if (err) throw err;
+                params.password = hash;
+                doc.password = hash;
+                doc.save();
+            });
+        });
+        if(err){
+            console.log("Something wrong when updating!");
+        }
+        doc ? console.log("Updated!") : console.log("User not found!");
+        return res.status(200).json({
+            success: true,
+            msg: "Congrats, user is updated!"  
+
+      });
     });
-});
+
+
+    });   
+  });
 
 /**
  * @route GET api/users/logout

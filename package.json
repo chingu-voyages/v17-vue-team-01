@@ -3,10 +3,18 @@
   "version": "1.0.0",
   "description": "set up meetings with different timezones",
   "main": "app.js",
-  "scripts": {
-    "dev": "nodemon app.js"
+  "engines": {
+    "node": "12.x"
   },
-  "author": "Ally Lee",
+  "scripts": {
+    "client-install": "cd client && npm install",
+    "start": "node app.js",
+    "server": "nodemon app.js",
+    "client": "cd client && npm run serve",
+    "client-build": "cd client && npm run build",
+    "dev": "concurrently \"npm run server\" \"npm run client\""
+  },
+  "author": "vue-team-v17",
   "license": "MIT",
   "dependencies": {
     "bcryptjs": "^2.4.3",
