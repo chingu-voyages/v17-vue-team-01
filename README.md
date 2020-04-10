@@ -234,7 +234,7 @@ If event exists, it will send three arrays, first with event details together wi
 ```
 If event doesn't exist, it will fail with msg no event found.  
 Tha advisable timeslots array will contain the days and times that all users from the event have already selected.
-
+If no advisable timeslots yet, array has only a single string with output.
 
 + Update event details
 
