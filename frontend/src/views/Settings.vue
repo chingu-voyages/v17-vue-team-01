@@ -180,7 +180,7 @@ export default {
                 }
 
                 // this.axios
-                //     .post("http://34.82.150.138:5000/api/users/update", {
+                //     .post("https://chingutime.herokuapp.com/api/users/update", {
                 //          headers: { "x-access-token": this.token },
                 //          body: this.settings
                 //     })

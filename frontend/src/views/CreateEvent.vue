@@ -190,7 +190,7 @@ export default {
 
         // this.axios
         //   .post(
-        //     "http://34.82.150.138:5000/api/events/create",
+        //     "https://chingutime.herokuapp.com/api/events/create",
         //     {
         //       title: this.createdEvent.eventName,
         //       details: "Test event created for chingu vue",
@@ -225,7 +225,7 @@ export default {
       // console.log(
       //   this.axios
       //     .post(
-      //       "http://34.82.150.138:5000/api/events/create",
+      //       "https://chingutime.herokuapp.com/api/events/create",
       //       {
       //         title: this.createdEvent.eventName,
       //         details: "Test event created for chingu vue",

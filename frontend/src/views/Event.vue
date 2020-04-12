@@ -35,6 +35,7 @@ export default {
       if (newer) {
         this.userPart = this.event[0];
         this.timeslotPart = this.event[1];
+        this.advisableTimeslots = this.event[2];
       }
     }
   },
@@ -44,13 +45,14 @@ export default {
     event: null,
     answer: null,
     userPart: null,
-    timeslotPart: null
+    timeslotPart: null,
+    advisableTimeslots: null
   }),
   mounted() {
     if (localStorage.getItem("user")) {
       this.user = JSON.parse(localStorage.getItem("user"));
       this.axios
-      .get(`http://34.82.150.138:5000/api/events/show/${this.url}`, {
+      .get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
         headers: { "x-access-token": localStorage.getItem("token") }
       })
       .then(response => (this.event = response.data))

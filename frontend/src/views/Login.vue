@@ -97,7 +97,7 @@ export default {
                 this.answer = "Please fill out all the fields.";
             } else {
                 this.axios
-                    .post("http://34.82.150.138:5000/api/users/login", {
+                    .post("https://chingutime.herokuapp.com/api/users/login", {
                         username: this.username,
                         password: this.password
                     })

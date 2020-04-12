@@ -66,7 +66,7 @@ export default {
             this.token = value;
             localStorage.setItem("token", value);
             this.axios
-                .get("http://34.82.150.138:5000/api/users/profile", {
+                .get("https://chingutime.herokuapp.com/api/users/profile", {
                     headers: { "x-access-token": value }
                 })
                 .then(response => (this.user = response.data));
