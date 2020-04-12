@@ -8,6 +8,8 @@ const User = require('../../model/User');
 const Event = require('../../model/Event');
 const Timeslot = require('../../model/Timeslot');
 const mongoose = require('mongoose');
+const { writeFileSync } = require('fs')
+const ics = require('ics')
 
 /**
  * @route POST api/events/create
@@ -313,6 +315,8 @@ router.post('/remove', (req, res) => {
     
 });
 
+
+
 /**
  * @route POST api/events/update
  * @desc Update event
@@ -324,6 +328,7 @@ router.post('/update', (req, res) => {
   
   jwt.verify(token, key, function(err, decoded) {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    //console.log(decoded);
 
     let params = {};
 
@@ -331,23 +336,63 @@ router.post('/update', (req, res) => {
     Event.findOneAndUpdate({
       _id: params.event_id,
     },
-    params ,function(err, doc){
+    params, {new: true} ,function(err, doc){
       if(!doc){
         return res.status(200).json({
           success: false,
           msg: "Event not found!"
       });
       }
-      
+
       if(err){
           console.log("Something wrong when updating data!");
       }
       doc ? console.log("Event updated!") : console.log("Nothing to change!");
     
-      return res.status(200).json({
-        success: true,
-        msg: "Congrats, event " + params.event_id + " is updated "
-      });
+      //console.log(doc);
+      //console.log(params);
+      if(doc.scheduled == true && params.scheduled == 'true'){
+        console.log("We should send emails and/or create ics file for download");
+
+        //get users name and email for ics creation and email sending
+
+        var hours = Math.abs(doc.end - doc.start) / 36e5;
+        console.log(hours);
+        const event = {
+          start: [doc.start.getFullYear(), (doc.start.getMonth()+1), doc.start.getDate(), doc.start.getHours(), doc.start.getMinutes() ],
+          duration: { hours: hours, minutes: 0 },
+          title: doc.title,
+          description: doc.description,
+          status: 'CONFIRMED',
+          busyStatus: 'BUSY',
+          organizer: { name: decoded.name, email: decoded.email },
+          attendees: [
+            { name: 'Adam Gibbons', email: 'adam@example.com' },
+            { name: 'Brittany Seaton', email: 'brittany@example2.org' }
+          ],
+          productId: 'ChinguTime'
+        }
+        ics.createEvent(event, (error, value) => {
+          if (error) {
+            console.log(error)
+            return
+          }
+          //console.log(value);
+          const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
+          writeFileSync(filename + '.ics', value);
+        });
+
+
+        console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
+        const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
+        return res.download(filename + '.ics');
+      }
+      else{
+        return res.status(200).json({
+          success: true,
+          msg: "Congrats, event " + params.event_id + " is updated "
+        });
+      } 
     
     });
 

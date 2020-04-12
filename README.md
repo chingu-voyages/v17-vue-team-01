@@ -1,10 +1,9 @@
 Vue-team-v17 Backend
 
 1. Clone repository
-2. cd /backend
-3. npm install
-4. npm install -g nodemon
-5. node app.js (nodemon app.js for development)
+2. npm install
+3. npm install -g nodemon
+4. node app.js (nodemon app.js for development)
 
 
 + Register users using postman (register at least 2 users for test purpose!)
@@ -234,7 +233,7 @@ If event exists, it will send three arrays, first with event details together wi
 ```
 If event doesn't exist, it will fail with msg no event found.  
 Tha advisable timeslots array will contain the days and times that all users from the event have already selected.
-
+If no advisable timeslots yet, array has only a single string with output.
 
 + Update event details
 
