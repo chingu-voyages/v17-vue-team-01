@@ -4,9 +4,7 @@
       <Login v-if="!user"/>
       <Events v-if="user"/>
     </v-row>
-    <v-row>
-      <Calendar v-if="user"/>
-    </v-row>
+    <Calendar v-if="user"/>
   </v-container>
 </template>
 

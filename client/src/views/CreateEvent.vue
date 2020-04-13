@@ -189,28 +189,28 @@ export default {
           eventEnd: this.dates[1]
         };
 
-        // this.axios
-        //   .post(
-        //     "https://chingutime.herokuapp.com/api/events/create",
-        //     {
-        //       title: this.createdEvent.eventName,
-        //       details: "Test event created for chingu vue",
-        //       color: this.createdEvent.eventColor,
-        //       possibleDays: this.datesFormatter()
-        //       // start: this.createdEvent.eventStart,
-        //       // end: this.createdEvent.eventEnd
-        //     },
-        //     {
-        //       headers: {
-        //         "x-access-token": this.usertoken)
-        //       }
-        //     }
-        //   )
-        //   .then(
-        //     response =>
-        //       (this.createdEvent.eventId = response.data.msg.slice(-24))
-        //   )
-        //   .catch(error => (console.log(error), (this.answer = error)));
+        this.axios
+          .post(
+            "https://chingutime.herokuapp.com/api/events/create",
+            {
+              title: this.createdEvent.eventName,
+              details: "Test event created for chingu vue",
+              color: this.createdEvent.eventColor,
+              possibleDays: this.datesFormatter()
+              // start: this.createdEvent.eventStart,
+              // end: this.createdEvent.eventEnd
+            },
+            {
+              headers: {
+                "x-access-token": this.usertoken
+              }
+            }
+          )
+          .then(
+            response =>
+              (this.createdEvent.eventId = response.data.msg.slice(-24))
+          )
+          .catch(error => (console.log(error), (this.answer = error)));
 
         this.slots = this.createdEvent.eventDates.length;
         for (let index = 0; index < this.slots; index++) {

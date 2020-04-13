@@ -18,7 +18,7 @@ const routes = [
         path: "/create-event",
         name: "CreateEvent",
         beforeEnter: (to, from, next) => {
-            if (!localStorage.user) next({ name: "Home" });
+            if (localStorage.getItem("user") == "null") next({ name: "Home" });
             else next();
         },
         component: () => import("../views/CreateEvent.vue")
@@ -27,7 +27,7 @@ const routes = [
         path: "/settings",
         name: "Settings",
         beforeEnter: (to, from, next) => {
-            if (!localStorage.user) next({ name: "Home" });
+            if (!localStorage.getItem("user") == "null") next({ name: "Home" });
             else next();
         },
         component: () => import("../views/Settings.vue")

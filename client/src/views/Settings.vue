@@ -117,7 +117,14 @@ export default {
               headers: { "x-access-token": this.usertoken }
             }
           )
-          .then(response => (this.answer = response.data.msg), location.reload())
+          .then(
+            response => (
+              (this.answer = response.data.msg),
+              this.$store.clearAll(),
+              (this.user = null),
+              (this.usertoken = null)
+            )
+          )
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
@@ -152,6 +159,27 @@ export default {
       }
       return this.settings;
     }
+    // savingChanges(response) {
+    //   console.log("saving");
+
+    //   if (this.usertoken) {
+    //     this.axios
+    //       .get("https://chingutime.herokuapp.com/api/users/profile", {
+    //         headers: { "x-access-token": this.usertoken }
+    //       })
+    //       .then(response => this.userUpdate(response));
+    //   }
+    // },
+    // userUpdate(response) {
+    //   console.log("update");
+    //   if (!_.isEqual(this.user, response.data)) {
+    //     localStorage.setItem("user", JSON.stringify(response.data));
+    //     console.log("done");
+    //     console.log(this.user);
+    //     this.user = response.data
+    //     console.log(this.user);
+    //   }
+    // }
   }
 };
 </script>
