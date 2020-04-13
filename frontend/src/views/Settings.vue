@@ -50,11 +50,12 @@ export default {
   name: "Settings",
   data() {
     return {
+      show1: false,
       answer: null,
       username: null,
       password: null,
-      oldpassword: null,
-      show1: false,
+      name: null,
+      email: null,
       time: null,
       rules: {
         emailtext: v => /.+@.+\..+/.test(v) || "E-mail must be valid"

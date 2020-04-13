@@ -202,7 +202,7 @@ export default {
         //     },
         //     {
         //       headers: {
-        //         "x-access-token": localStorage.getItem("token")
+        //         "x-access-token": this.usertoken)
         //       }
         //     }
         //   )
@@ -237,13 +237,13 @@ export default {
       //       },
       //       {
       //         headers: {
-      //           "x-access-token": localStorage.getItem("token")
+      //           "x-access-token": this.usertoken)
       //         }
       //       }
       //     )
       //     .then(
       //       response =>
-      //         (this.createdEvent.eventId = response.data.msg.slice(-24))
+      //         (this.createdEvent.eventId = response.data.msg.slice(-24), location.reload())
       //     )
       //     .catch(error => (console.log(error), (this.answer = error)))
       // );

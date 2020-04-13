@@ -61,7 +61,7 @@
         <br />
         <v-card class="mx-auto" max-width="400" v-if="answer">
             <v-card-text>
-                <h3>{{ answer }}</h3>
+                <h3>{{ answer }} </h3>
             </v-card-text>
         </v-card>
     </v-sheet>
