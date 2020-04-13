@@ -117,7 +117,7 @@ export default {
               headers: { "x-access-token": this.usertoken }
             }
           )
-          .then(response => (this.answer = response.data.msg), location.reload())
+          .then(response => (this.answer = response.data.msg))
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },

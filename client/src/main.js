@@ -10,7 +10,7 @@ import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
 
 let initialState = {
-  usertoken: '',
+  usertoken: null,
   user: null
 }
 

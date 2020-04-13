@@ -118,7 +118,7 @@ export default {
     ]
   }),
   mounted() {
-    this.today = getTodayDate();
+    this.today = this.getTodayDate();
     this.value = this.today;
     this.$refs.calendar.checkChange();
   },
