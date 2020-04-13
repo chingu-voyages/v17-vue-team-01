@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 const key = require('../../config/keys').secret;
 const User = require('../../model/User');
+const Event = require('../../model/Event');
 
 /**
  * @route POST api/users/register
@@ -137,8 +138,29 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         _id: decoded._id
-      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then(user => {
-          res.status(200).send(user);
+      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then((result) => {
+
+        if (!result) {
+            return res.status(200).json({
+              success: false,
+              msg: "User not found."
+            });
+          }
+
+        let events_data = [];
+
+        Event.find({
+            _id: { $in: result.events }
+        }
+        , function(err, events){
+            console.log(events);
+            events.forEach(function(event) { 
+                events_data.push(event._id);
+                events_data.push(event.title);
+                events_data.push(event.scheduled);
+            });
+            return res.status(200).send([result, events_data]);
+        });
         })
     })
   });
@@ -171,16 +193,17 @@ router.post('/update', (req, res) => {
       },
       params,function(err, doc){
 
-        //console.log(doc);
         // Hash the password
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(params.password, salt, (err, hash) => {
-                if (err) throw err;
-                params.password = hash;
-                doc.password = hash;
-                doc.save();
+        if(params.password){
+            bcrypt.genSalt(10, (err, salt) => {
+                bcrypt.hash(params.password, salt, (err, hash) => {
+                    if (err) throw err;
+                    params.password = hash;
+                    doc.password = hash;
+                    doc.save();
+                });
             });
-        });
+        }
         if(err){
             console.log("Something wrong when updating!");
         }

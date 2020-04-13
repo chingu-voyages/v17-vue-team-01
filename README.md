@@ -26,7 +26,7 @@ POST http://v17-vue-team-01.test:5000/api/users/register with raw JSON :
     "TZ": "-5"
 }
 ```
-Other options can be tried (username or email already used, password mismatch)  
+Other options can be tried (username or email already used) password mismatch is removed from code  
 If no TZ provided, defaults to GMT
 
 + Login with postman
@@ -39,15 +39,16 @@ POST http://v17-vue-team-01.test:5000/api/users/login with raw JSON:
 }
 ```
 Other options can be tried (wrong password, non existing user)  
-The output contains the token to be saved in local storage
+The output contains the token to be saved in local storage, token expiration time is currently 7 days
 
 
-+ Get token from output and used it for me route:
++ Get token from output and use it for profile route:
 
 GET http://v17-vue-team-01.test:5000/api/users/profile with header key:x-access-token value:token from login
 + Output should be the user information, together with its events:
 ```
-{
+[
+    {
     "events": [
         "5e7b755606c9f25fad22248f"
     ],
@@ -56,8 +57,18 @@ GET http://v17-vue-team-01.test:5000/api/users/profile with header key:x-access-
     "name": "Vue Chingu",
     "username": "Vue1",
     "email": "vuechingu1@gmail.com"
-}
+    },
+    [
+        "5e944b43489a3236c44d0632",
+        "Chingu Event New",
+        false,
+        "5e945bba4e508d2954cc7e45",
+        "Chingu Event New",
+        false
+    ]
+]
 ```
+It will also include a second array with user events information (id, title and if scheduled or not)  
 
 + Update user details
 
@@ -128,7 +139,7 @@ It will also delete timeslots for this user of this event.
 GET http://v17-vue-team-01.test:5000/api/events/show/id:
 
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
-If event exists, it will send three arrays, first with event details together with its users, the second with all timeslots for that event (for display), and the third array, either a string with information (no advisable timeslots for only one user, or still no advisable timeslots), or the array with advisable timeslots for schedule:
+If event exists, it will send four arrays, first with event details together with its users, the second with all timeslots for that event (for display), the third array, either a string with information (no advisable timeslots for only one user, or still no advisable timeslots), or the array with advisable timeslots for schedule, and a fourth array with event users information (id and username):
 ```
 [
     {
@@ -228,6 +239,12 @@ If event exists, it will send three arrays, first with event details together wi
         "2020-12-03T19C2",
         "2020-12-04T6C2",
         "2020-12-04T8C2"
+    ],
+    [
+        "5e8b6588c7b6371764362904",
+        "marcosme",
+        "5e8b65a0c7b6371764362905",
+        "ninja1"
     ]
 ]
 ```
@@ -251,7 +268,8 @@ POST http://v17-vue-team-01.test:5000/api/events/update with raw JSON:
 ```
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
 If event exists, it will be updated with the new data, only if data is not empty (if empty it will not change). 
-If event doesn't exist, it will fail with msg no event found.
+If event doesn't exist, it will fail with msg no event found.  
+If event scheduled boolean is changed to true, it must send also the start and end parameters correctly filled. If scheduled is changed to true BE will create an ics file with relevant information and send it to user. Also to be implemented, send the emails to each attendee informing them the event is scheduled (ics file can be included in the email).
 
 + Delete event
 
@@ -280,7 +298,8 @@ POST http://v17-vue-team-01.test:5000/api/timeslots/create with raw JSON:
 A user needs to be logged, and event_id can be saved in local storage also (to be discussed)
 timeslots[0] of each array within the timeslots array is for the day and the rests are the respective timeslots associated with the day.
 Timeslots are saved with the user id, the event id, the day and the time of the day (hour).  
-It will always save the hour as GMT. For instance, in this case, if the user has a TZ of GMT+1, it will save in timeslots as 13, 9, -1, 0 and 1 respectively. If TZ is GMT-5, it will save in timeslots as 19, 15, 5, 6 and 7, respectively.
+It will always save the hour as GMT. For instance, in this case, if the user has a TZ of GMT+1, it will save in timeslots as 13, 9, -1, 0 and 1 respectively. If TZ is GMT-5, it will save in timeslots as 19, 15, 5, 6 and 7, respectively.  
+If the timeslot is created at 23 and timezone is GMT+2, it will save it on the next day (or next month if last day) and with time 1. The same for timeslot created at 1 and TZ is GMT-2, timeslot will be save on previous day (or previous month).
 
 + Update timeslots
 

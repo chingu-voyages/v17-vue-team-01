@@ -11,6 +11,16 @@ const mongoose = require('mongoose');
 const { writeFileSync } = require('fs')
 const ics = require('ics')
 
+function retrieveUserById(id, callback) {
+  User.findOne({_id: id}, function(err, user) {
+    if (err) {
+      callback(err, null);
+    } else {
+      callback(null, user);
+    }
+  });
+};
+
 /**
  * @route POST api/events/create
  * @desc Create an event
@@ -88,6 +98,18 @@ router.get('/show/:id', (req, res) => {
         }
 
         let number_users = result.users.length;
+        let users_data = [];
+        result.users.forEach(user => retrieveUserById(user, function(err, userData) {
+            if (err) {
+              console.log(err);
+            }
+            console.log("inCallback: " + userData);
+            users_data.push(userData._id);
+            users_data.push(userData.username);
+          }));
+
+        
+
         console.log(number_users);
 
         Timeslot.find({event:event_id}).then((timeslots) => {
@@ -126,7 +148,7 @@ router.get('/show/:id', (req, res) => {
             //console.log( `advisable_timeslots: ${advisable_timeslots}`);
           }
           console.log( `advisable_timeslots: ${advisable_timeslots}`);
-          res.status(200).send([result, timeslots, advisable_timeslots]);
+          res.status(200).send([result, timeslots, advisable_timeslots, users_data]);
           
         });
         
@@ -356,6 +378,17 @@ router.post('/update', (req, res) => {
 
         //get users name and email for ics creation and email sending
 
+        let users_data = [];
+        User.find({
+          _id: { $in: doc.users }
+      }
+      , function(err, users){
+          //console.log(users);
+          users.forEach(function(user) { 
+              users_data.push({name: user.name, email: user.email});
+          });
+          
+      console.log(users_data);
         var hours = Math.abs(doc.end - doc.start) / 36e5;
         console.log(hours);
         const event = {
@@ -366,12 +399,10 @@ router.post('/update', (req, res) => {
           status: 'CONFIRMED',
           busyStatus: 'BUSY',
           organizer: { name: decoded.name, email: decoded.email },
-          attendees: [
-            { name: 'Adam Gibbons', email: 'adam@example.com' },
-            { name: 'Brittany Seaton', email: 'brittany@example2.org' }
-          ],
+          attendees: users_data,
           productId: 'ChinguTime'
         }
+      
         ics.createEvent(event, (error, value) => {
           if (error) {
             console.log(error)
@@ -381,7 +412,7 @@ router.post('/update', (req, res) => {
           const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
           writeFileSync(filename + '.ics', value);
         });
-
+      });
 
         console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
         const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();

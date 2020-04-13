@@ -64,6 +64,21 @@ router.post('/create', (req, res) => {
                   //change timeslot to GMT
                   tsContent = parseInt(tsContent) - userTZ;
                   
+                  if(tsContent < 0){
+                    let dateDay = new Date(day);
+                    let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+                    day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+                    tsContent = tsContent + 24;
+                  }
+
+                  if(tsContent > 24){
+                    let dateDay = new Date(day);
+                    let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+                    day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+                    tsContent = tsContent - 24;
+                  }
+
+
                   let newTimeslot = new Timeslot({
                     user: user_id,
                     event: result._id,
