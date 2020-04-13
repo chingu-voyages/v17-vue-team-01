@@ -61,14 +61,17 @@ export default {
             username: this.username,
             password: this.password
           })
-          .then(
-            response => (
-              (this.serverResponse = response.data.token.slice(7)),
-              this.tokenReceived(this.serverResponse)
-            )
-          )
+          .then(response => this.userfoundCheck(response))
           .catch(error => (console.log(error), (this.answer = error)));
       }
+    },
+    userfoundCheck(response) {
+      if (!response.data.token) {
+        this.answer = response.data.msg
+      } else {
+        this.serverResponse = response.data.token.slice(7);
+        this.tokenReceived(this.serverResponse)
+      }      
     },
     tokenReceived(value) {
       localStorage.setItem("usertoken", value);
