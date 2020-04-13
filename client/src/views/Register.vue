@@ -61,7 +61,7 @@
         <br />
         <v-card class="mx-auto" max-width="400" v-if="answer">
             <v-card-text>
-                <h3>{{ answer }}</h3>
+                <h3>{{ answer }} </h3>
             </v-card-text>
         </v-card>
     </v-sheet>
@@ -69,6 +69,7 @@
 
 <script>
 export default {
+    name: "Register",
     data() {
         return {
             show1: false,
@@ -144,7 +145,7 @@ export default {
                 }
 
                 this.axios
-                    .post("http://34.82.150.138:5000/api/users/register", {
+                    .post("https://chingutime.herokuapp.com/users/register", {
                         name: this.name,
                         email: this.email,
                         username: this.username,

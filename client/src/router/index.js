@@ -6,8 +6,8 @@ Vue.use(VueRouter);
 const routes = [
     {
         path: "/",
-        name: "Login",
-        component: () => import("../views/Login.vue")
+        name: "Home",
+        component: () => import("../views/Home.vue")
     },
     {
         path: "/register",
@@ -17,19 +17,19 @@ const routes = [
     {
         path: "/create-event",
         name: "CreateEvent",
-        // beforeEnter: (to, from, next) => {
-        //     if (!localStorage.user) next({ name: "Login" });
-        //     else next();
-        // },
+        beforeEnter: (to, from, next) => {
+            if (!localStorage.user) next({ name: "Home" });
+            else next();
+        },
         component: () => import("../views/CreateEvent.vue")
     },
     {
         path: "/settings",
         name: "Settings",
-        // beforeEnter: (to, from, next) => {
-        //     if (!localStorage.user) next({ name: "Login" });
-        //     else next();
-        // },
+        beforeEnter: (to, from, next) => {
+            if (!localStorage.user) next({ name: "Home" });
+            else next();
+        },
         component: () => import("../views/Settings.vue")
     },
     {
