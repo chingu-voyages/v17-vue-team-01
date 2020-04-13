@@ -117,6 +117,7 @@ import { getTodayDate } from "../plugins/util.js";
 import data from "../plugins/events.json";
 
 export default {
+    name: "Calendar",
     data: () => ({
         today: "2020-01-01",
         weekdays: [1, 2, 3, 4, 5, 6, 0],

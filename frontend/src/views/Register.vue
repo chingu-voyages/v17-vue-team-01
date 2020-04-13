@@ -69,6 +69,7 @@
 
 <script>
 export default {
+    name: "Register",
     data() {
         return {
             show1: false,

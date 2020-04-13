@@ -2,30 +2,29 @@
   <v-row class="mb-6">
     <v-col cols="12" md="4">
       <v-card class="pa-2" outlined tile>
-        <Login v-if="!user" />
+        <Login/>
       </v-card>
     </v-col>
     <v-col cols="12" md="8">
-      <v-card class="pa-2" outlined tile>
-        <v-sheet>
-          <p>Route {{ url }}</p>
-          <p>Event</p>
-          <p>{{ userPart }}</p>
-          <p>Timeslots</p>
-          <p>{{ timeslotPart }}</p>
-        </v-sheet>
-      </v-card>
+      <DisplayEvent
+        :userPart="userPart"
+        :timeslotPart="timeslotPart"
+        :advisableTimeslots="advisableTimeslots"
+        :url="url"
+      />
     </v-col>
   </v-row>
 </template>
 
 <script>
-import Login from "../components/Login.vue";
+import Login from "../components/Login";
+import DisplayEvent from "../components/DisplayEvent";
 
 export default {
   name: "Event",
   components: {
-    Login
+    Login,
+    DisplayEvent
   },
   created() {
     this.url = this.$route.params.id;
@@ -41,7 +40,6 @@ export default {
   },
   data: () => ({
     url: "",
-    user: null,
     event: null,
     answer: null,
     userPart: null,
@@ -49,14 +47,13 @@ export default {
     advisableTimeslots: null
   }),
   mounted() {
-    if (localStorage.getItem("user")) {
-      this.user = JSON.parse(localStorage.getItem("user"));
+    if (this.user) {
       this.axios
-      .get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
-        headers: { "x-access-token": localStorage.getItem("token") }
-      })
-      .then(response => (this.event = response.data))
-      .catch(error => (console.log(error), (this.answer = error)));
+        .get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
+          headers: { "x-access-token": localStorage.getItem("token") }
+        })
+        .then(response => (this.event = response.data))
+        .catch(error => (console.log(error), (this.answer = error)));
     }
   }
 };

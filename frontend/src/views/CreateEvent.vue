@@ -98,6 +98,7 @@
 
 <script>
 export default {
+  name: "CreateEvent",
   data: () => ({
     valid: true,
     dates: [null, null],
