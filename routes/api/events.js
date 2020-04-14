@@ -106,6 +106,7 @@ router.get('/show/:id', (req, res) => {
             console.log("inCallback: " + userData);
             users_data.push(userData._id);
             users_data.push(userData.username);
+            users_data.push(userData.events);
           }));
 
         
