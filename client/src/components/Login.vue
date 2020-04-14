@@ -5,7 +5,7 @@
         <v-card class="mx-auto" max-width="400">
           <v-card-text>
             <v-form ref="form" lazy-validation>
-              <v-text-field v-model="username" label="Username" required></v-text-field>
+              <v-text-field v-on:keyup.enter="getToken" v-model="username" label="Username" required></v-text-field>
 
               <v-text-field
                 v-model="password"
@@ -15,6 +15,7 @@
                 label="Password"
                 counter
                 @click:append="show1 = !show1"
+                v-on:keyup.enter="getToken"
               ></v-text-field>
             </v-form>
           </v-card-text>

@@ -5,6 +5,7 @@
         <h1>Happy to see you!</h1>
         <v-form ref="form" lazy-validation @submit.prevent="processForm">
           <v-text-field
+          v-on:keyup.enter="processForm"
             v-model="email"
             :rules="[rules.email, rules.emailtext]"
             label="E-mail"
@@ -12,11 +13,12 @@
             class="topMargin"
           ></v-text-field>
 
-          <v-text-field v-model="name" label="Name" required></v-text-field>
+          <v-text-field v-on:keyup.enter="processForm" v-model="name" label="Name" required></v-text-field>
 
-          <v-text-field v-model="username" label="Username" required></v-text-field>
+          <v-text-field v-on:keyup.enter="processForm" v-model="username" label="Username" required></v-text-field>
 
           <v-text-field
+          v-on:keyup.enter="processForm"
             v-model="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             :rules="[rules.required]"
@@ -27,6 +29,7 @@
           ></v-text-field>
 
           <v-select
+          v-on:keyup.enter="processForm"
             v-model="time"
             :items="zones"
             menu-props="auto"
