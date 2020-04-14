@@ -6,13 +6,14 @@
         <br>
         <h3>Each Field can be set individually or left empty</h3>
         <v-form ref="form" lazy-validation @submit.prevent="processForm">
-          <v-text-field v-model="email" :rules="[rules.emailtext]" label="E-mail" class="topMargin"></v-text-field>
+          <v-text-field v-on:keyup.enter="processForm" v-model="email" :rules="[rules.emailtext]" label="E-mail" class="topMargin"></v-text-field>
 
-          <v-text-field v-model="name" label="Name"></v-text-field>
+          <v-text-field v-on:keyup.enter="processForm" v-model="name" label="Name"></v-text-field>
 
-          <v-text-field v-model="username" label="Username"></v-text-field>
+          <v-text-field v-on:keyup.enter="processForm" v-model="username" label="Username"></v-text-field>
 
           <v-text-field
+          v-on:keyup.enter="processForm"
             v-model="password"
             :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
             :type="show1 ? 'text' : 'password'"
@@ -22,6 +23,7 @@
           ></v-text-field>
 
           <v-select
+          v-on:keyup.enter="processForm"
             v-model="time"
             :items="zones"
             menu-props="auto"
@@ -39,7 +41,7 @@
     <br>
     <v-card class="mx-auto" max-width="400" v-if="answer">
       <v-card-text>
-        <h3>{{ answer }}</h3>
+        <h3 v-html="answer"></h3>
       </v-card-text>
     </v-card>
   </v-sheet>
@@ -103,7 +105,14 @@ export default {
       ]
     };
   },
-  mounted() {},
+  mounted() {
+    this.answer = `
+    Email: ${this.user[0].email}  
+    <br>Name: ${this.user[0].name}
+    <br>Username: ${this.user[0].username}
+    <br>Timezone: UTC ${this.user[0].TZ}
+    `
+  },
   methods: {
     processForm() {
       let confirmation = confirm("Confirm changes?");
@@ -119,10 +128,7 @@ export default {
           )
           .then(
             response => (
-              (this.answer = response.data.msg),
-              this.$store.clearAll(),
-              (this.user = null),
-              (this.usertoken = null)
+              (this.answer = response.data.msg), this.savingChanges(response)
             )
           )
           .catch(error => (console.log(error), (this.answer = error)));
@@ -133,7 +139,6 @@ export default {
         let direction = this.time.slice(4, 5);
         let identifier = this.time.slice(5, 7);
         let addition = this.time.slice(8, 10);
-
         let zone = Number(identifier + "." + addition);
         if (direction == "-") {
           console.log("sucess");
@@ -158,28 +163,26 @@ export default {
         this.settings.email = this.email;
       }
       return this.settings;
-    }
-    // savingChanges(response) {
-    //   console.log("saving");
+    },
+    savingChanges(response) {
+      console.log("saving");
 
-    //   if (this.usertoken) {
-    //     this.axios
-    //       .get("https://chingutime.herokuapp.com/api/users/profile", {
-    //         headers: { "x-access-token": this.usertoken }
-    //       })
-    //       .then(response => this.userUpdate(response));
-    //   }
-    // },
-    // userUpdate(response) {
-    //   console.log("update");
-    //   if (!_.isEqual(this.user, response.data)) {
-    //     localStorage.setItem("user", JSON.stringify(response.data));
-    //     console.log("done");
-    //     console.log(this.user);
-    //     this.user = response.data
-    //     console.log(this.user);
-    //   }
-    // }
+      if (this.usertoken) {
+        this.axios
+          .get("https://chingutime.herokuapp.com/api/users/profile", {
+            headers: { "x-access-token": this.usertoken }
+          })
+          .then(response => this.userUpdate(response));
+      }
+    },
+    userUpdate(response) {
+      console.log("update");
+      if (!_.isEqual(this.user, response.data)) {
+        localStorage.setItem("user", JSON.stringify(response.data));
+        console.log("done");
+        location.reload();
+      }
+    }
   }
 };
 </script>
