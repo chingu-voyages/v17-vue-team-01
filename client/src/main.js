@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import persistentState from 'vue-persistent-state'
-import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
-import vuetify from './plugins/vuetify';
 import axios from "axios";
 import VueAxios from "vue-axios";
 import VueLodash from 'vue-lodash'
 import lodash from 'lodash'
+import vuetify from '@/plugins/vuetify' // path to vuetify export
+import App from './App.vue'
 
 let initialState = {
   usertoken: null,
