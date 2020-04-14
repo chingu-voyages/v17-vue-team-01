@@ -155,9 +155,9 @@ router.get('/profile', function(req, res) {
         , function(err, events){
             console.log(events);
             events.forEach(function(event) { 
-                events_data.push(event._id);
-                events_data.push(event.title);
-                events_data.push(event.scheduled);
+                events_data.push([event._id, event.title, event.scheduled]);
+                // events_data.push(event.title);
+                // events_data.push(event.scheduled);
             });
             return res.status(200).send([result, events_data]);
         });
