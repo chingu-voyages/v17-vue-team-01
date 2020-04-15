@@ -79,7 +79,7 @@ router.post('/create', (req, res) => {
  * @desc Shows event and its users
  * @access Public
  */
-router.get('/show/:id', (req, res) => {
+router.get('/show/:id', async function(req, res)  {
   let token = req.headers['x-access-token'];
   if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
   
@@ -99,7 +99,7 @@ router.get('/show/:id', (req, res) => {
 
         let number_users = result.users.length;
         let users_data = [];
-        result.users.forEach(user => retrieveUserById(user, function(err, userData) {
+        result.users.forEach(async (user) => retrieveUserById(user, function(err, userData) {
             if (err) {
               console.log(err);
             }
