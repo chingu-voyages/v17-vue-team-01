@@ -2,22 +2,26 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mx-auto" max-width="400">
-          <v-card-text>
-            <v-form ref="form" lazy-validation>
-              <v-text-field v-on:keyup.enter="getToken" v-model="username" label="Username" required></v-text-field>
-
-              <v-text-field
-                v-model="password"
-                :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-                :rules="[rules.required]"
-                :type="show1 ? 'text' : 'password'"
-                label="Password"
-                counter
-                @click:append="show1 = !show1"
-                v-on:keyup.enter="getToken"
-              ></v-text-field>
-            </v-form>
+        <v-card class="mx-auto" max-width="360">
+          <v-card-text class="text-left">
+            <h1>Sign up</h1>
+            <br>
+            <input
+              class="input"
+              v-on:keyup.enter="getToken"
+              type="text"
+              name="username"
+              v-model="username"
+              placeholder="Username"
+            >
+            <input
+              class="input"
+              v-on:keyup.enter="getToken"
+              type="password"
+              name="password"
+              v-model="password"
+              placeholder="Password"
+            >
           </v-card-text>
           <v-card-actions>
             <v-btn @click="getToken" color="success">Login</v-btn>
@@ -25,7 +29,7 @@
           </v-card-actions>
         </v-card>
         <br>
-        <v-card class="mx-auto" max-width="400" v-if="answer">
+        <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
             <h3>{{ answer }}</h3>
           </v-card-text>
@@ -40,12 +44,8 @@ export default {
   name: "Login",
   data() {
     return {
-      show1: false,
       password: null,
       username: null,
-      rules: {
-        required: value => !!value || "Password is required"
-      },
       answer: null,
       serverResponse: null
     };
@@ -68,11 +68,11 @@ export default {
     },
     userfoundCheck(response) {
       if (!response.data.token) {
-        this.answer = response.data.msg
+        this.answer = response.data.msg;
       } else {
         this.serverResponse = response.data.token.slice(7);
-        this.tokenReceived(this.serverResponse)
-      }      
+        this.tokenReceived(this.serverResponse);
+      }
     },
     tokenReceived(value) {
       localStorage.setItem("usertoken", value);
@@ -91,8 +91,19 @@ export default {
 };
 </script>
 
-<style lang="css">
+<style lang="scss">
 .leftMargin {
   margin-left: 15px;
+}
+.input {
+  color: black;
+  display: block;
+  border: 1px solid black;
+  width: 96%;
+
+  border-radius: 3px;
+  padding: 10px 5px;
+  margin: 0 0 10px 0;
+  font-size: 18px;
 }
 </style>
