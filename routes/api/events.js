@@ -11,8 +11,8 @@ const mongoose = require('mongoose');
 const { writeFileSync } = require('fs')
 const ics = require('ics')
 
-function retrieveUserById(id, callback) {
-  User.findOne({_id: id}, function(err, user) {
+async function retrieveUserById(id, callback) {
+  await User.findOne({_id: id}, function(err, user) {
     if (err) {
       callback(err, null);
     } else {

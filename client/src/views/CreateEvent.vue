@@ -190,9 +190,7 @@ export default {
         };
 
         this.axios
-          .post(
-            "https://chingutime.herokuapp.com/api/events/create",
-            {
+            .post("https://chingutime.herokuapp.com/api/events/create",{
               title: this.createdEvent.eventName,
               details: "Test event created for chingu vue",
               color: this.createdEvent.eventColor,
