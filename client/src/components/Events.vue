@@ -11,8 +11,8 @@
               <v-list-item :inactive="inactive" v-for="(event, i) in events" :key="i">
                 <v-list-item-content class="text-left">
                   <v-list-item-title>
-                    <v-btn color="orange lighten-2" :to="eventLink(event)">View</v-btn>
-                    {{ event }}
+                    <v-btn color="orange lighten-2" :to="eventLink(event._id)">View</v-btn>
+                    {{ event.title }}
                   </v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>
@@ -37,15 +37,15 @@
       <v-col>
         <v-card class="mx-auto" min-width="250" tile>
           <v-toolbar color="deep-purple lighten-2">
-            <v-toolbar-title>Set Events</v-toolbar-title>
+            <v-toolbar-title>Scheduled Events</v-toolbar-title>
           </v-toolbar>
           <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
             <v-list-item-group v-model="event" v-if="user" color="primary">
               <v-list-item :inactive="inactive" v-for="(event, i) in events" :key="i">
-                <v-list-item-content class="text-left">
+                <v-list-item-content class="text-left" v-if="event.scheduled == true">
                   <v-list-item-title>
-                    <v-btn color="deep-purple lighten-2" :to="eventLink(event)">View</v-btn>
-                    {{ event }}
+                    <v-btn color="deep-purple lighten-2" :to="eventLink(event._id)">View</v-btn>
+                    {{ event.title }}
                   </v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>

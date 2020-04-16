@@ -128,8 +128,7 @@ export default {
       if (confirmation == true) {
         console.log(this.selectFields());
         this.axios
-          .post(
-            "https://chingutime.herokuapp.com/api/users/update",
+          .post("https://chingutime.herokuapp.com/api/users/update",
             this.selectFields(),
             {
               headers: { "x-access-token": this.usertoken }
@@ -137,7 +136,14 @@ export default {
           )
           .then(
             response => (
+
+              (this.answer = response.data.msg)
+              //this.$store.clearAll(),
+              //(this.user = null),
+              //(this.usertoken = null)
+
               (this.answer = response.data.msg), this.savingChanges(response)
+
             )
           )
           .catch(error => (console.log(error), (this.answer = error)));
@@ -173,6 +179,7 @@ export default {
       }
       return this.settings;
     },
+
     savingChanges(response) {
       console.log("saving");
 

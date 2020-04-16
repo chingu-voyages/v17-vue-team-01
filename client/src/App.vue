@@ -19,7 +19,7 @@
           <v-icon>mdi-cog</v-icon>
         </v-btn>
 
-        <v-btn icon large @click="logout">
+        <v-btn icon large v-if="user" @click="logout">
           <v-icon>mdi-logout</v-icon>
         </v-btn>
       </v-app-bar>
@@ -48,7 +48,16 @@ export default {
   methods: {
     logout() {
       this.$store.clearAll();
-      location.reload();
+      //this.user = null;
+      //location.reload();
+      if(this.$route.path != "/"){
+        this.$router.push({ name: 'Home', params: { user: this.user } });
+        location.reload();
+      }
+      else{
+        location.reload();
+      }
+      
     },
     userUpdate(response) {      
       if (!_.isEqual(this.user, response.data)) {  
