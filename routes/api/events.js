@@ -69,6 +69,7 @@ router.post('/create', (req, res) => {
  * @desc Shows event and its users
  * @access Public
  */
+
 router.get('/show/:id', function(req, res)  {
   let token = req.headers['x-access-token'];
   if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
