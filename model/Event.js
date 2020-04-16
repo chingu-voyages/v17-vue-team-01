@@ -6,7 +6,7 @@ const EventSchema = new Schema({
     users: [
         {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User"
+          ref: "users"
         }
       ],
     title: {

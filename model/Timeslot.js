@@ -5,11 +5,11 @@ const Schema = mongoose.Schema;
 const TimeslotSchema = new Schema({
     event: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Event"
+          ref: "events"
         },
     user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User"
+          ref: "users"
         },
     day: {
         type: String,
