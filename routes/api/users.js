@@ -21,14 +21,12 @@ router.post('/register', (req, res) => {
         //confirm_password,
         TZ
     } = req.body;
-
     if (!name || !username || !email || !password) {
         return res.status(200).json({
             success: false,
             msg: "Registration failed, there are missing fields."
         });
     }
-
     // if (password !== confirm_password) {
     //     return res.status(200).json({
     //         success: false,
@@ -90,6 +88,7 @@ router.post('/login', (req, res) => {
         username: req.body.username
     }).then(user => {
         if (!user) {
+            console.log("entrou");
             return res.status(200).json({
                 success: false,
                 msg: "Username is not found."
@@ -138,29 +137,16 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         _id: decoded._id
-      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 }).then((result) => {
-
+      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 })
+      .populate({path: 'events', populate: { path: 'events' }, select: ['title', 'scheduled']})
+      .then((result) => {
         if (!result) {
             return res.status(200).json({
               success: false,
               msg: "User not found."
             });
           }
-
-        let events_data = [];
-
-        Event.find({
-            _id: { $in: result.events }
-        }
-        , function(err, events){
-            console.log(events);
-            events.forEach(function(event) { 
-                events_data.push([event._id, event.title, event.scheduled]);
-                // events_data.push(event.title);
-                // events_data.push(event.scheduled);
-            });
-            return res.status(200).send([result, events_data]);
-        });
+        return res.status(200).send(result);
         })
     })
   });
@@ -178,21 +164,17 @@ router.post('/update', (req, res) => {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
   
       let params = {};
-
       if (Object.keys(req.body).length == 0) {
         return res.status(200).json({
             success: false,
             msg: "Update failed, there are no fields to update."
         });
       }
-
       for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
-  
       User.findOneAndUpdate({
         _id: decoded._id,
       },
       params,function(err, doc){
-
         // Hash the password
         if(params.password){
             bcrypt.genSalt(10, (err, salt) => {
@@ -211,11 +193,8 @@ router.post('/update', (req, res) => {
         return res.status(200).json({
             success: true,
             msg: "Congrats, user is updated!"  
-
       });
     });
-
-
     });   
   });
 
