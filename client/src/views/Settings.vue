@@ -116,10 +116,10 @@ export default {
   },
   mounted() {
     this.answer = `
-    Email: ${this.user[0].email}  
-    <br>Name: ${this.user[0].name}
-    <br>Username: ${this.user[0].username}
-    <br>Timezone: UTC ${this.user[0].TZ}
+    Email: ${this.user.email}  
+    <br>Name: ${this.user.name}
+    <br>Username: ${this.user.username}
+    <br>Timezone: UTC ${this.user.TZ}
     `;
   },
   methods: {
@@ -128,7 +128,8 @@ export default {
       if (confirmation == true) {
         console.log(this.selectFields());
         this.axios
-          .post("https://chingutime.herokuapp.com/api/users/update",
+          .post(
+            "https://chingutime.herokuapp.com/api/users/update",
             this.selectFields(),
             {
               headers: { "x-access-token": this.usertoken }
@@ -136,14 +137,7 @@ export default {
           )
           .then(
             response => (
-
-              (this.answer = response.data.msg)
-              //this.$store.clearAll(),
-              //(this.user = null),
-              //(this.usertoken = null)
-
               (this.answer = response.data.msg), this.savingChanges(response)
-
             )
           )
           .catch(error => (console.log(error), (this.answer = error)));
@@ -161,28 +155,22 @@ export default {
         }
         this.settings.TZ = zone;
       }
-
       if (this.name) {
         this.settings.name = this.name;
       }
-
       if (this.password) {
         this.settings.password = this.password;
       }
-
       if (this.username) {
         this.settings.username = this.username;
       }
-
       if (this.email) {
         this.settings.email = this.email;
       }
       return this.settings;
     },
-
     savingChanges(response) {
       console.log("saving");
-
       if (this.usertoken) {
         this.axios
           .get("https://chingutime.herokuapp.com/api/users/profile", {
