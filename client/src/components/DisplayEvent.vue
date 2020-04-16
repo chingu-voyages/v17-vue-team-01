@@ -10,7 +10,7 @@
           <v-list-item :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
             <v-list-item-content class="text-left">
               <v-list-item-title>
-                {{ participants.username }} <span v-if: i=0> (Event Creator) </span>
+                {{ participants.username }} <span v-if="i==0"> (Event Creator) </span>
               </v-list-item-title>
               <v-list-item-subtitle></v-list-item-subtitle>
             </v-list-item-content>
@@ -51,16 +51,35 @@ export default {
   data: () => ({}),
   watch: {},
   mounted() {
-    //this.changeToUserTZ()
+    
   },
   methods: {
     
   },
   computed: {
     changeToUserTZ() {
-      console.log(this.user.TZ);
-      console.log(this.timeslotPart);
-      this.timeslotPart.forEach(timeslot => timeslot.time = parseInt(timeslot.time) + parseInt(this.user.TZ));
+      //console.log(this.user.TZ);
+      //console.log(this.timeslotPart);
+      this.timeslotPart.forEach(timeslot => {
+
+        timeslot.time = parseInt(timeslot.time) + parseInt(this.user.TZ);
+
+        if(timeslot.time < 0){
+          let dateDay = new Date(timeslot.day);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+          timeslot.day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+          timeslot.time = timeslot.time + 24;
+        }
+        if(timeslot.time > 24){
+          let dateDay = new Date(timeslot.day);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+          timeslot.day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+          timeslot.time = timeslot.time - 24;
+        }
+
+
+        
+      })
       return this.timeslotPart;
     }
   }

@@ -2,7 +2,7 @@
   <v-row class="mb-6">
     <v-col cols="12" md="4">
       <v-card class="pa-2" outlined tile>
-        <Login v-if="!user"/>
+        <ActionsEvent :url="url" :eventPart="eventPart"/>
       </v-card>
     </v-col>
     <v-col cols="12" md="8">
@@ -18,13 +18,13 @@
 </template>
 
 <script>
-import Login from "../components/Login";
+import ActionsEvent from "../components/ActionsEvent";
 import DisplayEvent from "../components/DisplayEvent";
 
 export default {
   name: "Event",
   components: {
-    Login,
+    ActionsEvent,
     DisplayEvent
   },
   created() {
@@ -34,8 +34,7 @@ export default {
   },
   watch: {
     event: function(newer, older) {
-      console.log(newer);
-      
+      //console.log(newer);
       if (newer) {
         this.eventPart = this.event[0];
         this.timeslotPart = this.event[1];
