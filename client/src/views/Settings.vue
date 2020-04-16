@@ -1,50 +1,64 @@
 <template>
-  <v-sheet>
-    <v-card class="mx-auto" max-width="400">
-      <v-card-text>
-        <h1>Change User Information</h1>
+  <v-container>
+    <v-row>
+      <v-col>
+        <v-card class="mx-auto" max-width="360">
+          <v-card-text>
+            <h1>Change User Information</h1>
+            <br>
+            <h3>Each Field can be set individually or left empty</h3>
+            <br>
+            <input
+              class="input"
+              v-on:keyup.enter="processForm"
+              type="text"
+              name="email"
+              v-model="email"
+              placeholder="Email"
+            >
+            <input
+              class="input"
+              v-on:keyup.enter="processForm"
+              type="text"
+              name="name"
+              v-model="name"
+              placeholder="Name"
+            >
+            <input
+              class="input"
+              v-on:keyup.enter="processForm"
+              type="text"
+              name="username"
+              v-model="username"
+              placeholder="Username"
+            >
+            <input
+              class="input"
+              v-on:keyup.enter="processForm"
+              type="password"
+              name="password"
+              v-model="password"
+              placeholder=" New Password"
+            >
+            <select v-model="time" class="input" placeholder="Timezone" label="Timezone">
+              <option disabled value>Please select timezone</option>
+              <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
+            </select>
+          </v-card-text>
+          <v-card-actions>
+            <v-btn @click="processForm" color="success">Update Information</v-btn>
+            <v-btn to="/" color="primary">Back Home</v-btn>
+          </v-card-actions>
+        </v-card>
         <br>
-        <h3>Each Field can be set individually or left empty</h3>
-        <v-form ref="form" lazy-validation @submit.prevent="processForm">
-          <v-text-field v-on:keyup.enter="processForm" v-model="email" :rules="[rules.emailtext]" label="E-mail" class="topMargin"></v-text-field>
-
-          <v-text-field v-on:keyup.enter="processForm" v-model="name" label="Name"></v-text-field>
-
-          <v-text-field v-on:keyup.enter="processForm" v-model="username" label="Username"></v-text-field>
-
-          <v-text-field
-          v-on:keyup.enter="processForm"
-            v-model="password"
-            :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-            :type="show1 ? 'text' : 'password'"
-            label="New Password"
-            counter
-            @click:append="show1 = !show1"
-          ></v-text-field>
-
-          <v-select
-          v-on:keyup.enter="processForm"
-            v-model="time"
-            :items="zones"
-            menu-props="auto"
-            label="Select"
-            hide-details
-            single-line
-          ></v-select>
-        </v-form>
-      </v-card-text>
-      <v-card-actions>
-        <v-btn @click="processForm" color="success">Update Information</v-btn>
-        <v-btn to="/" color="primary">Back Home</v-btn>
-      </v-card-actions>
-    </v-card>
-    <br>
-    <v-card class="mx-auto" max-width="400" v-if="answer">
-      <v-card-text>
-        <h3 v-html="answer"></h3>
-      </v-card-text>
-    </v-card>
-  </v-sheet>
+        <v-card class="mx-auto" max-width="360" v-if="answer">
+          <v-card-text>
+            <h3 v-html="answer"></h3>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -52,19 +66,14 @@ export default {
   name: "Settings",
   data() {
     return {
-      show1: false,
       answer: null,
       username: null,
       password: null,
       name: null,
       email: null,
-      time: null,
-      rules: {
-        emailtext: v => /.+@.+\..+/.test(v) || "E-mail must be valid"
-      },
+      time: "",
       settings: {},
       zones: [
-        "Select Timezone",
         "UTC +14:00 Samoa",
         "UTC +13:45	New Zealand",
         "UTC +13:00 New Zealand",
@@ -107,11 +116,11 @@ export default {
   },
   mounted() {
     this.answer = `
-    Email: ${this.user[0].email}  
-    <br>Name: ${this.user[0].name}
-    <br>Username: ${this.user[0].username}
-    <br>Timezone: UTC ${this.user[0].TZ}
-    `
+    Email: ${this.user.email}  
+    <br>Name: ${this.user.name}
+    <br>Username: ${this.user.username}
+    <br>Timezone: UTC ${this.user.TZ}
+    `;
   },
   methods: {
     processForm() {
@@ -119,7 +128,8 @@ export default {
       if (confirmation == true) {
         console.log(this.selectFields());
         this.axios
-          .post("https://chingutime.herokuapp.com/api/users/update",
+          .post(
+            "https://chingutime.herokuapp.com/api/users/update",
             this.selectFields(),
             {
               headers: { "x-access-token": this.usertoken }
@@ -127,14 +137,7 @@ export default {
           )
           .then(
             response => (
-
-              (this.answer = response.data.msg)
-              //this.$store.clearAll(),
-              //(this.user = null),
-              //(this.usertoken = null)
-
               (this.answer = response.data.msg), this.savingChanges(response)
-
             )
           )
           .catch(error => (console.log(error), (this.answer = error)));
@@ -152,28 +155,22 @@ export default {
         }
         this.settings.TZ = zone;
       }
-
       if (this.name) {
         this.settings.name = this.name;
       }
-
       if (this.password) {
         this.settings.password = this.password;
       }
-
       if (this.username) {
         this.settings.username = this.username;
       }
-
       if (this.email) {
         this.settings.email = this.email;
       }
       return this.settings;
     },
-
     savingChanges(response) {
       console.log("saving");
-
       if (this.usertoken) {
         this.axios
           .get("https://chingutime.herokuapp.com/api/users/profile", {
@@ -194,4 +191,16 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.input {
+  color: black;
+  display: block;
+  border: 1px solid black;
+  width: 96%;
+
+  border-radius: 3px;
+  padding: 10px 5px;
+  margin: 0 0 10px 0;
+  font-size: 18px;
+}
+</style>

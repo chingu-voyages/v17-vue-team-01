@@ -40,7 +40,6 @@ export default {
         this.eventPart = this.event[0];
         this.timeslotPart = this.event[1];
         this.advisableTimeslots = this.event[2];
-        this.userPart = this.event[3];
        }
     }
   },
@@ -50,8 +49,7 @@ export default {
     answer: null,
     eventPart: null,
     timeslotPart: null,
-    advisableTimeslots: null,
-    userPart: null
+    advisableTimeslots: null
   }),
   mounted() {
     //console.log(this.url);

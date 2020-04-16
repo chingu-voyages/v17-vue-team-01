@@ -1,34 +1,47 @@
 <template>
   <v-col>
-    <v-card class="mx-auto" max-width="700" v-if="!eventFirstValidate">
+    <v-card class="mx-auto text-center" max-width="740" v-if="!eventFirstValidate">
       <v-card-text>
         <h1>Create a new Event!</h1>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <v-text-field v-model="name" :rules="nameRules" label="Event name" required></v-text-field>
-
-          <v-row justify="space-around">
-            <v-col>
-              <v-date-picker no-title v-model="dates" range></v-date-picker>
-              <br>
-              <v-text-field v-model="dateRangeText" label="Date range" readonly></v-text-field>
-            </v-col>
+        <br>
+        <input
+          class="input input-long"
+          v-on:keyup.enter="processFormFirst"
+          type="text"
+          name="name"
+          v-model="name"
+          placeholder="Event name"
+        >
+        <v-row justify="center">
+          <v-col>
+            <v-date-picker no-title v-model="dates" range></v-date-picker>
+            <br>
+            <br>
+            <input
+              class="input"
+              type="text"
+              name="Date range"
+              v-model="dateRangeText"
+              label="Date range"
+              disabled
+            >
+          </v-col>
+          <v-col>
             <v-color-picker
               hide-inputs
               hide-canvas
               v-model="color"
-              class="ma-2"
               show-swatches
-              swatches-max-height="230"
+              swatches-max-height="226"
             ></v-color-picker>
-          </v-row>
+          </v-col>
+        </v-row>
 
-          <br>
-          <v-row justify="center">
-            <v-btn :disabled="!valid" color="success" class="mr-4" @click="processFormFirst">Save</v-btn>
-            <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn>
-            <v-btn to="/" color="primary">Back Home</v-btn>
-          </v-row>
-        </v-form>
+        <br>
+        <v-row justify="center">
+          <v-btn color="success" class="mr-4" @click="processFormFirst">Save</v-btn>
+          <v-btn to="/" color="primary">Back Home</v-btn>
+        </v-row>
       </v-card-text>
     </v-card>
     <br v-if="!eventFirstValidate">
@@ -36,59 +49,73 @@
       <v-card-text>
         <h1>Select the times</h1>
         <br>
-        <v-form ref="form" v-model="valid" lazy-validation>
-          <template>
-            <v-row align="center" justify="center" no-gutters>
-              <template v-for="(slot, i) in slots">
-                <v-col :key="`slot-${i}`">
-                  <v-card class="mx-auto" max-width="110" :value="slot">
-                    <h2 class="timeslotName">
-                      {{
-                      createdEvent.eventDates[i][2] + " " + months[createdEvent.eventDates[i][1]].slice(0, 3)
-                      }}
-                    </h2>
-                    <v-col>
-                      <v-checkbox v-model="slotItems[i]" label="00:00" value="0"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="01:00" value="1"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="02:00" value="2"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="03:00" value="3"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="04:00" value="4"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="05:00" value="5"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="06:00" value="6"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="07:00" value="7"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="08:00" value="8"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="09:00" value="9"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="10:00" value="10"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="11:00" value="11"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="12:00" value="12"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="13:00" value="13"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="14:00" value="14"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="15:00" value="15"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="16:00" value="16"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="17:00" value="17"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="18:00" value="18"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="19:00" value="19"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="20:00" value="20"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="21:00" value="21"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="22:00" value="22"></v-checkbox>
-                      <v-checkbox v-model="slotItems[i]" label="23:00" value="23"></v-checkbox>
-                    </v-col>
-                  </v-card>
-                  <br>
+        <v-row align="center" justify="center" no-gutters>
+          <template v-for="(slot, i) in slots">
+            <v-col :key="`slot-${i}`">
+              <v-card class="mx-auto" max-width="110" :value="slot">
+                <h2 class="timeslotName">
+                  {{
+                  createdEvent.eventDates[i][2] + " " + months[createdEvent.eventDates[i][1]].slice(0, 3)
+                  }}
+                </h2>
+                <v-col>
+                  <template v-for="n in 24">
+                    <label
+                      class="checkbox-label"
+                      :key="`checkbox-label-${n}`"
+                      :for="`checkbox-${n}`"
+                    >
+                      {{numbering(n)}}:00
+                      <input
+                        :key="`checkbox-${n}`"
+                        type="checkbox"
+                        :id="`checkbox-${n}`"
+                        :value="n-1"
+                        v-model="checkedNames"
+                        class="checkbox"
+                      >
+                      <span class="checkmark"></span>
+                    </label>
+                  </template>
+                  <!-- <v-checkbox v-model="slotItems[i]" label="00:00" value="0"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="01:00" value="1"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="02:00" value="2"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="03:00" value="3"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="04:00" value="4"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="05:00" value="5"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="06:00" value="6"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="07:00" value="7"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="08:00" value="8"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="09:00" value="9"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="10:00" value="10"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="11:00" value="11"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="12:00" value="12"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="13:00" value="13"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="14:00" value="14"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="15:00" value="15"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="16:00" value="16"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="17:00" value="17"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="18:00" value="18"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="19:00" value="19"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="20:00" value="20"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="21:00" value="21"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="22:00" value="22"></v-checkbox>
+                  <v-checkbox v-model="slotItems[i]" label="23:00" value="23"></v-checkbox>-->
                 </v-col>
-              </template>
-            </v-row>
+              </v-card>
+              <br>
+            </v-col>
           </template>
-          <br>
-          <v-row justify="center">
-            <v-btn :disabled="!valid" color="success" class="mr-4" @click="processFormSecond">Save</v-btn>
-            <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn>
-            <v-btn to="/" color="primary">Back Home</v-btn>
-          </v-row>
-        </v-form>
+        </v-row>
+        <br>
+        <v-row justify="center">
+          <v-btn :disabled="!valid" color="success" class="mr-4" @click="processFormSecond">Save</v-btn>
+          <!-- <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn> -->
+          <v-btn to="/" color="primary">Back Home</v-btn>
+        </v-row>
       </v-card-text>
     </v-card>
-    <v-card class="mx-auto" max-width="400" v-if="answer">
+    <v-card class="mx-auto" max-width="360" v-if="answer">
       <v-card-text>
         <h3>{{ answer }}</h3>
       </v-card-text>
@@ -146,8 +173,12 @@ export default {
     this.color = "#3f51b5";
   },
   methods: {
-    reset() {
-      this.$refs.form.reset();
+    reset() {},
+    numbering(n) {
+      if (n < 10) {
+        return `0${n}`;
+      }
+      return n;
     },
     processFormFirst() {
       if (
@@ -189,26 +220,28 @@ export default {
           eventEnd: this.dates[1]
         };
 
-        this.axios
-            .post("https://chingutime.herokuapp.com/api/events/create",{
-              title: this.createdEvent.eventName,
-              details: "Test event created for chingu vue",
-              color: this.createdEvent.eventColor,
-              possibleDays: this.datesFormatter()
-              // start: this.createdEvent.eventStart,
-              // end: this.createdEvent.eventEnd
-            },
-            {
-              headers: {
-                "x-access-token": this.usertoken
-              }
-            }
-          )
-          .then(
-            response =>
-              (this.createdEvent.eventId = response.data.msg.slice(-24))
-          )
-          .catch(error => (console.log(error), (this.answer = error)));
+        // this.axios
+        //   .post(
+        //     "https://chingutime.herokuapp.com/api/events/create",
+        //     {
+        //       title: this.createdEvent.eventName,
+        //       details: "Test event created for chingu vue",
+        //       color: this.createdEvent.eventColor,
+        //       possibleDays: this.datesFormatter()
+        //       // start: this.createdEvent.eventStart,
+        //       // end: this.createdEvent.eventEnd
+        //     },
+        //     {
+        //       headers: {
+        //         "x-access-token": this.usertoken
+        //       }
+        //     }
+        //   )
+        //   .then(
+        //     response =>
+        //       (this.createdEvent.eventId = response.data.msg.slice(-24))
+        //   )
+        //   .catch(error => (console.log(error), (this.answer = error)));
 
         this.slots = this.createdEvent.eventDates.length;
         for (let index = 0; index < this.slots; index++) {
@@ -216,11 +249,12 @@ export default {
         }
 
         this.eventFirstValidate = true;
+        this.answer = null;
       }
     },
     processFormSecond() {
       this.createdEvent.eventTimeslots = this.slotItems;
-      
+
       // console.log(
       //   this.axios
       //     .post(
@@ -275,7 +309,7 @@ export default {
   }
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .v-input--selection-controls {
   margin-top: 0px;
   padding-top: 4px;
@@ -286,5 +320,89 @@ export default {
 .timeslotName {
   text-align: center;
   padding-top: 10px;
+}
+.input {
+  color: black;
+  display: block;
+  border: 1px solid black;
+  max-width: 600px;
+  width: 290px;
+  border-radius: 3px;
+  padding: 10px 5px;
+  margin: 0 auto 10px auto;
+  font-size: 18px;
+  &-long {
+    width: 100%;
+  }
+}
+
+//-----------------------------------------
+
+/* The checkbox-label */
+.checkbox-label {
+  display: block;
+  position: relative;
+  padding: 1px 0 0 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox-label:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox-label input:checked ~ .checkmark {
+  background-color: #2196F3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox-label .checkmark:after {
+  left: 9px;
+  top: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 </style>

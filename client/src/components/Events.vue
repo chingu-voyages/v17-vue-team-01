@@ -11,8 +11,8 @@
               <v-list-item :inactive="inactive" v-for="(event, i) in events" :key="i">
                 <v-list-item-content class="text-left">
                   <v-list-item-title>
-                    <v-btn color="orange lighten-2" :to="eventLink(event[0])">View</v-btn>
-                    {{ event[1] }}
+                    <v-btn color="orange lighten-2" :to="eventLink(event._id)">View</v-btn>
+                    {{ event.title }}
                   </v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>
@@ -42,10 +42,10 @@
           <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
             <v-list-item-group v-model="event" v-if="user" color="primary">
               <v-list-item :inactive="inactive" v-for="(event, i) in events" :key="i">
-                <v-list-item-content class="text-left" v-if="event[2] == true">
+                <v-list-item-content class="text-left" v-if="event.scheduled == true">
                   <v-list-item-title>
-                    <v-btn color="deep-purple lighten-2" :to="eventLink(event)">View</v-btn>
-                    {{ event[1] }}
+                    <v-btn color="deep-purple lighten-2" :to="eventLink(event._id)">View</v-btn>
+                    {{ event.title }}
                   </v-list-item-title>
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>
@@ -77,12 +77,12 @@ export default {
   }),
   mounted() {
     if (this.user) {
-      this.events = this.user[1];
+      this.events = this.user.events;
     }
   },
   beforeUpdate() {
     if (this.user) {
-      this.events = this.user[1];
+      this.events = this.user.events;
     } else {
       this.events = null;
     }
