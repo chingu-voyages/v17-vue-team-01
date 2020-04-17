@@ -2,28 +2,110 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card class="mx-auto" max-width="360">
+        <v-card v-if="eventPart && advisableTimeslots" class="mx-auto" max-width="360">
             <h1 class="leftMargin">Event Actions</h1>
             <p class="leftMargin" v-if="user.username == eventPart.users[0].username"> You are the event creator </p>
-          
-            <v-input class="leftMargin">
-            <input
-              class="input"
-              v-on:keyup.enter="getToken"
-              type="text"
-              name="username"
-              v-model="username"
-              placeholder="Username"
+            <span v-if="eventPart.scheduled == false">
+            <v-divider></v-divider>
+            <v-card-text>   
+              <input
+                class="input"
+                v-on:keyup.enter="addUser"
+                type="text"
+                name="username"
+                v-model="username"
+                placeholder="Username"
+              >
+            </v-card-text>
+            <v-card-actions class="justify-center topNegativeMargin">
+              <v-btn @click="addUser" class="center" color="success">Add user</v-btn>
+            </v-card-actions>
+            <v-divider></v-divider>
+            <v-card-text v-if="eventPart.users.length > 1">   
+              <v-dialog
+              ref="dialog"
+              v-model="modal"
+              :return-value.sync="date"
+              persistent
+              width="290px"
             >
-            <v-btn @click="addUser" class="leftMargin mb-4 mr-4" color="success">Add user</v-btn>
-            </v-input>
-            <v-input class="leftMargin" v-if="eventPart && user.username == eventPart.users[0].username">
-                <select class="input" placeholder="Users" label="Users">
-                <option disabled value="">Please select User</option>
-                <option v-for="user in eventPart.users" :value="user.username" :key="user">{{user.username}}</option>
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="date"
+                label="Select date to schedule"
+                readonly
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="date" @input="$refs.dialog.save(date); modal = false" :min="eventPart.possibleDays[0]" :max="eventPart.possibleDays[1]">
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="modal = false">Cancel</v-btn>
+              <!--<v-btn text color="primary" @click="$refs.dialog.save(date)">OK</v-btn>-->
+            </v-date-picker>
+            </v-dialog>
+       
+        <v-menu
+        ref="menu"
+        v-model="menu2"
+        :close-on-content-click="false"
+        :nudge-right="40"
+        transition="scale-transition"
+        offset-y
+        max-width="290px"
+        min-width="290px"
+      >
+        <template v-slot:activator="{ on }">
+          <v-text-field
+            
+            label="Select time to schedule"
+            readonly
+            v-on="on"
+            :value="time"
+          ></v-text-field>
+        </template>
+        <v-time-picker
+          v-if="menu2"
+   
+          full-width
+          format="24hr"
+          :value="time"
+          @click:hour="closePicker"
+        ></v-time-picker>
+      </v-menu>
+        
+      <v-slider
+        v-model="numberHours"
+        min="1"
+        max="5"
+        label="Event Hours"
+        :thumb-size="16"
+        thumb-label="always"
+      ></v-slider>
+
+          </v-card-text>
+            <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1">
+              <v-btn @click="schedule" class="center" color="primary">Schedule Event</v-btn>
+            </v-card-actions>
+            <v-divider></v-divider>
+            <v-card-text v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1"> 
+                <select v-model="userDelete" class="input" placeholder="Users" label="Users">
+                <option disabled value>Please select User</option>
+                <option v-for="userDel in eventPart.users.slice(1)" :value="userDel.username" :key="userDel">{{userDel.username}}</option>
                 </select>
-                <v-btn @click="removeUser" class="leftMargin mr-4" color="warning">Rem user</v-btn>
-            </v-input>
+            </v-card-text> 
+            <v-card-actions class="justify-center topNegativeMargin" v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1">
+              <v-btn @click="removeUser" class="center" color="warning">Remove user</v-btn>
+            </v-card-actions>
+            </span>
+            <span v-else>
+              <p class="leftMargin"> This event {{eventPart.title}} is already scheduled! </p>
+              <p class="leftMargin"> Its scheduled date and time is: {{eventPart.start}} </p>
+            </span>  
+            <v-divider></v-divider>
+            <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
+                <v-btn @click="downloadIcs" class="center" color="primary">Download ics</v-btn>
+            </v-card-actions>
+            <v-divider></v-divider>
             <v-card-actions class="justify-center" v-if="user.username == eventPart.users[0].username">
                 <v-btn @click="deleteEvent" class="center" color="red darken-4">Delete Event</v-btn>
             </v-card-actions>
@@ -45,61 +127,150 @@ export default {
   props: {
     eventPart: Object,
     url: String,
+    advisableTimeslots: Array,
   },
   data() {
     return {
       username: null,
       answer: null,
+      userDelete: "",
+      date: null,
+      modal: false,
+      time: null,
+      menu2: false,
+      numberHours: 1
     };
   },
-  mounted() {},
-  watch: {},
+  computed() {},
+  watch: {
+    advisableTimeslots: function () {
+      if(typeof this.advisableTimeslots != "string"){
+        this.date = this.advisableTimeslots[0].substring(0, this.advisableTimeslots[0].indexOf('T'));
+        this.time = this.advisableTimeslots[0].substring(this.advisableTimeslots[0].indexOf('C'), this.advisableTimeslots[0].indexOf('T')+1)+":00";
+      }
+      }
+  },
   methods: {
+    toSnakeCase: str =>
+    str &&
+    str
+      .match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g)
+      .map(x => x.toLowerCase())
+      .join('_'),
+
+    closePicker: function(v){
+      v = v < 10 ? '0'+v : v;
+      
+      this.time = v+":00";
+      this.menu2 = false;
+      //console.log(this.time);
+      //return this.time;
+      //$refs.menu.save(time)
+    },
+
     addUser() {
-      if (!this.username) {
+      if (!this.user.username) {
         this.answer = "Please fill out a username.";
       } else {
-          console.log(this.url);
           const data = {
             event_id: this.url,
             username: this.username
           };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/add", data, {
+          //.post("https://chingutime.herokuapp.com/api/events/add", data, {
+            .post("http://localhost:5000/api/events/add", data, {
               headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
           })
-          .then(response => this.answer = response.data.msg)
+          .then(response => this.handleResponse(response))
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
-    removeUser(username) {
-      if (!this.username) {
-        this.answer = "Please fill out a username.";
+    
+    removeUser() {
+      console.log(this.userDelete);
+      if (this.userDelete == "Please select a user to remove" || !this.userDelete) {
+        this.answer = "Please select a user to remove.";
       } else {
           console.log(this.url);
           const data = {
             event_id: this.url,
-            username: this.username
+            username: this.userDelete
           };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/remove", data, {
+          //.post("https://chingutime.herokuapp.com/api/events/remove", data, {
+            .post("http://localhost:5000/api/events/remove", data, {
               headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
           })
-          .then(response => this.answer = response.data.msg)
+          .then(response => this.handleResponse(response))
           .catch(error => (console.log(error), (this.answer = error)));
+      }
+    },
+    handleResponse(response) {
+      if (response.data.success == true) {
+        this.answer = response.data.msg.replace(this.url, this.eventPart.title);
+        location.reload();
+      } else {
+        this.answer = response.data.msg;
       }
     },
     deleteEvent() {
+      let confirmation = confirm("Are you sure you want to delete this event?");
+      if (confirmation == true) {
         const data = {
         event_id: this.url,
         };
         this.axios
-            .post("https://chingutime.herokuapp.com/api/events/delete", data, {
+            //.post("https://chingutime.herokuapp.com/api/events/delete", data, {
+              .post("http://localhost:5000/api/events/delete", data, {
                 headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
             })
-            .then(response => this.answer = response.data.msg)
+            .then(response => this.$router.push({ name: 'Home', params: { user: this.user } }))
             .catch(error => (console.log(error), (this.answer = error)));
+      }
     },
+    schedule() {
+      //console.log(this.toSnakeCase(this.eventPart.title));
+      if (!this.date || !this.time) {
+        this.answer = "Please fill out all the fields to schedule the event.";
+      } else {
+      let confirmation = confirm("Are you sure you want to schedule this event?");
+      if (confirmation == true) {
+        let start = this.date + " " + this.time + ":00";
+        let end = this.date + " " + (parseInt(this.time.replace(":00", "")) + this.numberHours) + ":00:00";
+        //missing fringe case! Of start in one day and finishes on another
+        const data = {
+        event_id: this.url,
+        scheduled: 'true',
+        start: start, 
+        end: end
+        };
+        this.axios
+            //.post("https://chingutime.herokuapp.com/api/events/update", data, {
+              .post("http://localhost:5000/api/events/update", data, {
+                headers: {
+                  "x-access-token": localStorage.getItem("usertoken").replace(/"/g, ""),
+                  'Accept': 'application/octet-stream',
+                },
+                responseType: 'blob',
+            })
+            .then(response => {
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'ChinguTime_'+this.toSnakeCase(this.eventPart.title)+'_'+this.date+'.ics');
+              document.body.appendChild(link);
+              link.click();
+              this.answer = "Congrats, event "+this.eventPart.title+" is scheduled! Here you have you ics file.";
+              this.$router.push({ name: 'Home', params: { user: this.user } })
+            })
+            .catch(error => (console.log(error), (this.answer = error)));
+      }
+      }
+    },
+
+    downloadIcs() {
+      //still to be done, maybe a new route to BE?
+    }
   }
 };
 </script>
@@ -107,6 +278,9 @@ export default {
 <style lang="scss">
 .leftMargin {
   margin-left: 15px;
+}
+.topNegativeMargin {
+  margin-top: -15px;
 }
 .input {
   color: black;

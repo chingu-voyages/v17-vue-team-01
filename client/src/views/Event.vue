@@ -2,7 +2,7 @@
   <v-row class="mb-6">
     <v-col cols="12" md="4">
       <v-card class="pa-2" outlined tile>
-        <ActionsEvent :url="url" :eventPart="eventPart"/>
+        <ActionsEvent :url="url" :eventPart="eventPart" :advisableTimeslots="advisableTimeslots"/>
       </v-card>
     </v-col>
     <v-col cols="12" md="8">
@@ -55,7 +55,8 @@ export default {
     //console.log(localStorage.getItem("usertoken").replace(/"/g, ""));
     if (this.user) {
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
+        //.get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
+          .get(`http://localhost:5000/api/events/show/${this.url}`, {
           headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
         })
         .then(response => (this.event = response.data)) //(this.event = response.data))
