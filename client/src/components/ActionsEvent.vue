@@ -60,7 +60,7 @@
             label="Select time to schedule"
             readonly
             v-on="on"
-            :value="time"
+            :value="parseInt(time)+user.TZ"
           ></v-text-field>
         </template>
         <v-time-picker
