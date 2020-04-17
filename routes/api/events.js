@@ -338,10 +338,10 @@ router.post('/update', (req, res) => {
           const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
           writeFileSync(filename + '.ics', value);
         });
-      });
         console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
         const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
         return res.download(filename + '.ics');
+      });
       }
       else{
         return res.status(200).json({

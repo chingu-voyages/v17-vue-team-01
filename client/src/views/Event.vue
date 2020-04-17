@@ -2,7 +2,7 @@
   <v-row class="mb-6">
     <v-col cols="12" md="4">
       <v-card class="pa-2" outlined tile>
-        <ActionsEvent :url="url" :eventPart="eventPart"/>
+        <ActionsEvent :url="url" :eventPart="eventPart" :advisableTimeslots="advisableTimeslots"/>
       </v-card>
     </v-col>
     <v-col cols="12" md="8">
