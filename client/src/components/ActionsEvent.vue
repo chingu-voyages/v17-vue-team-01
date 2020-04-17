@@ -2,10 +2,10 @@
   <v-container>
     <v-row>
       <v-col>
-        <v-card v-if="eventPart" class="mx-auto" max-width="360">
+        <v-card v-if="eventPart && advisableTimeslots" class="mx-auto" max-width="360">
             <h1 class="leftMargin">Event Actions</h1>
             <p class="leftMargin" v-if="user.username == eventPart.users[0].username"> You are the event creator </p>
-
+            <span v-if="eventPart.scheduled == false">
             <v-divider></v-divider>
             <v-card-text>   
               <input
@@ -96,6 +96,15 @@
             <v-card-actions class="justify-center topNegativeMargin" v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1">
               <v-btn @click="removeUser" class="center" color="warning">Remove user</v-btn>
             </v-card-actions>
+            </span>
+            <span v-else>
+              <p class="leftMargin"> This event {{eventPart.title}} is already scheduled! </p>
+              <p class="leftMargin"> Its scheduled date and time is: {{eventPart.start}} </p>
+            </span>  
+            <v-divider></v-divider>
+            <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
+                <v-btn @click="downloadIcs" class="center" color="primary">Download ics</v-btn>
+            </v-card-actions>
             <v-divider></v-divider>
             <v-card-actions class="justify-center" v-if="user.username == eventPart.users[0].username">
                 <v-btn @click="deleteEvent" class="center" color="red darken-4">Delete Event</v-btn>
@@ -132,12 +141,15 @@ export default {
       numberHours: 1
     };
   },
-  computed() {
-    //return {
-      //date: "2020-05-01"//this.advisableTimeslots[0].substring(0, this.advisableTimeslots[0].indexOf('T')),
-    //};
+  computed() {},
+  watch: {
+    advisableTimeslots: function () {
+      if(typeof this.advisableTimeslots != "string"){
+        this.date = this.advisableTimeslots[0].substring(0, this.advisableTimeslots[0].indexOf('T'));
+        this.time = this.advisableTimeslots[0].substring(this.advisableTimeslots[0].indexOf('C'), this.advisableTimeslots[0].indexOf('T')+1)+":00";
+      }
+      }
   },
-  watch: {},
   methods: {
     toSnakeCase: str =>
     str &&
@@ -254,6 +266,10 @@ export default {
             .catch(error => (console.log(error), (this.answer = error)));
       }
       }
+    },
+
+    downloadIcs() {
+      //still to be done, maybe a new route to BE?
     }
   }
 };
