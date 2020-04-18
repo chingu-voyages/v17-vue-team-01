@@ -177,8 +177,8 @@ export default {
             username: this.username
           };
         this.axios
-          //.post("https://chingutime.herokuapp.com/api/events/add", data, {
-            .post("http://localhost:5000/api/events/add", data, {
+          .post("https://chingutime.herokuapp.com/api/events/add", data, {
+          //  .post("http://localhost:5000/api/events/add", data, {
               headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
           })
           .then(response => this.handleResponse(response))
@@ -197,8 +197,8 @@ export default {
             username: this.userDelete
           };
         this.axios
-          //.post("https://chingutime.herokuapp.com/api/events/remove", data, {
-            .post("http://localhost:5000/api/events/remove", data, {
+          .post("https://chingutime.herokuapp.com/api/events/remove", data, {
+          //  .post("http://localhost:5000/api/events/remove", data, {
               headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
           })
           .then(response => this.handleResponse(response))
@@ -220,8 +220,8 @@ export default {
         event_id: this.url,
         };
         this.axios
-            //.post("https://chingutime.herokuapp.com/api/events/delete", data, {
-              .post("http://localhost:5000/api/events/delete", data, {
+            .post("https://chingutime.herokuapp.com/api/events/delete", data, {
+            //  .post("http://localhost:5000/api/events/delete", data, {
                 headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
             })
             .then(response => this.$router.push({ name: 'Home', params: { user: this.user } }))
@@ -245,8 +245,8 @@ export default {
         end: end
         };
         this.axios
-            //.post("https://chingutime.herokuapp.com/api/events/update", data, {
-              .post("http://localhost:5000/api/events/update", data, {
+            .post("https://chingutime.herokuapp.com/api/events/update", data, {
+            //  .post("http://localhost:5000/api/events/update", data, {
                 headers: {
                   "x-access-token": localStorage.getItem("usertoken").replace(/"/g, ""),
                   'Accept': 'application/octet-stream',

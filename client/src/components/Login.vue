@@ -58,8 +58,8 @@ export default {
         this.answer = "Please fill out all the fields.";
       } else {
         this.axios
-          //.post("https://chingutime.herokuapp.com/api/users/login", {
-            .post("http://localhost:5000/api/users/login", {
+          .post("https://chingutime.herokuapp.com/api/users/login", {
+            //.post("http://localhost:5000/api/users/login", {
             username: this.username,
             password: this.password
           })
@@ -78,8 +78,8 @@ export default {
     tokenReceived(value) {
       localStorage.setItem("usertoken", value);
       this.axios
-        //.get("https://chingutime.herokuapp.com/api/users/profile", {
-          .get("http://localhost:5000/api/users/profile", {
+        .get("https://chingutime.herokuapp.com/api/users/profile", {
+          //.get("http://localhost:5000/api/users/profile", {
           headers: { "x-access-token": value }
         })
         .then(
