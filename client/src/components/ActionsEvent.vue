@@ -30,12 +30,12 @@
               width="290px"
             >
             <template v-slot:activator="{ on }">
-              <v-text-field
+              <input
+                class="input"
                 v-model="date"
                 label="Select date to schedule"
-                readonly
                 v-on="on"
-              ></v-text-field>
+              />
             </template>
             <v-date-picker v-model="date" @input="$refs.dialog.save(date); modal = false" :min="eventPart.possibleDays[0]" :max="eventPart.possibleDays[1]">
               <v-spacer></v-spacer>
@@ -55,13 +55,12 @@
         min-width="290px"
       >
         <template v-slot:activator="{ on }">
-          <v-text-field
-            
+          <input
+            class="input"
             label="Select time to schedule"
-            readonly
             v-on="on"
-            :value="time"
-          ></v-text-field>
+            :value="parseInt(time)+user.TZ"
+          />
         </template>
         <v-time-picker
           v-if="menu2"
