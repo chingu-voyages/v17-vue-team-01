@@ -33,7 +33,7 @@
               <input
                 class="input"
                 v-model="date"
-                label="Select date to schedule"
+                placeholder="Select date to schedule"
                 v-on="on"
               />
             </template>
@@ -57,14 +57,13 @@
         <template v-slot:activator="{ on }">
           <input
             class="input"
-            label="Select time to schedule"
+            placeholder="Select time to schedule"
             v-on="on"
-            :value="parseInt(time)+user.TZ"
+            :value="time"
           />
         </template>
         <v-time-picker
           v-if="menu2"
-   
           full-width
           format="24hr"
           :value="time"
@@ -72,14 +71,7 @@
         ></v-time-picker>
       </v-menu>
         
-      <v-slider
-        v-model="numberHours"
-        min="1"
-        max="5"
-        label="Event Hours"
-        :thumb-size="16"
-        thumb-label="always"
-      ></v-slider>
+      
 
           </v-card-text>
             <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1">
@@ -137,7 +129,7 @@ export default {
       modal: false,
       time: null,
       menu2: false,
-      numberHours: 1
+      numberHours: 1 //currently hardcoded to 1 as v-slider is not working
     };
   },
   computed() {},
@@ -145,9 +137,22 @@ export default {
     advisableTimeslots: function () {
       if(typeof this.advisableTimeslots != "string"){
         this.date = this.advisableTimeslots[0].substring(0, this.advisableTimeslots[0].indexOf('T'));
-        this.time = this.advisableTimeslots[0].substring(this.advisableTimeslots[0].indexOf('C'), this.advisableTimeslots[0].indexOf('T')+1)+":00";
+        this.time = parseInt(this.advisableTimeslots[0].substring(this.advisableTimeslots[0].indexOf('C'), this.advisableTimeslots[0].indexOf('T')+1))+this.user.TZ;
+        if(this.time < 0){
+          this.time += 24;
+          let dateDay = new Date(this.date);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+          this.date = newDate.getFullYear() + '-' + ('0' + (newDate.getMonth()+1)).slice(-2) + '-' + (newDate.getDate());
+        }
+        if(this.time > 24){
+          this.time -= 24;
+          let dateDay = new Date(this.date);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+          this.date = newDate.getFullYear() + '-' + ('0' + (newDate.getMonth()+1)).slice(-2) + '-' + (newDate.getDate());
+        }
+        this.time += ":00"; 
       }
-      }
+    }
   },
   methods: {
     toSnakeCase: str =>
@@ -235,8 +240,14 @@ export default {
       let confirmation = confirm("Are you sure you want to schedule this event?");
       if (confirmation == true) {
         let start = this.date + " " + this.time + ":00";
-        let end = this.date + " " + (parseInt(this.time.replace(":00", "")) + this.numberHours) + ":00:00";
-        //missing fringe case! Of start in one day and finishes on another
+        let timeEnd = parseInt(this.time.replace(":00", "")) + this.numberHours;
+        if(timeEnd > 24){
+          timeEnd -= 24;
+          let dateDay = new Date(this.date);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+          this.date = newDate.getFullYear() + '-' + ('0' + (newDate.getMonth()+1)).slice(-2) + '-' + (newDate.getDate());
+        }
+        let end = this.date + " " + timeEnd + ":00:00";
         const data = {
         event_id: this.url,
         scheduled: 'true',
