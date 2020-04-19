@@ -1,11 +1,13 @@
 <template>
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
-      <p>Event: {{ eventPart }}</p>
-      <p>Route: /event/{{ url }}</p>
+      <!-- <p>Event: {{ eventPart }}</p>
+      <p>Route: /event/{{ url }}</p> -->
       <p>Event title: {{ eventPart.title }}</p>
+
       <p>Users:</p>
-      <v-list :shaped="shaped">
+      
+      <!-- <v-list :shaped="shaped">
         <v-list-item-group v-model="event" color="primary">
           <v-list-item :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
             <v-list-item-content class="text-left">
@@ -16,9 +18,30 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
+      </v-list> -->
+      
+      <v-list :shaped ="shaped">
+      <div>
+        <span class="mr-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">{{ participants.username }}</span>
+      </div>
       </v-list>
-      <v-list :shaped="shaped">
-      <p>Timeslots:</p>
+      
+      <p class="mt-5">Pending Timeslots:</p>
+      
+      <v-list :shaped ="shaped">
+      <div>
+        <v-row>
+        <span class="mx-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
+          {{ participants.username }}
+          <span class="mx-5 mb-8" :inactive="inactive" v-for="(timeslot, i) in changeToUserTZ" :key="i">
+            <v-col>{{ timeslot.day }} - {{ timeslot.time }}:00</v-col>
+          </span>
+        </span>  
+        </v-row>    
+      </div>
+      </v-list>
+     
+      <!-- <v-list :shaped="shaped">
       <v-list-item-group v-model="event" color="primary">
           <v-list-item :inactive="inactive" v-for="(timeslot, i) in changeToUserTZ" :key="i">
             <v-list-item-content class="text-left">
@@ -29,7 +52,8 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
-      </v-list>
+      </v-list> -->
+      
     </v-sheet>
 
 
