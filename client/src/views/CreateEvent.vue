@@ -238,9 +238,6 @@ export default {
         }
       }
 
-      console.log(this.createdEvent.eventId, this.createdEvent.eventTimeslots);
-      
-
       this.axios
         .post(
           "https://chingutime.herokuapp.com/api/timeslots/create",
