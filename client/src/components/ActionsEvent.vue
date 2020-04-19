@@ -33,7 +33,7 @@
               <input
                 class="input"
                 v-model="date"
-                label="Select date to schedule"
+                placeholder="Select date to schedule"
                 v-on="on"
               />
             </template>
@@ -57,14 +57,13 @@
         <template v-slot:activator="{ on }">
           <input
             class="input"
-            label="Select time to schedule"
+            placeholder="Select time to schedule"
             v-on="on"
             :value="parseInt(time)+user.TZ"
           />
         </template>
         <v-time-picker
           v-if="menu2"
-   
           full-width
           format="24hr"
           :value="time"
@@ -135,7 +134,7 @@ export default {
       userDelete: "",
       date: null,
       modal: false,
-      time: null,
+      time: "",
       menu2: false,
       numberHours: 1
     };
