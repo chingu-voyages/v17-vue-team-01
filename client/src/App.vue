@@ -37,32 +37,16 @@ export default {
   data: () => ({}),
   watch: {},
   mounted() {
-    if (this.usertoken) {
-      this.axios
-        .get("https://chingutime.herokuapp.com/api/users/profile", {
-          //.get("http://localhost:5000/api/users/profile", {
-          headers: { "x-access-token": this.usertoken }
-        })
-        .then(response => this.userUpdate(response));
-    }
+    // 
   },
   methods: {
     logout() {
       this.$store.clearAll();
-      //this.user = null;
-      //location.reload();
       if(this.$route.path != "/"){
         this.$router.push({ name: 'Home', params: { user: this.user } });
         location.reload();
       }
       else{
-        location.reload();
-      }
-      
-    },
-    userUpdate(response) {      
-      if (!_.isEqual(this.user, response.data)) {  
-        localStorage.setItem("user", JSON.stringify(response.data));
         location.reload();
       }
     }
