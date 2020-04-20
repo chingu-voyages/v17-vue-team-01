@@ -1,13 +1,11 @@
 <template>
   <v-row class="mb-6">
     <v-col cols="12" md="4">
-      <v-card class="pa-2" outlined tile>
-        <ActionsEvent :url="url" :eventPart="eventPart" :advisableTimeslots="advisableTimeslots"/>
-      </v-card>
+      <ActionsEvent :url="url" :eventPart="eventPart" :advisableTimeslots="advisableTimeslots"/>
     </v-col>
     <v-col cols="12" md="8">
-       <DisplayEvent 
-        :eventPart="eventPart" 
+      <DisplayEvent
+        :eventPart="eventPart"
         :timeslotPart="timeslotPart"
         :advisableTimeslots="advisableTimeslots"
         :userPart="userPart"
@@ -28,7 +26,6 @@ export default {
     DisplayEvent
   },
   created() {
-    
     this.url = this.$route.params.id;
     //console.log(this.url);
   },
@@ -39,7 +36,7 @@ export default {
         this.eventPart = this.event[0];
         this.timeslotPart = this.event[1];
         this.advisableTimeslots = this.event[2];
-       }
+      }
     }
   },
   data: () => ({
@@ -57,7 +54,11 @@ export default {
       this.axios
         .get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
           //.get(`http://localhost:5000/api/events/show/${this.url}`, {
-          headers: { "x-access-token": localStorage.getItem("usertoken").replace(/"/g, "") }
+          headers: {
+            "x-access-token": localStorage
+              .getItem("usertoken")
+              .replace(/"/g, "")
+          }
         })
         .then(response => (this.event = response.data)) //(this.event = response.data))
         .catch(error => (console.log(error), (this.answer = error)));

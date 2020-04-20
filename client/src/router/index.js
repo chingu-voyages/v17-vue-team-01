@@ -35,6 +35,10 @@ const routes = [
     {
         path: "/event/:id",
         name: "Event",
+        beforeEnter: (to, from, next) => {
+            if (localStorage.getItem("user") === "null") next({ name: "Home" });
+            else next();
+        },
         component: () => import("../views/Event.vue")
     }
 ];
