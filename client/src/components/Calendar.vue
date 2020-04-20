@@ -62,20 +62,21 @@
         >
           <v-card color="grey lighten-4" flat>
             <v-toolbar :color="selectedEvent.color" dark>
-              <v-btn icon>
-                <v-icon>mdi-pencil</v-icon>
-              </v-btn>
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-              <v-spacer></v-spacer>
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-              <v-btn icon>
-                <v-icon>mdi-dots-vertical</v-icon>
-              </v-btn>
             </v-toolbar>
             <v-card-text>
-              <span v-html="selectedEvent.details"></span>
+              <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
+                <v-list-item-group color="primary">
+                  <template v-for="user in selectedEvent.users">
+                    <v-list-item :inactive="inactive" :key="user">
+                      <v-list-item-content class="text-left">
+                        <v-list-item-title>{{ user }}</v-list-item-title>
+                        <v-list-item-subtitle></v-list-item-subtitle>
+                      </v-list-item-content>
+                    </v-list-item>
+                  </template>
+                </v-list-item-group>
+              </v-list>
             </v-card-text>
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">Cancel</v-btn>
@@ -88,8 +89,6 @@
 </template>
 
 <script>
-import data from "../plugins/events.json";
-
 export default {
   name: "Calendar",
   data: () => ({
@@ -97,7 +96,9 @@ export default {
     weekdays: [1, 2, 3, 4, 5, 6, 0],
     type: "month",
     value: "",
-    events: data,
+    events: [],
+    eventIDs: [],
+    serverResponse: [],
     typeToLabel: {
       month: "Month",
       week: "Week",
@@ -120,7 +121,33 @@ export default {
   mounted() {
     this.today = this.getTodayDate();
     this.value = this.today;
-    this.$refs.calendar.checkChange();
+    for (let i = 0; i < this.user.events.length; i++) {
+      if ((this.user.events[i].scheduled = true)) {
+        this.eventIDs.push(this.user.events[i]["_id"]);
+      }
+    }
+    for (let j = 0; j < this.eventIDs.length; j++) {
+      this.axios
+        .get(
+          `https://chingutime.herokuapp.com/api/events/show/${
+            this.eventIDs[j]
+          }`,
+          {
+            //.get(`http://localhost:5000/api/events/show/${this.url}`, {
+            headers: {
+              "x-access-token": localStorage
+                .getItem("usertoken")
+                .replace(/"/g, "")
+            }
+          }
+        )
+        .then(
+          response => (
+            this.serverResponse.push(response.data), this.checkFinish(j)
+          )
+        )
+        .catch(error => (console.log(error), (this.answer = error)));
+    }
   },
   methods: {
     title(value) {
@@ -160,6 +187,30 @@ export default {
       var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
       var yyyy = today.getFullYear();
       return yyyy + "-" + mm + "-" + dd;
+    },
+    checkFinish() {
+      if (this.eventIDs.length == this.serverResponse.length) {
+        for (let i = 0; i < this.serverResponse.length; i++) {
+          this.events.push({
+          color: this.serverResponse[i][0].color,
+          end: this.transformTimestamp(this.serverResponse[i][0].end),
+          name: this.serverResponse[i][0].title,
+          start: this.transformTimestamp(this.serverResponse[i][0].start),
+          users: this.transformUsers(this.serverResponse[i][0].users)
+        });
+        }
+        
+      }
+    },
+    transformTimestamp(input) {
+      return input.slice(0,10) + " " + input.slice(11,16)
+    },
+    transformUsers(input) {
+      let result = [];
+      for (let i = 0; i < input.length; i++) {
+        result.push(input[i].username);
+      }
+      return result
     }
   }
 };
