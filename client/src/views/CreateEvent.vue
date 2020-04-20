@@ -62,45 +62,21 @@
                   <template v-for="n in 24">
                     <label
                       class="checkbox-label"
-                      :key="`checkbox-label-${n}`"
-                      :for="`checkbox-${n}`"
+                      :key="`checkbox-label-${i}-${n}`"
+                      :for="`checkbox-${i}-${n}`"
                     >
-                      {{numbering(n)}}:00
+                      {{numbering(n-1)}}:00
                       <input
-                        :key="`checkbox-${n}`"
+                        :key="`checkbox-${i}-${n}`"
                         type="checkbox"
-                        :id="`checkbox-${n}`"
+                        :id="`checkbox-${i}-${n}`"
                         :value="n-1"
-                        v-model="checkedNames"
+                        v-model="slotItems[i]"
                         class="checkbox"
                       >
                       <span class="checkmark"></span>
                     </label>
                   </template>
-                  <!-- <v-checkbox v-model="slotItems[i]" label="00:00" value="0"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="01:00" value="1"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="02:00" value="2"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="03:00" value="3"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="04:00" value="4"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="05:00" value="5"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="06:00" value="6"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="07:00" value="7"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="08:00" value="8"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="09:00" value="9"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="10:00" value="10"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="11:00" value="11"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="12:00" value="12"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="13:00" value="13"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="14:00" value="14"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="15:00" value="15"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="16:00" value="16"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="17:00" value="17"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="18:00" value="18"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="19:00" value="19"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="20:00" value="20"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="21:00" value="21"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="22:00" value="22"></v-checkbox>
-                  <v-checkbox v-model="slotItems[i]" label="23:00" value="23"></v-checkbox>-->
                 </v-col>
               </v-card>
               <br>
@@ -111,7 +87,7 @@
         <v-row justify="center">
           <v-btn :disabled="!valid" color="success" class="mr-4" @click="processFormSecond">Save</v-btn>
           <!-- <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn> -->
-          <v-btn to="/" color="primary">Back Home</v-btn>
+          <v-btn to="/" color="primary" v-if="!eventFirstValidate">Back Home</v-btn>
         </v-row>
       </v-card-text>
     </v-card>
@@ -131,7 +107,6 @@ export default {
     dates: [null, null],
     name: null,
     color: null,
-    colorValue: null,
     answer: null,
     eventFirstValidate: false,
     slots: null,
@@ -143,7 +118,7 @@ export default {
       eventStart: null,
       eventEnd: null,
       eventColor: null,
-      eventTimeslots: {}
+      eventTimeslots: []
     },
     months: [
       "",
@@ -220,28 +195,26 @@ export default {
           eventEnd: this.dates[1]
         };
 
-        // this.axios
-        //   .post(
-        //     "https://chingutime.herokuapp.com/api/events/create",
-        //     {
-        //       title: this.createdEvent.eventName,
-        //       details: "Test event created for chingu vue",
-        //       color: this.createdEvent.eventColor,
-        //       possibleDays: this.datesFormatter()
-        //       // start: this.createdEvent.eventStart,
-        //       // end: this.createdEvent.eventEnd
-        //     },
-        //     {
-        //       headers: {
-        //         "x-access-token": this.usertoken
-        //       }
-        //     }
-        //   )
-        //   .then(
-        //     response =>
-        //       (this.createdEvent.eventId = response.data.msg.slice(-24))
-        //   )
-        //   .catch(error => (console.log(error), (this.answer = error)));
+        this.axios
+          .post(
+            "https://chingutime.herokuapp.com/api/events/create",
+            {
+              title: this.createdEvent.eventName,
+              details: "Test event created for chingu vue",
+              color: this.createdEvent.eventColor,
+              possibleDays: this.datesFormatter(this.createdEvent.eventDates)
+            },
+            {
+              headers: {
+                "x-access-token": this.usertoken
+              }
+            }
+          )
+          .then(
+            response =>
+              (this.createdEvent.eventId = response.data.msg.slice(-24))
+          )
+          .catch(error => (console.log(error), (this.answer = error)));
 
         this.slots = this.createdEvent.eventDates.length;
         for (let index = 0; index < this.slots; index++) {
@@ -253,34 +226,36 @@ export default {
       }
     },
     processFormSecond() {
-      this.createdEvent.eventTimeslots = this.slotItems;
+      this.createdEvent.eventTimeslots = [];
 
-      // console.log(
-      //   this.axios
-      //     .post(
-      //       "https://chingutime.herokuapp.com/api/events/create",
-      //       {
-      //         title: this.createdEvent.eventName,
-      //         details: "Test event created for chingu vue",
-      //         color: this.createdEvent.eventColor,
-      //         possibleDays: this.datesFormatter()
-      //         // start: this.createdEvent.eventStart,
-      //         // end: this.createdEvent.eventEnd
-      //       },
-      //       {
-      //         headers: {
-      //           "x-access-token": this.usertoken)
-      //         }
-      //       }
-      //     )
-      //     .then(
-      //       response =>
-      //         (this.createdEvent.eventId = response.data.msg.slice(-24), location.reload())
-      //     )
-      //     .catch(error => (console.log(error), (this.answer = error)))
-      // );
+      for (let j = 0; j < this.slotItems.length; j++) {
+        this.createdEvent.eventTimeslots.push([
+          this.datesFormatterArray(this.slotItems[j][0])
+        ]);
 
-      this.eventSecondValidate = true;
+        for (let l = 1; l < this.slotItems[j].length; l++) {
+          this.createdEvent.eventTimeslots[j][l] = this.slotItems[j][l];
+        }
+      }
+
+      this.axios
+        .post(
+          "https://chingutime.herokuapp.com/api/timeslots/create",
+          {
+            "event_id": this.createdEvent.eventId,
+            timeslots: this.createdEvent.eventTimeslots
+          },
+          {
+            headers: {
+              "x-access-token": this.usertoken
+            }
+          }
+        )
+        .then(response => (this.answer = response.data.msg))
+        .catch(error => (console.log(error), (this.answer = error)));
+
+      this.$router.push({ name: "Home" });
+      location.reload()
     },
     dateNames(d1, d2) {
       let oneDay = 24 * 3600 * 1000;
@@ -294,17 +269,22 @@ export default {
       }
       return array;
     },
-    datesFormatter() {
+    datesFormatter(input) {
       let formatted = [];
-      for (
-        let index = 0;
-        index < this.createdEvent.eventDates.length;
-        index++
-      ) {
-        let array = this.createdEvent.eventDates[index];
-        formatted.push(array[0] + "-" + array[1] + "-" + array[2]);
+      for (let index = 0; index < input.length; index++) {
+        let array = input[index];
+        formatted.push(
+          array[0].toString() +
+            "-" +
+            this.numbering(array[1]).toString() +
+            "-" +
+            array[2].toString()
+        );
       }
       return formatted;
+    },
+    datesFormatterArray(input) {
+      return `${input[0].toString()}-${this.numbering(input[1]).toString()}-${input[2].toString()}`
     }
   }
 };
@@ -378,7 +358,7 @@ export default {
 
 /* When the checkbox is checked, add a blue background */
 .checkbox-label input:checked ~ .checkmark {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 /* Create the checkmark/indicator (hidden when not checked) */
