@@ -83,6 +83,14 @@ export default {
     if (this.user) {
       this.events = this.user.events;
     }
+    if (this.usertoken) {
+      this.axios
+        .get("https://chingutime.herokuapp.com/api/users/profile", {
+          //.get("http://localhost:5000/api/users/profile", {
+          headers: { "x-access-token": this.usertoken }
+        })
+        .then(response => this.userUpdate(response));
+    }
   },
   beforeUpdate() {
     if (this.user) {
@@ -94,6 +102,12 @@ export default {
   methods: {
     eventLink(id) {
       return "/event/" + id;
+    },
+    userUpdate(response) {      
+      if (!_.isEqual(this.user, response.data)) {  
+        localStorage.setItem("user", JSON.stringify(response.data));
+        this.user = response.data
+      }
     }
   }
 };
