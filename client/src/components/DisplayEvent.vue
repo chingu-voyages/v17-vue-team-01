@@ -92,13 +92,13 @@ export default {
           let dateDay = new Date(timeslot.day);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
           timeslot.day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
-          timeslot.time = timeslot.time + 24;
+          timeslot.time = timeslot.time + 23;
         }
-        if(timeslot.time > 24){
+        if(timeslot.time > 23){
           let dateDay = new Date(timeslot.day);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
           timeslot.day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
-          timeslot.time = timeslot.time - 24;
+          timeslot.time = timeslot.time - 23;
         }
 
 

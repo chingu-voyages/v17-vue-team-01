@@ -37,7 +37,7 @@
                 v-on="on"
               />
             </template>
-            <v-date-picker v-model="date" @input="$refs.dialog.save(date); modal = false" :min="eventPart.possibleDays[0]" :max="eventPart.possibleDays[1]">
+            <v-date-picker v-model="date" @input="$refs.dialog.save(date); modal = false" :min="eventPart.possibleDays[0]" :max="eventPart.possibleDays[eventPart.possibleDays.lenght-1]">
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="modal = false">Cancel</v-btn>
               <!--<v-btn text color="primary" @click="$refs.dialog.save(date)">OK</v-btn>-->
@@ -144,7 +144,7 @@ export default {
           let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
           this.date = newDate.getFullYear() + '-' + ('0' + (newDate.getMonth()+1)).slice(-2) + '-' + (newDate.getDate());
         }
-        if(this.time > 24){
+        if(this.time > 23){
           this.time -= 24;
           let dateDay = new Date(this.date);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
@@ -241,8 +241,8 @@ export default {
       if (confirmation == true) {
         let start = this.date + " " + this.time + ":00";
         let timeEnd = parseInt(this.time.replace(":00", "")) + this.numberHours;
-        if(timeEnd > 24){
-          timeEnd -= 24;
+        if(timeEnd > 23){
+          timeEnd -= 23;
           let dateDay = new Date(this.date);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
           this.date = newDate.getFullYear() + '-' + ('0' + (newDate.getMonth()+1)).slice(-2) + '-' + (newDate.getDate());
