@@ -272,8 +272,8 @@ export default {
           event_id: this.url
         };
         this.axios
-          //.post("https://chingutime.herokuapp.com/api/events/delete", data, {
-              .post("http://localhost:5000/api/events/delete", data, {
+          .post("https://chingutime.herokuapp.com/api/events/delete", data, {
+              //.post("http://localhost:5000/api/events/delete", data, {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
@@ -324,8 +324,8 @@ export default {
             end: end
           };
           this.axios
-            //.post("https://chingutime.herokuapp.com/api/events/update", data, {
-                .post("http://localhost:5000/api/events/update", data, {
+            .post("https://chingutime.herokuapp.com/api/events/update", data, {
+              //.post("http://localhost:5000/api/events/update", data, {
               headers: {
                 "x-access-token": localStorage
                   .getItem("usertoken")
@@ -363,8 +363,8 @@ export default {
     downloadIcs() {
       console.log(this.eventPart.start.substring(0,13));
       this.axios
-            //.get(`https://chingutime.herokuapp.com/api/events/${this.url}/download`, {
-                .get(`http://localhost:5000/api/events/download/${this.url}`, {
+            .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`, {
+                //.get(`http://localhost:5000/api/events/download/${this.url}`, {
               headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")

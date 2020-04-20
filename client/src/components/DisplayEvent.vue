@@ -159,11 +159,6 @@ export default {
       this.changeToUserTZ.forEach(function (tmsl){ 
         if(i == tmsl.day && n == tmsl.time){
           count++;
-          console.log(count);
-          console.log(i);
-          console.log(n);
-          console.log(tmsl.day);
-          console.log(tmsl.time);
         }
       })
       
