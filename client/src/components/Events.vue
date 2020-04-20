@@ -8,8 +8,9 @@
           </v-toolbar>
           <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
             <v-list-item-group v-model="event" v-if="user" color="primary">
-              <v-list-item :inactive="inactive" v-for="(event, i) in events" :key="i">
-                <v-list-item-content class="text-left" v-if="event.scheduled == false">
+              <template v-for="(event, i) in events">
+              <v-list-item :inactive="inactive" :key="i" v-if="event.scheduled == false">
+                <v-list-item-content class="text-left">
                   <v-list-item-title>
                     <v-btn color="orange lighten-2" :to="eventLink(event._id)">View</v-btn>
                     {{ event.title }}
@@ -17,6 +18,7 @@
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
+              </template>
             </v-list-item-group>
             <v-list-item-group v-model="item" v-else color="primary">
               <v-list-item :inactive="inactive" :key="i">
@@ -41,8 +43,9 @@
           </v-toolbar>
           <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
             <v-list-item-group v-model="event" v-if="user" color="primary">
-              <v-list-item :inactive="inactive" v-for="(event, i) in events" :key="i">
-                <v-list-item-content class="text-left" v-if="event.scheduled == true">
+              <template v-for="(event, i) in events">
+              <v-list-item :inactive="inactive"  :key="i" v-if="event.scheduled == true">
+                <v-list-item-content class="text-left" >
                   <v-list-item-title>
                     <v-btn color="deep-purple lighten-2" :to="eventLink(event._id)">View</v-btn>
                     {{ event.title }}
@@ -50,6 +53,7 @@
                   <v-list-item-subtitle></v-list-item-subtitle>
                 </v-list-item-content>
               </v-list-item>
+              </template>
             </v-list-item-group>
             <v-list-item-group v-model="item" v-else color="primary">
               <v-list-item :inactive="inactive" :key="i">
