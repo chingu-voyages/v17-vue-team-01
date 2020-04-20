@@ -8,8 +8,9 @@ const User = require('../../model/User');
 const Event = require('../../model/Event');
 const Timeslot = require('../../model/Timeslot');
 const mongoose = require('mongoose');
-const { writeFileSync } = require('fs')
-const ics = require('ics')
+const { writeFileSync } = require('fs');
+const fs = require('fs')
+const ics = require('ics');
 
 /**
  * @route POST api/events/create
@@ -117,6 +118,36 @@ router.get('/show/:id', function(req, res)  {
           }
           res.status(200).send([result, timeslots, advisable_timeslots]);
         });
+      });  
+  }); 
+});
+
+/**
+ * @route GET api/events/download
+ * @desc Download ics file for event
+ * @access Public
+ */
+
+router.get('/download/:id', function(req, res)  {
+  let token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  
+  jwt.verify(token, key, function(err, decoded) {
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+
+      let event_id = req.params.id;
+      Event.findOne( {_id: event_id}  ).then((result) => {
+        if (!result) {
+          return res.status(200).json({
+            success: false,
+            msg: "Event not found."
+          });
+        }
+        const filename = result.title.replace(/\s/g, '') + 
+        //'_' + result.start.getFullYear() + (result.start.getMonth()+1) + result.start.getDate() +'T'+ result.start.getHours() +
+        '_' + req.params.id;
+        
+        return res.download(filename + '.ics');
       });  
   }); 
 });
@@ -335,11 +366,15 @@ router.post('/update', (req, res) => {
             console.log(error)
             return
           }
-          const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
+          const filename = doc.title.replace(/\s/g, '') + 
+          //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
+          '_' + params.event_id;
           writeFileSync(filename + '.ics', value);
         });
         console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
-        const filename = doc.title.replace(/\s/g, '') + '_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours();
+        const filename = doc.title.replace(/\s/g, '') + 
+        //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
+        '_' + params.event_id;
         return res.download(filename + '.ics');
       });
       }
@@ -374,6 +409,17 @@ router.post('/delete', (req, res) => {
           msg: "Event not found!"
         });
       }
+      
+      //or if the event is scheduled and older than a week => still to do!
+      //const today = Date.now();
+      //today.setDate(today.getDate()-7);
+      /*if(result.scheduled == true && result.start < today){
+        return res.status(200).json({
+          success: false,
+          msg: "User is not the creator, cannot delete event!"
+        });
+      }*/
+
       //check if it is the first user of the event
       if(result.users[0] != user_id){
         return res.status(200).json({
@@ -406,6 +452,19 @@ router.post('/delete', (req, res) => {
             msg: "Congrats, event " + result.title + " is deleted and removed from each user"
         });
         }) 
+
+        //still has to check if is already schedule, if so, delete ics file
+        const filename = result.title.replace(/\s/g, '') + 
+        //'_' + result.start.getFullYear() + (result.start.getMonth()+1) + result.start.getDate() +'T'+ result.start.getHours() + 
+        '_' + req.body.event_id;
+       
+        //delete the file
+        try {
+          fs.unlinkSync(filename + '.ics')
+          //file removed
+        } catch(err) {
+          console.error(err)
+        }
     });
   });   
 });
