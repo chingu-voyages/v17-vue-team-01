@@ -29,6 +29,7 @@
                 ref="dialog"
                 v-model="modal"
                 :return-value.sync="date"
+                
                 persistent
                 width="290px"
               >
@@ -42,26 +43,24 @@
                 </template>
                 <v-date-picker
                   v-model="date"
-                  scrollable
                   :min="eventPart.possibleDays[0]"
-                  :max="eventPart.possibleDays[1]"
+                  :max="eventPart.possibleDays[eventPart.possibleDays.length-1]"
                 >
                   <v-spacer></v-spacer>
                   <v-btn text color="primary" @click="modal = false">Cancel</v-btn>
                   <v-btn text color="primary" :disabled="!date" @click="dateSelector(input)">OK</v-btn>
                 </v-date-picker>
               </v-dialog>
-
-              <select v-model="time" class="input" placeholder="Select time to schedule" label="Time">
-                <option disabled value>Please select time</option>
+              
+              <select v-model="time" class="input" placeholder="Times" label="Time">
+                <option disabled value>Please select time to schedule</option>
                 <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
               </select>
+              <select v-model="numberHours" class="input" placeholder="numberHours" label="numberHour">
+                <option disabled value>Amount of hours in the event</option>
+                <option v-for="zone1 in zones1" v-bind:value="zone1.number" :key="zone1.number">{{zone1.display}}</option>
+              </select>
 
-              <input
-                v-model="numberHours"
-                class="input"
-                placeholder="Amount of hours in the event"
-              />
             </v-card-text>
             <v-card-actions
               class="justify-center topNegativeMargin"
@@ -92,6 +91,7 @@
           <span v-else>
             <p class="leftMargin">This event {{eventPart.title}} is already scheduled!</p>
             <p class="leftMargin">Its scheduled date and time is: {{eventPart.start}}</p>
+            <p class="leftMargin">And it is scheduled until: {{eventPart.end}}</p>
           </span>
           <v-divider></v-divider>
           <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
@@ -135,10 +135,19 @@ export default {
       modal2: false,
       time: "",
       zones: [
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+        "00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00",
+        "11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00",
+        "21:00","22:00","23:00"
+      ],
+      zones1: [
+        {number:1,display:"For one hour"},
+        {number:2,display:"For two hours"},
+        {number:3,display:"For three hours"},
+        {number:4,display:"For four hours"},
+        {number:5,display:"For five hours"}
       ],
       menu2: false,
-      numberHours: null
+      numberHours: 1 
     };
   },
   computed() {},
@@ -169,7 +178,7 @@ export default {
             "-" +
             newDate.getDate();
         }
-        if (this.time > 24) {
+        if (this.time > 23) {
           this.time -= 24;
           let dateDay = new Date(this.date);
           let newDate = new Date(
@@ -183,6 +192,7 @@ export default {
             newDate.getDate();
         }
         this.time += ":00";
+        this.dateSaved = this.date;
       }
     }
   },
@@ -221,7 +231,6 @@ export default {
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
-
     removeUser() {
       console.log(this.userDelete);
       if (
@@ -264,7 +273,7 @@ export default {
         };
         this.axios
           .post("https://chingutime.herokuapp.com/api/events/delete", data, {
-            //  .post("http://localhost:5000/api/events/delete", data, {
+              //.post("http://localhost:5000/api/events/delete", data, {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
@@ -282,6 +291,9 @@ export default {
     },
     schedule() {
       //console.log(this.toSnakeCase(this.eventPart.title));
+      //console.log(this.dateSaved);
+      //console.log(this.time);
+      //console.log(this.numberHours);
       if (!this.dateSaved || !this.time) {
         this.answer = "Please fill out all the fields to schedule the event.";
       } else {
@@ -290,8 +302,8 @@ export default {
         );
         if (confirmation == true) {
           let start = this.dateSaved + " " + this.time.toString() + ":00";
-          let timeEnd = this.time + this.numberHours;
-          if (timeEnd > 24) {
+          let timeEnd = parseInt(this.time.substring(0,2)) + this.numberHours;
+          if (timeEnd > 23) {
             timeEnd -= 24;
             let dateDay = new Date(this.dateSaved);
             let newDate = new Date(
@@ -313,7 +325,7 @@ export default {
           };
           this.axios
             .post("https://chingutime.herokuapp.com/api/events/update", data, {
-              //  .post("http://localhost:5000/api/events/update", data, {
+              //.post("http://localhost:5000/api/events/update", data, {
               headers: {
                 "x-access-token": localStorage
                   .getItem("usertoken")
@@ -332,6 +344,8 @@ export default {
                   this.toSnakeCase(this.eventPart.title) +
                   "_" +
                   this.dateSaved +
+                  "T" +
+                  this.time.substring(0,2) +
                   ".ics"
               );
               document.body.appendChild(link);
@@ -346,9 +360,37 @@ export default {
         }
       }
     },
-
     downloadIcs() {
-      //still to be done, maybe a new route to BE?
+      console.log(this.eventPart.start.substring(0,13));
+      this.axios
+            .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`, {
+                //.get(`http://localhost:5000/api/events/download/${this.url}`, {
+              headers: {
+              "x-access-token": localStorage
+                .getItem("usertoken")
+                .replace(/"/g, "")
+              },
+              responseType: "blob"
+            })
+            .then(response => {
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute(
+                "download",
+                "ChinguTime_" +
+                  this.toSnakeCase(this.eventPart.title) +
+                  "_" +
+                  this.eventPart.start.substring(0,13) +
+                  ".ics"
+              );
+              document.body.appendChild(link);
+              link.click();
+              this.answer =
+                "Here you have you ics file.";
+            })
+            .catch(error => (console.log(error), (this.answer = error)));
+        
     }
   }
 };
@@ -366,10 +408,10 @@ export default {
   display: block;
   border: 1px solid black;
   width: 96%;
-
   border-radius: 3px;
   padding: 10px 5px;
   margin: 0 0 10px 0;
   font-size: 18px;
 }
 </style>
+
