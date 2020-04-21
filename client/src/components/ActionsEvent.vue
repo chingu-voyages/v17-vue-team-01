@@ -90,8 +90,7 @@
           </span>
           <span v-else>
             <p class="leftMargin">This event {{eventPart.title}} is already scheduled!</p>
-            <p class="leftMargin">Its scheduled date and time is: {{eventPart.start}}</p>
-            <p class="leftMargin">And it is scheduled until: {{eventPart.end}}</p>
+            <p class="leftMargin">Time: {{(eventPart.start).replace("T", " ").replace(":00.000Z", "")}} - {{ (eventPart.end).replace("T", " ").replace(":00.000Z", "") }}</p>
           </span>
           <v-divider></v-divider>
           <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">

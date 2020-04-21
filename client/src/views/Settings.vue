@@ -53,7 +53,15 @@
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
-            <h3 v-html="answer"></h3>
+            <h3>
+              Email: {{email || user.email}}
+              <br>
+              Name: {{name || user.name}}
+              <br>
+              Username: {{username || user.username}}
+              <br>
+              Timezone: UTC {{time || user.TZ}}
+            </h3>
           </v-card-text>
         </v-card>
       </v-col>
@@ -66,7 +74,7 @@ export default {
   name: "Settings",
   data() {
     return {
-      answer: null,
+      answer: true,
       username: null,
       password: null,
       name: null,
@@ -115,21 +123,21 @@ export default {
     };
   },
   mounted() {
-    this.answer = `
-    Email: ${this.user.email}  
-    <br>Name: ${this.user.name}
-    <br>Username: ${this.user.username}
-    <br>Timezone: UTC ${this.user.TZ}
-    `;
+    // this.answer = `
+    // Email: ${this.user.email}  
+    // <br>Name: ${this.user.name}
+    // <br>Username: ${this.user.username}
+    // <br>Timezone: UTC ${this.user.TZ}
+    // `;
   },
   methods: {
     processForm() {
       let confirmation = confirm("Confirm changes?");
       if (confirmation == true) {
-        console.log(this.selectFields());
         this.axios
-          .post("https://chingutime.herokuapp.com/api/users/update",
-          //.post("http://localhost:5000/api/users/update",
+          .post(
+            "https://chingutime.herokuapp.com/api/users/update",
+            //.post("http://localhost:5000/api/users/update",
             this.selectFields(),
             {
               headers: { "x-access-token": this.usertoken }
@@ -150,7 +158,6 @@ export default {
         let addition = this.time.slice(8, 10);
         let zone = Number(identifier + "." + addition);
         if (direction == "-") {
-          console.log("sucess");
           zone *= -1;
         }
         this.settings.TZ = zone;
@@ -170,21 +177,18 @@ export default {
       return this.settings;
     },
     savingChanges(response) {
-      console.log("saving");
       if (this.usertoken) {
         this.axios
           .get("https://chingutime.herokuapp.com/api/users/profile", {
-          //  .get("http://localhost:5000/api/users/profile", {
+            //  .get("http://localhost:5000/api/users/profile", {
             headers: { "x-access-token": this.usertoken }
           })
           .then(response => this.userUpdate(response));
       }
     },
     userUpdate(response) {
-      console.log("update");
       if (!_.isEqual(this.user, response.data)) {
         localStorage.setItem("user", JSON.stringify(response.data));
-        console.log("done");
         location.reload();
       }
     }

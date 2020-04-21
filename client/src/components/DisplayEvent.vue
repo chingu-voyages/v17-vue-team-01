@@ -1,11 +1,20 @@
 <template>
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
+
       <!--<p>Event: {{ eventPart }}</p>-->
       <!--<p>Route: /event/{{ url }}</p>-->
-      <p>Event title: {{ eventPart.title }}</p>
+      <!--<p>Event title: {{ eventPart.title }}</p>-->
       <!--<p>Timeslots: {{ timeslotPart }} </p>-->
-      <p>Users:</p>
+      <!--<p>Users:</p>-->
+
+      <!-- <p>Event: {{ eventPart }}</p>
+      <p>Route: /event/{{ url }}</p>
+      <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
+      
+      <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
+      <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
+      <h3>Users:</h3>
       
       <!-- <v-list :shaped="shaped">
         <v-list-item-group v-model="event" color="primary">
@@ -14,7 +23,15 @@
               <v-list-item-title>
                 {{ participants.username }} <span v-if="i==0"> (Event Creator) </span>
               </v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle>
+              <v-list-item-subtitle></v-list-item-subtitle><template>
+  <v-card class="pa-2" outlined tile>
+    <v-sheet v-if="eventPart">
+      <p>Event: {{ eventPart }}</p>
+      <p>Route: /event/{{ url }}</p>
+      <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p>
+      
+      <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
+      <h3>Users:</h3>
             </v-list-item-content>
           </v-list-item>
         </v-list-item-group>
@@ -28,8 +45,10 @@
       </div>
       </v-list>
       
+
       <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
       <p v-else class="mt-5">Current Event Calendar:</p>
+
       
         <v-row align="center" justify="center" no-gutters>
           <template v-for="(day, i) in this.eventPart.possibleDays">
@@ -106,7 +125,7 @@
     </v-sheet>
 
 
-      <p>Advisable Timeslots: {{ advisableTimeslots }} </p>
+      <!-- <p>Advisable Timeslots: {{ advisableTimeslots }} </p> -->
       
   </v-card>
 </template>

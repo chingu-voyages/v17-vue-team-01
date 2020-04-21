@@ -93,7 +93,7 @@
     </v-card>
     <v-card class="mx-auto" max-width="360" v-if="answer">
       <v-card-text>
-        <h3>{{ answer }}</h3>
+        <h3 v-html="answer"></h3>
       </v-card-text>
     </v-card>
   </v-col>
@@ -156,6 +156,12 @@ export default {
       return n;
     },
     processFormFirst() {
+      if (this.dates[0] == null || this.dates[1] == null) {
+        this.answer = "Please select 2 dates as a range.<br> Ex: 21-04-2020 - 22-04-2020";
+        window.scrollBy(0, 200);
+        return;
+      }
+
       if (
         !this.name ||
         !this.color ||
@@ -166,6 +172,7 @@ export default {
         window.scrollBy(0, 200);
         return;
       }
+
       let dateSplit1 = this.dates[0].split("-");
       let dateSplit2 = this.dates[1].split("-");
       let d1 = new Date(
@@ -180,7 +187,7 @@ export default {
       );
 
       if (d1.getTime() > d2.getTime()) {
-        this.answer = "Please select the range with the earlier date first";
+        this.answer = "Please select the range with the earlier date first.<br> Ex: 21-04-2020 - 22-04-2020";
         window.scrollBy(0, 200);
       } else if (this.dateNames(d1, d2).length > 10) {
         this.answer = "Currently only a range of 10 dates are selectable";
