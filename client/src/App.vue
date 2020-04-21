@@ -36,16 +36,7 @@ export default {
   components: {},
   data: () => ({}),
   watch: {},
-  mounted() {
-    if (this.usertoken) {
-      this.axios
-        .get("https://chingutime.herokuapp.com/api/users/profile", {
-          //.get("http://localhost:5000/api/users/profile", {
-          headers: { "x-access-token": this.usertoken }
-        })
-        .then(response => this.userUpdate(response));
-    }
-  },
+  mounted() {},
   methods: {
     logout() {
       this.$store.clearAll();
