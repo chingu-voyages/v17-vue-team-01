@@ -6,6 +6,7 @@
       <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
       
       <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
+      <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
       <h3>Users:</h3>
       
       <!-- <v-list :shaped="shaped">
