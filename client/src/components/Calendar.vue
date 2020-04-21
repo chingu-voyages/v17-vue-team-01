@@ -119,37 +119,53 @@ export default {
     ]
   }),
   mounted() {
-    this.today = this.getTodayDate();
-    this.value = this.today;
-    for (let i = 0; i < this.user.events.length; i++) {
-      if ((this.user.events[i].scheduled = true)) {
-        this.eventIDs.push(this.user.events[i]["_id"]);
-      }
-    }
-    for (let j = 0; j < this.eventIDs.length; j++) {
+    if (this.usertoken) {
       this.axios
-        .get(
-          `https://chingutime.herokuapp.com/api/events/show/${
-            this.eventIDs[j]
-          }`,
-          {
-            //.get(`http://localhost:5000/api/events/show/${this.url}`, {
-            headers: {
-              "x-access-token": localStorage
-                .getItem("usertoken")
-                .replace(/"/g, "")
-            }
+        .get("https://chingutime.herokuapp.com/api/users/profile", {
+          //.get("http://localhost:5000/api/users/profile", {
+          headers: { "x-access-token": this.usertoken }
+        })
+        .then(response => {
+          if (!_.isEqual(this.user, response.data)) {
+            localStorage.setItem("user", JSON.stringify(response.data));
+            this.user = response.data;
           }
-        )
-        .then(
-          response => (
-            this.serverResponse.push(response.data), this.checkFinish(j)
-          )
-        )
-        .catch(error => (console.log(error), (this.answer = error)));
+          this.setup();
+        });
     }
   },
   methods: {
+    setup() {
+      this.today = this.getTodayDate();
+      this.value = this.today;
+      for (let i = 0; i < this.user.events.length; i++) {
+        if (this.user.events[i].scheduled == true) {
+          this.eventIDs.push(this.user.events[i]["_id"]);
+        }
+      }
+      for (let j = 0; j < this.eventIDs.length; j++) {
+        this.axios
+          .get(
+            `https://chingutime.herokuapp.com/api/events/show/${
+              this.eventIDs[j]
+            }`,
+            {
+              //.get(`http://localhost:5000/api/events/show/${this.url}`, {
+              headers: {
+                "x-access-token": localStorage
+                  .getItem("usertoken")
+                  .replace(/"/g, "")
+              }
+            }
+          )
+          .then(
+            response => (
+              this.serverResponse.push(response.data), this.convertToEvent()
+            )
+          )
+          .catch(error => (console.log(error), (this.answer = error)));
+      }
+    },
     title(value) {
       let dateArray = value.split("-");
       var date = new Date(
@@ -188,29 +204,28 @@ export default {
       var yyyy = today.getFullYear();
       return yyyy + "-" + mm + "-" + dd;
     },
-    checkFinish() {
+    convertToEvent() {
       if (this.eventIDs.length == this.serverResponse.length) {
         for (let i = 0; i < this.serverResponse.length; i++) {
           this.events.push({
-          color: this.serverResponse[i][0].color,
-          end: this.transformTimestamp(this.serverResponse[i][0].end),
-          name: this.serverResponse[i][0].title,
-          start: this.transformTimestamp(this.serverResponse[i][0].start),
-          users: this.transformUsers(this.serverResponse[i][0].users)
-        });
+            color: this.serverResponse[i][0].color,
+            end: this.transformTimestamp(this.serverResponse[i][0].end),
+            name: this.serverResponse[i][0].title,
+            start: this.transformTimestamp(this.serverResponse[i][0].start),
+            users: this.transformUsers(this.serverResponse[i][0].users)
+          });
         }
-        
       }
     },
     transformTimestamp(input) {
-      return input.slice(0,10) + " " + input.slice(11,16)
+      return input.slice(0, 10) + " " + input.slice(11, 16);
     },
     transformUsers(input) {
       let result = [];
       for (let i = 0; i < input.length; i++) {
         result.push(input[i].username);
       }
-      return result
+      return result;
     }
   }
 };
