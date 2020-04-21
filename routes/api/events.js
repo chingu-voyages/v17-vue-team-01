@@ -348,10 +348,25 @@ router.post('/update', (req, res) => {
           users.forEach(function(user) { 
               users_data.push({name: user.name, email: user.email});
           });
-        var hours = Math.abs(doc.end - doc.start) / 36e5;
-        console.log(hours);
+        let hours = Math.abs(doc.end - doc.start) / 36e5;
+        let hourStart = doc.start.getHours() - decoded.TZ;
+        let day = doc.start.getDate();
+        if(hourStart < 0){
+          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + doc.start.getDate());
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+          day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+          day = day.slice(-2);
+          hourStart = hourStart + 24;
+        }
+        if(hourStart > 23){
+          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + doc.start.getDate());
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+          day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+          day = day.slice(-2);
+          hourStart = hourStart - 24;
+        }
         const event = {
-          start: [doc.start.getFullYear(), (doc.start.getMonth()+1), doc.start.getDate(), doc.start.getHours(), doc.start.getMinutes() ],
+          start: [doc.start.getFullYear(), (doc.start.getMonth()+1), day, parseInt(hourStart), doc.start.getMinutes() ],
           duration: { hours: hours, minutes: 0 },
           title: doc.title,
           description: doc.description,

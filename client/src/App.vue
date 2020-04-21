@@ -36,7 +36,9 @@ export default {
   components: {},
   data: () => ({}),
   watch: {},
+
   mounted() {},
+
   methods: {
     logout() {
       this.$store.clearAll();

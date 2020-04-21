@@ -102,7 +102,8 @@ router.post('/login', (req, res) => {
                     _id: user._id,
                     username: user.username,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    TZ: user.TZ,
                 }
                 jwt.sign(payload, key, {
                     expiresIn: 604800

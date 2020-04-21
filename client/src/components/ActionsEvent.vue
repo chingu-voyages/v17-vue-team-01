@@ -190,6 +190,9 @@ export default {
             "-" +
             newDate.getDate();
         }
+        if (this.time < 10) {
+          this.time = "0"+this.time;
+        }
         this.time += ":00";
         this.dateSaved = this.date;
       }

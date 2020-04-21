@@ -1,6 +1,13 @@
 <template>
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
+
+      <!--<p>Event: {{ eventPart }}</p>-->
+      <!--<p>Route: /event/{{ url }}</p>-->
+      <!--<p>Event title: {{ eventPart.title }}</p>-->
+      <!--<p>Timeslots: {{ timeslotPart }} </p>-->
+      <!--<p>Users:</p>-->
+
       <!-- <p>Event: {{ eventPart }}</p>
       <p>Route: /event/{{ url }}</p>
       <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
@@ -32,11 +39,16 @@
       
       <v-list :shaped ="shaped">
       <div>
-        <span class="mr-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">{{ participants.username }}</span>
+        <span class="mr-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
+          {{ participants.username }} <span v-if="participants.username == user.username"> (You) </span>
+        </span>
       </div>
       </v-list>
       
-      <h3 class="mt-5">Current calendar:</h3>
+
+      <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
+      <p v-else class="mt-5">Current Event Calendar:</p>
+
       
         <v-row align="center" justify="center" no-gutters>
           <template v-for="(day, i) in this.eventPart.possibleDays">
@@ -54,14 +66,21 @@
                       :key="`checkbox-label-${i}-${n}`"
                       :for="`checkbox-${i}-${n}`"
                     >
-                     <span :style="{ background: computedClass(day, n-1, eventPart.color, eventPart.users.length ) }">{{numbering(n-1)}}:00</span>
+                     
+                       {{numbering(n-1)}}:00
+     
+                          <div class="rounded text-center" :style="{ background: computedClass(day, n-1, eventPart.color, eventPart.users.length ) }">
+                          {{computedUsers(day, n-1 )}}</div>
+                     
                       <input
                         :key="`checkbox-${i}-${n}`"
                         type="checkbox"
                         :id="`checkbox-${i}-${n}`"
                         :value="n-1"
-                        v-model="[i][n]"
                         class="checkbox"
+                        :checked="computedChecked(day, n-1, user._id)"
+                        @click="alert(day, n-1)"
+                        :disabled="eventPart.scheduled"
                       >
                       <span class="checkmark"></span>
                     </label>
@@ -129,7 +148,7 @@ export default {
     
   },
   methods: {
-
+    
   pSBC: function(p,c0,c1,l){
 	let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
 	if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
@@ -161,12 +180,13 @@ export default {
       }
       return n;
     },
-    computedClass(i, n, c, nUser) {
+    computedClass(i, n, c, numberUsers) {
       const colorBase = this.pSBC(0.9,c,false,true);
       //console.log(colorBase);
-      let nUsers = (0.9/nUser);
+      let nUsers = (0.9/numberUsers);
       let count = 0;
       this.changeToUserTZ.forEach(function (tmsl){ 
+
         if(i == tmsl.day && n == tmsl.time){
           count++;
         }
@@ -180,8 +200,28 @@ export default {
         return colorBase;
       }
       
-    }
+    },
+    computedChecked(i, n, userId) {
+      let checked;
+      this.changeToUserTZ.forEach(function (tmsl){ 
+        if(i == tmsl.day && n == tmsl.time && userId == tmsl.user){
+          checked = true;
+        }
+      })
+      return checked;
+    },
+
+    computedUsers(i, n) {
+      let countU = 0;
+      this.changeToUserTZ.forEach(function (tmsl){ 
+        if(i == tmsl.day && n == tmsl.time){
+          countU++;
+        }
+      })
+      return countU;
+    },
   },
+  
   computed: {
     
 
@@ -193,16 +233,17 @@ export default {
         if(timeslot.time < 0){
           let dateDay = new Date(timeslot.day);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
-          timeslot.day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
-          timeslot.time = timeslot.time + 23;
+          timeslot.day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+          timeslot.time = timeslot.time + 24;
         }
         if(timeslot.time > 23){
           let dateDay = new Date(timeslot.day);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
-          timeslot.day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
-          timeslot.time = timeslot.time - 23;
+          timeslot.day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+          timeslot.time = timeslot.time - 24;
         }
       })
+      
       return this.timeslotPart;
     }
   }
@@ -235,7 +276,10 @@ export default {
     width: 100%;
   }
 }
-
+.rounded {
+  border: none;
+  border-radius: 10px;
+}
 //-----------------------------------------
 
 /* The checkbox-label */
@@ -246,6 +290,7 @@ export default {
   margin-bottom: 12px;
   cursor: pointer;
   font-size: 16px;
+  text-align: center;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
