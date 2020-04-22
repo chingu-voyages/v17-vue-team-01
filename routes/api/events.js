@@ -105,6 +105,8 @@ router.get('/show/:id', function(req, res)  {
                   if(parseInt(candidate_timeslots[j].slice(-1)) == number_users){
                     console.log(`matched one: ${candidate_timeslots[j]}`);
                     advisable_timeslots.push(candidate_timeslots[j]);
+                    advisable_timeslots.forEach(timeslot => timeslot.slice(-2). replace("T", " "));
+                    console.log(`advisable_timeslots: ${advisable_timeslots}`);
                   }  
                 } 
               } 

@@ -89,8 +89,9 @@
             </v-card-actions>
           </span>
           <span v-else>
-            <p class="leftMargin">This event {{eventPart.title}} is already scheduled!</p>
-            <p class="leftMargin">Time: {{(eventPart.start).replace("T", " ").replace(":00.000Z", "")}} - {{ (eventPart.end).replace("T", " ").replace(":00.000Z", "") }}</p>
+            <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
+            <p class="leftMargin">Start: {{(eventPart.start).replace("T", " ").replace(":00.000Z", "")}}</p>
+            <p class="leftMargin">End: {{ (eventPart.end).replace("T", " ").replace(":00.000Z", "") }}</p>
           </span>
           <v-divider></v-divider>
           <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
