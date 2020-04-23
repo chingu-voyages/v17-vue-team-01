@@ -72,8 +72,6 @@ export default {
     check: false
   }),
   mounted() {
-    console.log("mounted");
-
     if (this.user) {
       this.events = this.user.events;
     }
