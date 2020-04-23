@@ -18,7 +18,7 @@
       <p v-if="!eventPart.scheduled" class="mb-5">You have advisable timeslots for schedule: {{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(parseInt(tsml.slice(-4, -2)) + parseInt(this.user.TZ)) + ":00").join(", ") }}</p>
 
       <h3>Users:</h3>
-      
+      .  
       <!-- <v-list :shaped="shaped">
         <v-list-item-group v-model="event" color="primary">
           <v-list-item :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">

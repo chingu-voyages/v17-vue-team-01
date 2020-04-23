@@ -35,7 +35,7 @@ export default {
       if (newer) {
         this.eventPart = this.event[0];
         this.timeslotPart = this.event[1];
-        this.advisableTimeslots = this.event[2];
+        this.advisableTimeslots = this.handleAdvisable(this.event[2]);
       }
     }
   },
@@ -45,7 +45,7 @@ export default {
     answer: null,
     eventPart: null,
     timeslotPart: null,
-    advisableTimeslots: null
+    advisableTimeslots: null,
   }),
   mounted() {
     //console.log(this.url);
@@ -62,6 +62,37 @@ export default {
         })
         .then(response => (this.event = response.data)) //(this.event = response.data))
         .catch(error => (console.log(error), (this.answer = error)));
+    }
+  },
+  methods: {
+    handleAdvisable(advisableTimeslots){
+      console.log(typeof(advisableTimeslots));
+      if(typeof(advisableTimeslots) == 'object'){
+        advisableTimeslots.forEach((tmsl, index) => {
+          //console.log(tmsl);
+        
+          let date = tmsl.substring(0, tmsl.indexOf("T"));
+          let time = parseInt(tmsl.substring(tmsl.indexOf("T") + 1, tmsl.indexOf("C"))) + parseInt(this.user.TZ);
+          //console.log(time);
+          if(time < 0){
+            let dateDay = new Date(date);
+            let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+            date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+            time = time + 24;
+          }
+          if(time > 23){
+            let dateDay = new Date(date);
+            let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+            date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+            time = time - 24;
+          }
+          time < 10 ? time = "0" + time + ":00" : time = time + ":00";
+          advisableTimeslots[index] = date + " " + time;
+        })
+      }
+      
+
+      return advisableTimeslots;
     }
   }
 };
