@@ -89,8 +89,9 @@
             </v-card-actions>
           </span>
           <span v-else>
-            <p class="leftMargin">This event {{eventPart.title}} is already scheduled!</p>
-            <p class="leftMargin">Time: {{(eventPart.start).replace("T", " ").replace(":00.000Z", "")}} - {{ (eventPart.end).replace("T", " ").replace(":00.000Z", "") }}</p>
+            <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
+            <p class="leftMargin">Start: {{(eventPart.start).replace("T", " ").replace(":00.000Z", "")}}</p>
+            <p class="leftMargin">End: {{ (eventPart.end).replace("T", " ").replace(":00.000Z", "") }}</p>
           </span>
           <v-divider></v-divider>
           <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
@@ -155,15 +156,15 @@ export default {
       if (typeof this.advisableTimeslots != "string") {
         this.date = this.advisableTimeslots[0].substring(
           0,
-          this.advisableTimeslots[0].indexOf("T")
+          this.advisableTimeslots[0].indexOf(" ")
         );
         this.time =
           parseInt(
             this.advisableTimeslots[0].substring(
-              this.advisableTimeslots[0].indexOf("C"),
-              this.advisableTimeslots[0].indexOf("T") + 1
+              this.advisableTimeslots[0].indexOf(" "),
+              this.advisableTimeslots[0].indexOf("00") + 1
             )
-          ) + this.user.TZ;
+          );
         if (this.time < 0) {
           this.time += 24;
           let dateDay = new Date(this.date);

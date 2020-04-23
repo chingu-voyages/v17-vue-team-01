@@ -12,10 +12,13 @@
       <p>Route: /event/{{ url }}</p>
       <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
       
-      <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
-      <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
-      <h3>Users:</h3>
+      <h3 class="mb-5">Title: {{ eventPart.title }}</h3>
+      <h3 class="mb-5">Details: {{ eventPart.details }}</h3>
       
+      <p v-if="!eventPart.scheduled" class="mb-5">You have advisable timeslots for schedule: {{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(parseInt(tsml.slice(-4, -2)) + parseInt(this.user.TZ)) + ":00").join(", ") }}</p>
+
+      <h3>Users:</h3>
+      .  
       <!-- <v-list :shaped="shaped">
         <v-list-item-group v-model="event" color="primary">
           <v-list-item :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
@@ -49,7 +52,12 @@
       <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
       <p v-else class="mt-5">Current Event Calendar:</p>
 
-      
+            <v-card-actions
+              class="justify-center topNegativeMargin" 
+            >
+              <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
+            </v-card-actions>
+            <br>
         <v-row align="center" justify="center" no-gutters>
           <template v-for="(day, i) in this.eventPart.possibleDays">
             <v-col :key="`day-${i}`">
@@ -79,20 +87,28 @@
                         :value="n-1"
                         class="checkbox"
                         :checked="computedChecked(day, n-1, user._id)"
-                        @click="alert(day, n-1)"
+                        
                         :disabled="eventPart.scheduled"
                       >
                       <span class="checkmark"></span>
                     </label>
                   </template>
+                  
                 </v-col>
               </v-card>
               <br>
+              
             </v-col>
+            
           </template>
+          
         </v-row>
 
-
+            <v-card-actions
+              class="justify-center topNegativeMargin" 
+            >
+              <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
+            </v-card-actions>
 
 
 
@@ -140,15 +156,19 @@ export default {
     url: String
   },
   components: {},
-  data: () => ({
-    //slotItems: [],
-  }),
-  watch: {},
-  mounted() {
-    
+  data () {
+    return {
+      slotItems: [],  
+    }
+  },
+  watch: {
+
+  },
+  created() {
+   
   },
   methods: {
-    
+
   pSBC: function(p,c0,c1,l){
 	let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
 	if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
@@ -203,6 +223,7 @@ export default {
     },
     computedChecked(i, n, userId) {
       let checked;
+      //console.log(this.slotItems)
       this.changeToUserTZ.forEach(function (tmsl){ 
         if(i == tmsl.day && n == tmsl.time && userId == tmsl.user){
           checked = true;
@@ -220,14 +241,51 @@ export default {
       })
       return countU;
     },
+
+    createTimeslots(){
+      let confirmation = confirm("Are you sure you want to add timeslots? Previous created timeslots will be replaced!");
+      if (confirmation == true) {
+        
+      for(let i = 0; i < this.eventPart.possibleDays.length; i++){
+        for(let n = 1; n < 25; n++){
+          let myId = "checkbox-"+i+"-"+n;
+          console.log(document.getElementById(myId));
+          if(document.getElementById(myId).checked){
+            console.log("adicionou");
+            this.slotItems.push([this.eventPart.possibleDays[i], n-1]);
+          }
+        }
+      }
+        const data = {
+          event_id: this.url,
+          timeslots: this.slotItems
+        };
+        //console.log(this.slotItems);
+        this.axios
+          .post("https://chingutime.herokuapp.com/api/timeslots/create", data, {
+              //.post("http://localhost:5000/api/timeslots/create", data, {
+            headers: {
+              "x-access-token": localStorage
+                .getItem("usertoken")
+                .replace(/"/g, "")
+            }
+          })
+          .then(
+            response => (
+              //this.answer
+              location.reload()
+            )
+          )
+          .catch(error => (console.log(error), (this.answer = error)));
+      }
+    }
+
   },
   
   computed: {
     
 
     changeToUserTZ() {
-      //console.log(this.user.TZ);
-      //console.log(this.timeslotPart);
       this.timeslotPart.forEach(timeslot => {
         timeslot.time = parseInt(timeslot.time) + parseInt(this.user.TZ);
         if(timeslot.time < 0){
