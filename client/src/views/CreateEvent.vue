@@ -12,6 +12,14 @@
           v-model="name"
           placeholder="Event name"
         >
+        <input
+          class="input input-long"
+          v-on:keyup.enter="processFormFirst"
+          type="text"
+          name="datails"
+          v-model="details"
+          placeholder="Event details"
+        >
         <v-row justify="center">
           <v-col>
             <v-date-picker no-title v-model="dates" range></v-date-picker>
@@ -106,6 +114,7 @@ export default {
     valid: true,
     dates: [null, null],
     name: null,
+    details: null,
     color: null,
     answer: null,
     eventFirstValidate: false,
@@ -196,6 +205,7 @@ export default {
         window.scrollTo(0, 0);
         this.createdEvent = {
           eventName: this.name,
+          eventDetails: this.details,
           eventDates: this.dateNames(d1, d2),
           eventColor: this.color,
           eventStart: this.dates[0],
@@ -207,7 +217,7 @@ export default {
             "https://chingutime.herokuapp.com/api/events/create",
             {
               title: this.createdEvent.eventName,
-              details: "Test event created for chingu vue",
+              details: this.createdEvent.eventDetails,
               color: this.createdEvent.eventColor,
               possibleDays: this.datesFormatter(this.createdEvent.eventDates)
             },
