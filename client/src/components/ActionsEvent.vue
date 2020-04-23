@@ -156,15 +156,15 @@ export default {
       if (typeof this.advisableTimeslots != "string") {
         this.date = this.advisableTimeslots[0].substring(
           0,
-          this.advisableTimeslots[0].indexOf("T")
+          this.advisableTimeslots[0].indexOf(" ")
         );
         this.time =
           parseInt(
             this.advisableTimeslots[0].substring(
-              this.advisableTimeslots[0].indexOf("C"),
-              this.advisableTimeslots[0].indexOf("T") + 1
+              this.advisableTimeslots[0].indexOf(" "),
+              this.advisableTimeslots[0].indexOf("00") + 1
             )
-          ) + this.user.TZ;
+          );
         if (this.time < 0) {
           this.time += 24;
           let dateDay = new Date(this.date);

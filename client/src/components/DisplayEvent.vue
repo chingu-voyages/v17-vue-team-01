@@ -5,16 +5,28 @@
       <!--<p>Event: {{ eventPart }}</p>-->
       <!--<p>Route: /event/{{ url }}</p>-->
       <!--<p>Event title: {{ eventPart.title }}</p>-->
-      <!--<p>Timeslots: {{ timeslotPart }} </p>-->
-      <!--<p>Users:</p>-->
-
+      <!--<p>{{ timeslotPart }}<br>
+        {{advisableTimeslots}}<br> </p>
+      <p>Users:</p>-->
+      
       <!-- <p>Event: {{ eventPart }}</p>
       <p>Route: /event/{{ url }}</p>
       <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
       
       <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
       <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
-      <p v-if="!eventPart.scheduled" class="mb-5">You have advisable timeslots for schedule: {{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(parseInt(tsml.slice(-4, -2)) + parseInt(this.user.TZ)) + ":00").join(", ") }}</p>
+
+      <div v-if="!eventPart.scheduled">
+        <div v-if="typeof advisableTimeslots != 'string'" >
+        <p class="mb-5">The following timeslots are already selected by all participants:</p>
+
+        <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
+        <p>The first timeslot is already added to schedule form fields.</p>
+        </div>
+        <div v-else class="mb-5">
+          <p class="mb-5"> {{advisableTimeslots}} </p>
+        </div>
+      </div>      
 
       <h3>Users:</h3>
       
@@ -109,7 +121,7 @@
               <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
             </v-card-actions>
 
-
+      
 
       <!--<v-list :shaped ="shaped">
       <div>
@@ -160,11 +172,11 @@ export default {
       slotItems: [],  
     }
   },
-  watch: {
+  mounted() {
 
   },
   created() {
-   
+
   },
   methods: {
 
@@ -192,7 +204,7 @@ export default {
 	if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
 	else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 },
-
+    
     numbering(n) {
       if (n < 10) {
         return `0${n}`;
@@ -282,10 +294,9 @@ export default {
   },
   
   computed: {
-    
-
     changeToUserTZ() {
       this.timeslotPart.forEach(timeslot => {
+        //console.log(timeslot);
         timeslot.time = parseInt(timeslot.time) + parseInt(this.user.TZ);
         if(timeslot.time < 0){
           let dateDay = new Date(timeslot.day);
@@ -300,7 +311,28 @@ export default {
           timeslot.time = timeslot.time - 24;
         }
       })
-      
+
+      /*this.advisableTimeslots.forEach((tmsl, index) => {
+        //console.log(tmsl);
+        
+        let date = tmsl.substring(0, tmsl.indexOf("T"));
+        let time = parseInt(tmsl.substring(tmsl.indexOf("T") + 1, tmsl.indexOf("C"))) + parseInt(this.user.TZ);
+        //console.log(time);
+        if(time < 0){
+          let dateDay = new Date(date);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+          date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+          time = time + 24;
+        }
+        if(time > 23){
+          let dateDay = new Date(date);
+          let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+          date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+          time = time - 24;
+        }
+        time < 10 ? time = "0" + time + ":00" : time = time + ":00";
+        this.advisableTimeslots[index] = date + " " + time;
+      })*/
       return this.timeslotPart;
     }
   }
