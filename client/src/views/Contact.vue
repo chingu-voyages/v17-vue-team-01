@@ -7,9 +7,44 @@
             <h1 class="addedLineheight">We would love to hear from you!</h1>
             <br>
             <h3>For any inquiries or issues:</h3>
-            <h3>
+            <!-- <h3>
               <v-icon>mdi-email</v-icon> chingutime(at)gmail.com
-            </h3>
+            </h3> -->
+  <form method="POST" action="https://formspree.io/chingutime@gmail.com">
+    <v-text-field
+      v-model="name"
+      :error-messages="nameErrors"
+      :counter="10"
+      label="Name"
+      type="text"
+      name="name"
+      required
+      @input="$v.name.$touch()"
+      @blur="$v.name.$touch()"
+    ></v-text-field>
+    <v-text-field
+      v-model="email"
+      :error-messages="emailErrors"
+      label="E-mail"
+      type="email"
+      name="_replyto"
+      required
+      @input="$v.email.$touch()"
+      @blur="$v.email.$touch()"
+    ></v-text-field>
+        <v-text-field
+      v-model="content"
+      :error-messages="contentErrors"
+      label="Content"
+      type="text"
+      name="message"
+      required
+      @input="$v.content.$touch()"
+      @blur="$v.content.$touch()"
+    ></v-text-field>
+    <v-btn class="mr-4" type="submit" @click="submit">Send</v-btn>
+    <v-btn @click="clear">clear</v-btn>
+  </form>
             <br>
             <h3>Our Team:</h3>
             <v-row>
@@ -62,13 +97,62 @@
 </template>
 
 <script>
+import { validationMixin } from 'vuelidate'
+import { required, maxLength, email } from 'vuelidate/lib/validators'
+
 export default {
   name: "Contact",
   components: {},
-  data() {},
+  mixins: [validationMixin],
+  validations: {
+      name: { required, maxLength: maxLength(10) },
+      email: { required, email },
+      content: { required }
+    },
+    data: () => ({
+      name: '',
+      email: '',
+      content: ''
+    }),
   mounted() {},
   watch: {},
-  methods: {}
+      computed: {
+      nameErrors () {
+        const errors = []
+        if (!this.$v.name.$dirty) return errors
+        !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
+        !this.$v.name.required && errors.push('Name is required.')
+        return errors
+      },
+      emailErrors () {
+        const errors = []
+        if (!this.$v.email.$dirty) return errors
+        !this.$v.email.email && errors.push('Must be valid e-mail')
+        !this.$v.email.required && errors.push('E-mail is required')
+        return errors
+      },
+      contentErrors () {
+        const errors = []
+        if (!this.$v.content.$dirty) return errors
+        !this.$v.content.required && errors.push('Content is required.')
+        return errors
+      }
+    },
+
+    methods: {
+      submit () {
+        this.$v.$touch()
+        this.$router.push({ name: "Home" });
+       
+      },
+      clear () {
+        this.$v.$reset()
+        this.name = ''
+        this.email = ''
+        this.select = null
+        this.checkbox = false
+      },
+    },
 };
 </script>
 

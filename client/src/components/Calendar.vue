@@ -178,10 +178,7 @@ export default {
       var date = new Date(
         Date.UTC(dateArray[0], dateArray[1] - 1, dateArray[2])
       );
-      console.log(`date: ${date}`)
       const month = date.toLocaleString("en-US", { month: "long" });
-      console.log(`month: ${month}`);
-      console.log(`dateArray[0]: ${dateArray[0]} `)
       return `${month} ${dateArray[0]}`;
     },
     viewDay({ date }) {
