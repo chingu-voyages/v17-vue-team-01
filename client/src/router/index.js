@@ -33,6 +33,15 @@ const routes = [
         component: () => import("../views/Settings.vue")
     },
     {
+        path: "/contact",
+        name: "Contact",
+        beforeEnter: (to, from, next) => {
+            if (localStorage.getItem("user") === "null") next({ name: "Home" });
+            else next();
+        },
+        component: () => import("../views/Contact.vue")
+    },
+    {
         path: "/event/:id",
         name: "Event",
         beforeEnter: (to, from, next) => {
@@ -40,6 +49,15 @@ const routes = [
             else next();
         },
         component: () => import("../views/Event.vue")
+    },
+    {
+        path: "*",
+        name: "404",
+        beforeEnter: (to, from, next) => {
+            if (localStorage.getItem("user") === "null") next({ name: "Home" });
+            else next();
+        },
+        component: () => import("../views/404.vue")
     }
 ];
 
