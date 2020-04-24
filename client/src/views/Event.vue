@@ -77,13 +77,13 @@ export default {
           if(time < 0){
             let dateDay = new Date(date);
             let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
-            date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+            date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
             time = time + 24;
           }
           if(time > 23){
             let dateDay = new Date(date);
             let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
-            date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+            date = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
             time = time - 24;
           }
           time < 10 ? time = "0" + time + ":00" : time = time + ":00";

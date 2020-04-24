@@ -176,7 +176,7 @@ export default {
             "-" +
             ("0" + (newDate.getMonth() + 1)).slice(-2) +
             "-" +
-            newDate.getDate();
+            ("0" + (newDate.getDate())).slice(-2);
         }
         if (this.time > 23) {
           this.time -= 24;
@@ -189,7 +189,7 @@ export default {
             "-" +
             ("0" + (newDate.getMonth() + 1)).slice(-2) +
             "-" +
-            newDate.getDate();
+            ("0" + (newDate.getDate())).slice(-2);
         }
         if (this.time < 10) {
           this.time = "0"+this.time;
@@ -317,7 +317,7 @@ export default {
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
-              newDate.getDate();
+              ("0" + (newDate.getDate())).slice(-2);
           }
           let end = this.dateSaved + " " + timeEnd + ":00:00";
           const data = {
