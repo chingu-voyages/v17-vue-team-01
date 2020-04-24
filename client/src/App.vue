@@ -15,6 +15,10 @@
 
         <v-spacer></v-spacer>
 
+        <v-btn icon large to="/contact" v-if="user">
+          <v-icon>mdi-frequently-asked-questions</v-icon>
+        </v-btn>
+
         <v-btn icon large to="/settings" v-if="user">
           <v-icon>mdi-cog</v-icon>
         </v-btn>
