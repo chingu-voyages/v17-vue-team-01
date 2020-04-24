@@ -79,7 +79,7 @@ router.get('/show/:id', function(req, res)  {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
 
       let event_id = req.params.id;
-      Event.findOne( {_id: event_id}  ).populate({path: 'users', populate: { path: 'users' }, select: 'username'}).then((result) => {
+      Event.findOne( {_id: event_id}  ).populate({path: 'users', populate: { path: 'users' }, select: ['username', 'TZ'] }).then((result) => {
         if (!result) {
           return res.status(200).json({
             success: false,
@@ -354,16 +354,16 @@ router.post('/update', (req, res) => {
         let hourStart = doc.start.getHours() - decoded.TZ;
         let day = doc.start.getDate();
         if(hourStart < 0){
-          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + doc.start.getDate());
+          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + ("0" + (doc.start.getDate())).slice(-2));
           let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
-          day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+          day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
           day = day.slice(-2);
           hourStart = hourStart + 24;
         }
         if(hourStart > 23){
-          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + doc.start.getDate());
+          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + ("0" + (doc.start.getDate())).slice(-2));
           let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
-          day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+          day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
           day = day.slice(-2);
           hourStart = hourStart - 24;
         }

@@ -176,7 +176,7 @@ export default {
             "-" +
             ("0" + (newDate.getMonth() + 1)).slice(-2) +
             "-" +
-            newDate.getDate();
+            ("0" + (newDate.getDate())).slice(-2);
         }
         if (this.time > 23) {
           this.time -= 24;
@@ -189,7 +189,7 @@ export default {
             "-" +
             ("0" + (newDate.getMonth() + 1)).slice(-2) +
             "-" +
-            newDate.getDate();
+            ("0" + (newDate.getDate())).slice(-2);
         }
         if (this.time < 10) {
           this.time = "0"+this.time;
@@ -235,14 +235,14 @@ export default {
       }
     },
     removeUser() {
-      console.log(this.userDelete);
+      //console.log(this.userDelete);
       if (
         this.userDelete == "Please select a user to remove" ||
         !this.userDelete
       ) {
         this.answer = "Please select a user to remove.";
       } else {
-        console.log(this.url);
+        //console.log(this.url);
         const data = {
           event_id: this.url,
           username: this.userDelete
@@ -317,7 +317,7 @@ export default {
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
-              newDate.getDate();
+              ("0" + (newDate.getDate())).slice(-2);
           }
           let end = this.dateSaved + " " + timeEnd + ":00:00";
           const data = {
@@ -364,7 +364,7 @@ export default {
       }
     },
     downloadIcs() {
-      console.log(this.eventPart.start.substring(0,13));
+      //console.log(this.eventPart.start.substring(0,13));
       this.axios
             .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`, {
                 //.get(`http://localhost:5000/api/events/download/${this.url}`, {

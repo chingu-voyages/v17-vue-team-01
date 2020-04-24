@@ -56,13 +56,13 @@ router.post('/create', (req, res) => {
                   if(tsContent < 0){
                     let dateDay = new Date(day);
                     let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
-                    day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+                    day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
                     tsContent = tsContent + 24;
                   }
                   if(tsContent > 23){
                     let dateDay = new Date(day);
                     let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
-                    day = newDate.getFullYear() + '-' + (newDate.getMonth() + 1) + '-' + (newDate.getDate()); 
+                    day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
                     tsContent = tsContent - 24;
                   }
                   let newTimeslot = new Timeslot({

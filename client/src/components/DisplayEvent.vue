@@ -2,43 +2,20 @@
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
 
-      <!--<p>Event: {{ eventPart }}</p>-->
-      <!--<p>Route: /event/{{ url }}</p>-->
-      <!--<p>Event title: {{ eventPart.title }}</p>-->
-      <!--<p>Timeslots: {{ timeslotPart }} </p>-->
-      <!--<p>Users:</p>-->
-
-      <!-- <p>Event: {{ eventPart }}</p>
-      <p>Route: /event/{{ url }}</p>
-      <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
-      
-      <h3 class="mb-5">Title: {{ eventPart.title }}</h3>
-      <h3 class="mb-5">Details: {{ eventPart.details }}</h3>
-      
-      <p v-if="!eventPart.scheduled" class="mb-5">You have advisable timeslots for schedule: {{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(parseInt(tsml.slice(-4, -2)) + parseInt(this.user.TZ)) + ":00").join(", ") }}</p>
-
-      <h3>Users:</h3>
-      .  
-      <!-- <v-list :shaped="shaped">
-        <v-list-item-group v-model="event" color="primary">
-          <v-list-item :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
-            <v-list-item-content class="text-left">
-              <v-list-item-title>
-                {{ participants.username }} <span v-if="i==0"> (Event Creator) </span>
-              </v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle><template>
-  <v-card class="pa-2" outlined tile>
-    <v-sheet v-if="eventPart">
-      <p>Event: {{ eventPart }}</p>
-      <p>Route: /event/{{ url }}</p>
-      <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p>
-      
       <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
+      <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
+      <div v-if="!eventPart.scheduled">
+        <div v-if="typeof advisableTimeslots != 'string'" >
+        <p class="mb-5">The following timeslots are already selected by all participants:</p>
+        
+        <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
+        <p>The first timeslot is already added to schedule form fields.</p>
+        </div>
+        <div v-else class="mb-5">
+          <p class="mb-5"> {{advisableTimeslots}} </p>
+        </div>
+      </div>      
       <h3>Users:</h3>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list> -->
       
       <v-list :shaped ="shaped">
       <div>
@@ -52,14 +29,12 @@
       <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
       <p v-else class="mt-5">Current Event Calendar:</p>
 
-            <v-card-actions
-              class="justify-center topNegativeMargin" 
-            >
-              <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
+            <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin">
+              <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>
             <br>
         <v-row align="center" justify="center" no-gutters>
-          <template v-for="(day, i) in this.eventPart.possibleDays">
+          <template v-for="(day, i) in possible=computePossibleDays(eventPart.users, user.username, eventPart.possibleDays, user.TZ)">
             <v-col :key="`day-${i}`">
               <v-card class="mx-auto" max-width="110" :value="day">
                 <h3 class="timeslotName">
@@ -69,17 +44,13 @@
                 </h3>
                 <v-col>
                   <template v-for="n in 24">
+                    
                     <label
                       class="checkbox-label"
                       :key="`checkbox-label-${i}-${n}`"
                       :for="`checkbox-${i}-${n}`"
                     >
-                     
                        {{numbering(n-1)}}:00
-     
-                          <div class="rounded text-center" :style="{ background: computedClass(day, n-1, eventPart.color, eventPart.users.length ) }">
-                          {{computedUsers(day, n-1 )}}</div>
-                     
                       <input
                         :key="`checkbox-${i}-${n}`"
                         type="checkbox"
@@ -87,11 +58,21 @@
                         :value="n-1"
                         class="checkbox"
                         :checked="computedChecked(day, n-1, user._id)"
-                        
-                        :disabled="eventPart.scheduled"
+                        :disabled="eventPart.scheduled || ((eventPart.users[0].username != user.username ) && ((i == 0 && n < eventPart.users[0].TZ) || (i == possible.length-1 && n > (eventPart.users[0].TZ - 1))))"
                       >
                       <span class="checkmark"></span>
                     </label>
+                    <span :key="`tooltip-label-${i}-${n}`">
+                      <v-tooltip bottom :disabled="computedUserNames(day, n-1, eventPart.users) == null">
+                        <template #activator="data">
+                          <div v-on="data.on" class="rounded text-center" :style="{ background: computedClass(day, n-1, eventPart.color, eventPart.users.length ) }">
+                            {{computedUsers(day, n-1 )}}
+                          </div>
+                        </template>
+                        <span><template v-for="(i,index) in computedUserNames(day, n-1, eventPart.users)">{{index+1}}: {{ i == user.username ? i + " (You)" : i}} </template></span>
+                      </v-tooltip>
+                      <br>
+                    </span>
                   </template>
                   
                 </v-col>
@@ -104,44 +85,10 @@
           
         </v-row>
 
-            <v-card-actions
-              class="justify-center topNegativeMargin" 
-            >
-              <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
+            <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin" >
+              <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>
-
-
-
-      <!--<v-list :shaped ="shaped">
-      <div>
-        <v-row>
-        <span class="mx-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
-          {{ participants.username }}
-          <span class="mx-5 mb-8" :inactive="inactive" v-for="(timeslot, i) in changeToUserTZ" :key="i">
-            <v-col>{{ timeslot.day }} - {{ timeslot.time }}:00</v-col>
-          </span>
-        </span>  
-        </v-row>    
-      </div>
-      </v-list>-->
-     
-      <!-- <v-list :shaped="shaped">
-      <v-list-item-group v-model="event" color="primary">
-          <v-list-item :inactive="inactive" v-for="(timeslot, i) in changeToUserTZ" :key="i">
-            <v-list-item-content class="text-left">
-              <v-list-item-title>
-                Day {{ timeslot.day }} Time {{ timeslot.time  }}
-              </v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list> -->
-      
     </v-sheet>
-
-
-      <!-- <p>Advisable Timeslots: {{ advisableTimeslots }} </p> -->
       
   </v-card>
 </template>
@@ -159,13 +106,14 @@ export default {
   data () {
     return {
       slotItems: [],  
+      possible: []
     }
   },
   watch: {
 
   },
   created() {
-   
+
   },
   methods: {
 
@@ -200,6 +148,9 @@ export default {
       }
       return n;
     },
+
+    
+
     computedClass(i, n, c, numberUsers) {
       const colorBase = this.pSBC(0.9,c,false,true);
       //console.log(colorBase);
@@ -234,6 +185,7 @@ export default {
 
     computedUsers(i, n) {
       let countU = 0;
+
       this.changeToUserTZ.forEach(function (tmsl){ 
         if(i == tmsl.day && n == tmsl.time){
           countU++;
@@ -242,17 +194,44 @@ export default {
       return countU;
     },
 
-    createTimeslots(){
+    computedUserNames(i, n, eventPartUsers) {
+      let usernames = [];
+      this.changeToUserTZ.forEach(function (tmsl){ 
+        if(i == tmsl.day && n == tmsl.time){
+          eventPartUsers.forEach(function (user){
+            if(tmsl.user == user._id) {
+              usernames.push(user.username);  
+            }
+          })  
+        }
+      })
+      if(usernames.length == 0)
+       return null;
+      return usernames;
+    },
+
+    createTimeslots(user){
+      let sizePossibleDays = this.eventPart.possibleDays.length;
+      if(user.TZ != 0 && this.eventPart.users[0].username != user.username) sizePossibleDays = this.eventPart.possibleDays.length + 1;
+      //console.log(sizePossibleDays);
       let confirmation = confirm("Are you sure you want to add timeslots? Previous created timeslots will be replaced!");
       if (confirmation == true) {
-        
-      for(let i = 0; i < this.eventPart.possibleDays.length; i++){
+      
+      for(let i = 0; i < sizePossibleDays; i++){
         for(let n = 1; n < 25; n++){
           let myId = "checkbox-"+i+"-"+n;
-          console.log(document.getElementById(myId));
+          let day;
+          //console.log(document.getElementById(myId));
           if(document.getElementById(myId).checked){
-            console.log("adicionou");
-            this.slotItems.push([this.eventPart.possibleDays[i], n-1]);
+            if(i == sizePossibleDays-1){
+              day = new Date(this.eventPart.possibleDays[i-1]);
+              let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+              day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+            }
+            else{
+              day = this.eventPart.possibleDays[i]; 
+            }
+            this.slotItems.push([day, n-1]);
           }
         }
       }
@@ -278,12 +257,44 @@ export default {
           )
           .catch(error => (console.log(error), (this.answer = error)));
       }
-    }
+    },
+
+    computePossibleDays(users, username, possibleDays, TZ){
+      let possibles = [];
+      let size = possibleDays.length;
+      this.calculatePossibleDays.forEach(function (possible, i){ 
+        //console.log(possible);
+        //console.log(i)
+        //console.log(this.eventPart.possibleDays)
+        //console.log(users[0].username)
+        possibles.push(possible);
+        if (i+1 == size && TZ > 0 && users[0].username != username){ 
+          //console.log("Last callback call at index " + i ); 
+          let day = new Date(possible);
+          let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+          possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+          possibles.push(possible);
+        }
+        if (i == 0 && TZ < 0 && users[0].username != username){ 
+          //console.log("Last callback call at index " + i ); 
+          let day = new Date(possible);
+          let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+          possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+          possibles.unshift(possible);
+        }
+      })
+      //console.log(possibles)
+      return possibles;
+    },
 
   },
   
   computed: {
     
+    calculatePossibleDays() {
+      //console.log(eventPartUsers)
+      return this.eventPart.possibleDays;
+    },
 
     changeToUserTZ() {
       this.timeslotPart.forEach(timeslot => {
@@ -291,13 +302,13 @@ export default {
         if(timeslot.time < 0){
           let dateDay = new Date(timeslot.day);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
-          timeslot.day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+          timeslot.day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
           timeslot.time = timeslot.time + 24;
         }
         if(timeslot.time > 23){
           let dateDay = new Date(timeslot.day);
           let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
-          timeslot.day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + (newDate.getDate()); 
+          timeslot.day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
           timeslot.time = timeslot.time - 24;
         }
       })
