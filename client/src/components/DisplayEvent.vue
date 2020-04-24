@@ -262,7 +262,6 @@ export default {
           let myId = "checkbox-"+i+"-"+n;
           console.log(document.getElementById(myId));
           if(document.getElementById(myId).checked){
-            console.log("adicionou");
             this.slotItems.push([this.eventPart.possibleDays[i], n-1]);
           }
         }

@@ -66,7 +66,7 @@ export default {
   },
   methods: {
     handleAdvisable(advisableTimeslots){
-      console.log(typeof(advisableTimeslots));
+      //console.log(typeof(advisableTimeslots));
       if(typeof(advisableTimeslots) == 'object'){
         advisableTimeslots.forEach((tmsl, index) => {
           //console.log(tmsl);
