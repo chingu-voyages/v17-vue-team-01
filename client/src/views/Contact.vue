@@ -11,7 +11,7 @@
               <v-icon>mdi-email</v-icon> chingutime(at)gmail.com
             </h3> -->
   <form method="POST" action="https://formspree.io/chingutime@gmail.com">
-    <v-text-field
+    <input
       v-model="name"
       :error-messages="nameErrors"
       :counter="10"
@@ -21,8 +21,8 @@
       required
       @input="$v.name.$touch()"
       @blur="$v.name.$touch()"
-    ></v-text-field>
-    <v-text-field
+    >
+    <input
       v-model="email"
       :error-messages="emailErrors"
       label="E-mail"
@@ -31,8 +31,8 @@
       required
       @input="$v.email.$touch()"
       @blur="$v.email.$touch()"
-    ></v-text-field>
-        <v-text-field
+    >
+        <input
       v-model="content"
       :error-messages="contentErrors"
       label="Content"
@@ -41,7 +41,7 @@
       required
       @input="$v.content.$touch()"
       @blur="$v.content.$touch()"
-    ></v-text-field>
+    >
     <v-btn class="mr-4" type="submit" @click="submit">Send</v-btn>
     <v-btn @click="clear">clear</v-btn>
   </form>
