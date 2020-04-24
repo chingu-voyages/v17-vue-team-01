@@ -2,6 +2,8 @@
   <v-row class="calendar">
     <v-col>
       <v-sheet height="64">
+
+
         <v-toolbar flat color="white">
           <v-btn outlined class="mr-4" color="grey darken-2" @click="value = today">Today</v-btn>
           <v-btn fab text small color="grey darken-2" @click="$refs.calendar.prev()">
@@ -18,9 +20,13 @@
           <v-spacer></v-spacer>
           <v-menu bottom right>
             <template v-slot:activator="{ on }">
-              <v-btn outlined color="grey darken-2" v-on="on">
-                <span>{{ typeToLabel[type] }}</span>
-                <v-icon right>mdi-menu-down</v-icon>
+              <v-btn icon lv-on="on">
+                <v-icon right v-on="on">mdi-dots-vertical
+                  <span>{{ typeToLabel[type] }}</span>
+                </v-icon>
+                
+                <!-- <v-icon right>mdi-menu-down</v-icon> -->
+                
               </v-btn>
             </template>
             <v-list>
@@ -39,6 +45,8 @@
             </v-list>
           </v-menu>
         </v-toolbar>
+
+
       </v-sheet>
       <v-sheet height="70vh" class="calendarRows">
         <v-calendar
@@ -67,6 +75,7 @@
             <v-card-text>
               <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
                 <v-list-item-group color="primary">
+                  
                   <template v-for="user in selectedEvent.users">
                     <v-list-item :inactive="inactive" :key="user">
                       <v-list-item-content class="text-left">
@@ -146,9 +155,7 @@ export default {
       for (let j = 0; j < this.eventIDs.length; j++) {
         this.axios
           .get(
-            `https://chingutime.herokuapp.com/api/events/show/${
-              this.eventIDs[j]
-            }`,
+            `https://chingutime.herokuapp.com/api/events/show/${this.eventIDs[j]}`,
             {
               //.get(`http://localhost:5000/api/events/show/${this.url}`, {
               headers: {
@@ -171,7 +178,10 @@ export default {
       var date = new Date(
         Date.UTC(dateArray[0], dateArray[1] - 1, dateArray[2])
       );
+      console.log(`date: ${date}`)
       const month = date.toLocaleString("en-US", { month: "long" });
+      console.log(`month: ${month}`);
+      console.log(`dateArray[0]: ${dateArray[0]} `)
       return `${month} ${dateArray[0]}`;
     },
     viewDay({ date }) {
@@ -210,7 +220,8 @@ export default {
           this.events.push({
             color: this.serverResponse[i][0].color,
             end: this.transformTimestamp(this.serverResponse[i][0].end),
-            name: this.serverResponse[i][0].title,
+            title: this.serverResponse[i][0].title,
+            details: this.serverResponse[i][0].details,
             start: this.transformTimestamp(this.serverResponse[i][0].start),
             users: this.transformUsers(this.serverResponse[i][0].users)
           });
@@ -238,4 +249,8 @@ export default {
 .calendarTitle {
   margin-left: 5px;
 }
+// @media screen and (max-width: 600px) {
+//   .calendarTitle {
+//     font-size: 15px;
+// }
 </style>
