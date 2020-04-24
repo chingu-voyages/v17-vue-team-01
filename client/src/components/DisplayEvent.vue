@@ -1,7 +1,7 @@
 <template>
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
-      
+
       <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
       <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
 
@@ -45,17 +45,13 @@
                 </h3>
                 <v-col>
                   <template v-for="n in 24">
+                    
                     <label
                       class="checkbox-label"
                       :key="`checkbox-label-${i}-${n}`"
                       :for="`checkbox-${i}-${n}`"
                     >
-                     
                        {{numbering(n-1)}}:00
-     
-                          <div class="rounded text-center" :style="{ background: computedClass(day, n-1, eventPart.color, eventPart.users.length ) }">
-                          {{computedUsers(day, n-1 )}}</div>
-                     
                       <input
                         :key="`checkbox-${i}-${n}`"
                         type="checkbox"
@@ -68,6 +64,17 @@
                       >
                       <span class="checkmark"></span>
                     </label>
+                    <span :key="`tooltip-label-${i}-${n}`">
+                      <v-tooltip bottom :disabled="computedUserNames(day, n-1, eventPart.users) == null">
+                        <template #activator="data">
+                          <div v-on="data.on" class="rounded text-center" :style="{ background: computedClass(day, n-1, eventPart.color, eventPart.users.length ) }">
+                            {{computedUsers(day, n-1 )}}
+                          </div>
+                        </template>
+                        <span><template v-for="(i,index) in computedUserNames(day, n-1, eventPart.users)">{{index+1}}: {{ i == user.username ? i + " (You)" : i}} </template></span>
+                      </v-tooltip>
+                      <br>
+                    </span>
                   </template>
                   
                 </v-col>
@@ -182,6 +189,22 @@ export default {
         }
       })
       return countU;
+    },
+
+    computedUserNames(i, n, eventPartUsers) {
+      let usernames = [];
+      this.changeToUserTZ.forEach(function (tmsl){ 
+        if(i == tmsl.day && n == tmsl.time){
+          eventPartUsers.forEach(function (user){
+            if(tmsl.user == user._id) {
+              usernames.push(user.username);  
+            }
+          })  
+        }
+      })
+      if(usernames.length == 0)
+       return null;
+      return usernames;
     },
 
     createTimeslots(){
