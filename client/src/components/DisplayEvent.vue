@@ -1,44 +1,22 @@
 <template>
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
-
-      <!--<p>Event: {{ eventPart }}</p>-->
-      <!--<p>Route: /event/{{ url }}</p>-->
-      <!--<p>Event title: {{ eventPart.title }}</p>-->
-      <!--<p>Timeslots: {{ timeslotPart }} </p>-->
-      <!--<p>Users:</p>-->
-
-      <!-- <p>Event: {{ eventPart }}</p>
-      <p>Route: /event/{{ url }}</p>
-      <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p> -->
-      
-      <h3 class="mb-5">Title: {{ eventPart.title }}</h3>
-      <h3 class="mb-5">Details: {{ eventPart.details }}</h3>
-      
-      <p v-if="!eventPart.scheduled" class="mb-5">You have advisable timeslots for schedule: {{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(parseInt(tsml.slice(-4, -2)) + parseInt(this.user.TZ)) + ":00").join(", ") }}</p>
-
-      <h3>Users:</h3>
-      .  
-      <!-- <v-list :shaped="shaped">
-        <v-list-item-group v-model="event" color="primary">
-          <v-list-item :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
-            <v-list-item-content class="text-left">
-              <v-list-item-title>
-                {{ participants.username }} <span v-if="i==0"> (Event Creator) </span>
-              </v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle><template>
-  <v-card class="pa-2" outlined tile>
-    <v-sheet v-if="eventPart">
-      <p>Event: {{ eventPart }}</p>
-      <p>Route: /event/{{ url }}</p>
-      <p v-for="(timeslot, i) in timeslotPart" :key="i">Timeslots: {{ timeslot }} </p>
       
       <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
+      <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
+
+      <div v-if="!eventPart.scheduled">
+        <div v-if="typeof advisableTimeslots != 'string'" >
+        <p class="mb-5">The following timeslots are already selected by all participants:</p>
+
+        <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
+        <p>The first timeslot is already added to schedule form fields.</p>
+        </div>
+        <div v-else class="mb-5">
+          <p class="mb-5"> {{advisableTimeslots}} </p>
+        </div>
+      </div>      
       <h3>Users:</h3>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list> -->
       
       <v-list :shaped ="shaped">
       <div>
@@ -104,44 +82,10 @@
           
         </v-row>
 
-            <v-card-actions
-              class="justify-center topNegativeMargin" 
-            >
+            <v-card-actions class="justify-center topNegativeMargin" >
               <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
             </v-card-actions>
-
-
-
-      <!--<v-list :shaped ="shaped">
-      <div>
-        <v-row>
-        <span class="mx-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
-          {{ participants.username }}
-          <span class="mx-5 mb-8" :inactive="inactive" v-for="(timeslot, i) in changeToUserTZ" :key="i">
-            <v-col>{{ timeslot.day }} - {{ timeslot.time }}:00</v-col>
-          </span>
-        </span>  
-        </v-row>    
-      </div>
-      </v-list>-->
-     
-      <!-- <v-list :shaped="shaped">
-      <v-list-item-group v-model="event" color="primary">
-          <v-list-item :inactive="inactive" v-for="(timeslot, i) in changeToUserTZ" :key="i">
-            <v-list-item-content class="text-left">
-              <v-list-item-title>
-                Day {{ timeslot.day }} Time {{ timeslot.time  }}
-              </v-list-item-title>
-              <v-list-item-subtitle></v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-item-group>
-      </v-list> -->
-      
     </v-sheet>
-
-
-      <!-- <p>Advisable Timeslots: {{ advisableTimeslots }} </p> -->
       
   </v-card>
 </template>
