@@ -30,10 +30,8 @@
       <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
       <p v-else class="mt-5">Current Event Calendar:</p>
 
-            <v-card-actions
-              class="justify-center topNegativeMargin" 
-            >
-              <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
+            <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin">
+              <v-btn @click="createTimeslots" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>
             <br>
         <v-row align="center" justify="center" no-gutters>
@@ -82,8 +80,8 @@
           
         </v-row>
 
-            <v-card-actions class="justify-center topNegativeMargin" >
-              <v-btn @click="createTimeslots" class="center" color="success">Add timeslots</v-btn>
+            <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin" >
+              <v-btn @click="createTimeslots" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>
     </v-sheet>
       
