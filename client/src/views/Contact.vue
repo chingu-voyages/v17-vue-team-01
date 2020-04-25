@@ -10,40 +10,11 @@
             <!-- <h3>
               <v-icon>mdi-email</v-icon> chingutime(at)gmail.com
             </h3> -->
-  <form method="POST" action="https://formspree.io/chingutime@gmail.com">
-    <input
-      v-model="name"
-      :error-messages="nameErrors"
-      :counter="10"
-      label="Name"
-      type="text"
-      name="name"
-      required
-      @input="$v.name.$touch()"
-      @blur="$v.name.$touch()"
-    >
-    <input
-      v-model="email"
-      :error-messages="emailErrors"
-      label="E-mail"
-      type="email"
-      name="_replyto"
-      required
-      @input="$v.email.$touch()"
-      @blur="$v.email.$touch()"
-    >
-        <input
-      v-model="content"
-      :error-messages="contentErrors"
-      label="Content"
-      type="text"
-      name="message"
-      required
-      @input="$v.content.$touch()"
-      @blur="$v.content.$touch()"
-    >
-    <v-btn class="mr-4" type="submit" @click="submit">Send</v-btn>
-    <v-btn @click="clear">clear</v-btn>
+  <form class="form" method="POST" action="https://formspree.io/chingutime@gmail.com" data-netlify="true">
+    <input class="mt-3" required name="name" v-model="name" placeholder="Name" type="text" autocomplete="off">
+		<input required name="email" v-model="email" placeholder="E-mail" type="email" autocomplete="off">
+		<textarea name="message" rows="4" v-model="message" placeholder="Message"></textarea>
+    <button class="button" type="submit">Send</button>
   </form>
             <br>
             <h3>Our Team:</h3>
@@ -97,18 +68,9 @@
 </template>
 
 <script>
-import { validationMixin } from 'vuelidate'
-import { required, maxLength, email } from 'vuelidate/lib/validators'
-
 export default {
   name: "Contact",
   components: {},
-  mixins: [validationMixin],
-  validations: {
-      name: { required, maxLength: maxLength(10) },
-      email: { required, email },
-      content: { required }
-    },
     data: () => ({
       name: '',
       email: '',
@@ -116,42 +78,16 @@ export default {
     }),
   mounted() {},
   watch: {},
-      computed: {
-      nameErrors () {
-        const errors = []
-        if (!this.$v.name.$dirty) return errors
-        !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long')
-        !this.$v.name.required && errors.push('Name is required.')
-        return errors
-      },
-      emailErrors () {
-        const errors = []
-        if (!this.$v.email.$dirty) return errors
-        !this.$v.email.email && errors.push('Must be valid e-mail')
-        !this.$v.email.required && errors.push('E-mail is required')
-        return errors
-      },
-      contentErrors () {
-        const errors = []
-        if (!this.$v.content.$dirty) return errors
-        !this.$v.content.required && errors.push('Content is required.')
-        return errors
-      }
-    },
-
-    methods: {
-      submit () {
-        this.$v.$touch()
-        this.$router.push({ name: "Home" });
-       
-      },
-      clear () {
-        this.$v.$reset()
-        this.name = ''
-        this.email = ''
-        this.select = null
-        this.checkbox = false
-      },
+  computed: {},
+  methods: {
+      // submit () {
+      //   this.$router.push({ name: "Home" });    
+      // },
+      // clear () {
+      //   this.name = ''
+      //   this.email = ''
+      //   this.content = ''
+      // },
     },
 };
 </script>
@@ -159,5 +95,47 @@ export default {
 <style lang="scss">
 .addedLineheight {
   line-height: 130%;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	font-size: 16px;
+}
+input[type="email"],
+input[type="text"],
+textarea {
+	border: solid 1px #e8e8e8;
+	font-family: 'Roboto', sans-serif;
+	padding: 10px 7px;
+	margin-bottom: 15px;
+	outline: none;
+}
+
+textarea {
+	resize: none;
+}
+
+.button {
+	background: #da552f;
+	border: solid 1px #da552f;
+	color: white;
+	cursor: pointer;
+	padding: 10px 50px;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.button:hover {
+	background: #ea532a;
+	border: solid 1px #ea532a;
+}
+
+input[type="email"],
+input[type="text"],
+textarea,
+.button {
+	font-size: 15px;
+	border-radius: 3px
 }
 </style>
