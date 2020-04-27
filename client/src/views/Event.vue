@@ -33,7 +33,7 @@ export default {
     event: function(newer, older) {
       //console.log(newer);
       if (newer) {
-        this.eventPart = this.event[0];
+        this.eventPart = this.handleScheduled(this.event[0]);
         this.timeslotPart = this.event[1];
         this.advisableTimeslots = this.handleAdvisable(this.event[2]);
       }
@@ -90,9 +90,52 @@ export default {
           advisableTimeslots[index] = date + " " + time;
         })
       }
-      
-
       return advisableTimeslots;
+    },
+    handleScheduled(eventPart){
+      //console.log(typeof(advisableTimeslots));
+      if(eventPart.scheduled == true){
+        
+          //console.log(eventPart.start);
+        
+          let dateStart = eventPart.start.substring(0, eventPart.start.indexOf("T"));
+          let timeStart = parseInt(eventPart.start.substring(eventPart.start.indexOf("T") + 1, eventPart.start.indexOf(":"))) + parseInt(this.user.TZ);
+          //console.log(timeStart);
+          if(timeStart < 0){
+            let dateDay = new Date(dateStart);
+            let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+            dateStart = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+            timeStart = timeStart + 24;
+          }
+          if(timeStart > 23){
+            let dateDay = new Date(dateStart);
+            let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+            dateStart = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+            timeStart = timeStart - 24;
+          }
+          timeStart < 10 ? timeStart = "0" + timeStart + ":00" : timeStart = timeStart + ":00";
+          eventPart.start = dateStart + " " + timeStart;
+        
+          let dateEnd = eventPart.end.substring(0, eventPart.end.indexOf("T"));
+          let timeEnd = parseInt(eventPart.end.substring(eventPart.end.indexOf("T") + 1, eventPart.end.indexOf(":"))) + parseInt(this.user.TZ);
+          //console.log(timeEnd);
+          if(timeEnd < 0){
+            let dateDay = new Date(dateEnd);
+            let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+            dateEnd = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+            timeEnd = timeEnd + 24;
+          }
+          if(timeEnd > 23){
+            let dateDay = new Date(dateEnd);
+            let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+            dateEnd= newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+            timeEnd = timeEnd - 24;
+          }
+          timeEnd < 10 ? timeEnd = "0" + timeEnd + ":00" : timeEnd = timeEnd + ":00";
+          eventPart.end = dateEnd + " " + timeEnd;
+
+      }
+      return eventPart;
     }
   }
 };

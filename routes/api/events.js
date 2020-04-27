@@ -351,9 +351,9 @@ router.post('/update', (req, res) => {
               users_data.push({name: user.name, email: user.email});
           });
         let hours = Math.abs(doc.end - doc.start) / 36e5;
-        let hourStart = doc.start.getHours() - decoded.TZ;
+        let hourStart = doc.start.getHours();// - decoded.TZ;
         let day = doc.start.getDate();
-        if(hourStart < 0){
+        /*if(hourStart < 0){
           let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + ("0" + (doc.start.getDate())).slice(-2));
           let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
           day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
@@ -366,7 +366,7 @@ router.post('/update', (req, res) => {
           day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
           day = day.slice(-2);
           hourStart = hourStart - 24;
-        }
+        }*/
         const event = {
           start: [doc.start.getFullYear(), (doc.start.getMonth()+1), day, parseInt(hourStart), doc.start.getMinutes() ],
           duration: { hours: hours, minutes: 0 },

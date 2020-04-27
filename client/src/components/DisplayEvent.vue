@@ -9,7 +9,7 @@
         <p class="mb-5">The following timeslots are already selected by all participants:</p>
         
         <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
-        <p>The first timeslot is already added to schedule form fields.</p>
+        <p>One timeslot is already added to schedule form fields.</p>
         </div>
         <div v-else class="mb-5">
           <p class="mb-5"> {{advisableTimeslots}} </p>
@@ -24,8 +24,6 @@
         </span>
       </div>
       </v-list>
-      
-
       <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
       <p v-else class="mt-5">Current Event Calendar:</p>
 
@@ -50,7 +48,6 @@
                       :key="`checkbox-label-${i}-${n}`"
                       :for="`checkbox-${i}-${n}`"
                     >
-                       {{numbering(n-1)}}:00
                       <input
                         :key="`checkbox-${i}-${n}`"
                         type="checkbox"
@@ -58,10 +55,13 @@
                         :value="n-1"
                         class="checkbox"
                         :checked="computedChecked(day, n-1, user._id)"
-                        :disabled="eventPart.scheduled || ((eventPart.users[0].username != user.username ) && ((i == 0 && n < eventPart.users[0].TZ) || (i == possible.length-1 && n > (eventPart.users[0].TZ - 1))))"
+                        :disabled="computedDisabled(eventPart, user, i, n, possible)"
+                                  
                       >
+                      <span class="numbering">{{numbering(n-1)}}:00</span>
                       <span class="checkmark"></span>
                     </label>
+                  
                     <span :key="`tooltip-label-${i}-${n}`">
                       <v-tooltip bottom :disabled="computedUserNames(day, n-1, eventPart.users) == null">
                         <template #activator="data">
@@ -84,7 +84,6 @@
           </template>
           
         </v-row>
-
             <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin" >
               <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>
@@ -183,6 +182,47 @@ export default {
       return checked;
     },
 
+    computedDisabled(eventPart, user, i, n, possible) {
+      let disabled;
+      //console.log(user.TZ-eventPart.users[0].TZ)
+      let diffFromCreator = user.TZ-eventPart.users[0].TZ;
+      if(eventPart.scheduled == true) {
+        disabled = true;
+        return disabled;
+      }
+      if(eventPart.users[0].username != user.username && diffFromCreator > 0 ){
+        //GMT 0 creator, GMT 8 user
+        if(i == 0 && n < user.TZ-eventPart.users[0].TZ+1){
+          disabled = true;
+          return disabled;
+        }
+        if(i == possible.length-1 && n > user.TZ-eventPart.users[0].TZ){
+          disabled = true;
+          return disabled;
+        }
+      }
+      if(eventPart.users[0].username != user.username && diffFromCreator <= 0 ){
+        //GMT 0 creator, GMT -8 user
+        if(i == 0 && n < 24+user.TZ-eventPart.users[0].TZ+1){
+          disabled = true;
+          return disabled;
+        }
+        if(i == possible.length-1 && n > 24+user.TZ-eventPart.users[0].TZ){
+          disabled = true;
+          return disabled;
+        }
+      }
+    },
+
+/*"eventPart.scheduled || 
+((eventPart.users[0].username != user.username && user.TZ > eventPart.users[0].TZ) && 
+((i == 0 && n < user.TZ+1) || (i == possible.length-1 && n > (user.TZ-eventPart.users[0].TZ)))) ||
+((eventPart.users[0].username != user.username && user.TZ < eventPart.users[0].TZ) && 
+((i == 0 && n < 24-user.TZ-eventPart.users[0].TZ+1) || (i == possible.length-1 && n > 24-user.TZ-eventPart.users[0].TZ)))"*/
+
+
+
+
     computedUsers(i, n) {
       let countU = 0;
 
@@ -212,8 +252,8 @@ export default {
 
     createTimeslots(user){
       let sizePossibleDays = this.eventPart.possibleDays.length;
-      if(user.TZ != 0 && this.eventPart.users[0].username != user.username) sizePossibleDays = this.eventPart.possibleDays.length + 1;
-      //console.log(sizePossibleDays);
+      if(this.eventPart.users[0].username != user.username) sizePossibleDays = this.eventPart.possibleDays.length + 1;
+      //console.log(this.eventPart.possibleDays);
       let confirmation = confirm("Are you sure you want to add timeslots? Previous created timeslots will be replaced!");
       if (confirmation == true) {
       
@@ -223,13 +263,57 @@ export default {
           let day;
           //console.log(document.getElementById(myId));
           if(document.getElementById(myId).checked){
-            if(i == sizePossibleDays-1){
-              day = new Date(this.eventPart.possibleDays[i-1]);
-              let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-              day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+            if(user.TZ == 0 && this.eventPart.users[0].TZ < user.TZ){
+              day = this.eventPart.possibleDays[i]; 
             }
             else{
-              day = this.eventPart.possibleDays[i]; 
+                if(i == 0){
+                  day = new Date(this.eventPart.possibleDays[0]);
+                  let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+                  day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                }
+                else{
+                  day = this.eventPart.possibleDays[i-1]; 
+                }
+            }
+            if(user.TZ > 0){
+              /*if(i == 0){
+                day = new Date(this.eventPart.possibleDays[0]);
+                let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+                day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+              }*/
+              if(i == sizePossibleDays-1){
+                day = new Date(this.eventPart.possibleDays[i-1]);
+                let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+                day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                //console.log(day)
+              }
+              //if(i != 0 && i != sizePossibleDays-1){
+              else{  
+                day = this.eventPart.possibleDays[i];
+              }
+            }
+
+            if(user.TZ < 0){
+              if(sizePossibleDays == this.eventPart.possibleDays.length){
+                day = this.eventPart.possibleDays[i];
+              }
+              else{
+                if(i == 0){
+                 day = new Date(this.eventPart.possibleDays[0]);
+                 let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+                 day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                }
+              /*if(i == sizePossibleDays-1){
+                day = new Date(this.eventPart.possibleDays[i-1]);
+                let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+                day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+              }*/
+                else{
+                  day = this.eventPart.possibleDays[i-1];
+                }
+              }
+              
             }
             this.slotItems.push([day, n-1]);
           }
@@ -239,7 +323,7 @@ export default {
           event_id: this.url,
           timeslots: this.slotItems
         };
-        //console.log(this.slotItems);
+        console.log(this.slotItems);
         this.axios
           .post("https://chingutime.herokuapp.com/api/timeslots/create", data, {
               //.post("http://localhost:5000/api/timeslots/create", data, {
@@ -261,21 +345,24 @@ export default {
 
     computePossibleDays(users, username, possibleDays, TZ){
       let possibles = [];
+      //console.log(users[0].username);
+      //console.log(username);
       let size = possibleDays.length;
+      if(TZ-users[0].TZ < 0) size = possibleDays.length + 1;
+      //if(TZ-users[0].TZ > 0 && users[0].TZ < 0) size = possibleDays.length + 1;
+      //console.log(size);
       this.calculatePossibleDays.forEach(function (possible, i){ 
-        //console.log(possible);
-        //console.log(i)
-        //console.log(this.eventPart.possibleDays)
-        //console.log(users[0].username)
         possibles.push(possible);
-        if (i+1 == size && TZ > 0 && users[0].username != username){ 
+        //console.log(i+1); 
+        //console.log(size); 
+        if (i+1 == size && TZ >= 0 && users[0].username != username){ 
           //console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
           possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
           possibles.push(possible);
         }
-        if (i == 0 && TZ < 0 && users[0].username != username){ 
+        if (i == 0 && TZ-users[0].TZ < 0 && users[0].username != username){ 
           //console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
@@ -383,6 +470,19 @@ export default {
   height: 24px;
   width: 24px;
   background-color: #eee;
+}
+
+/* Add a red background color for disable checkbox */
+.checkbox-label input:disabled ~ .checkmark {
+  background-color: #4d0202;
+  cursor: default;
+}
+.checkbox-label:hover input:disabled ~ .checkmark {
+  background-color: #4d0202;
+  cursor: default;
+}
+.checkbox-label input:disabled ~ .numbering{
+  cursor: default;
 }
 
 /* On mouse-over, add a grey background color */

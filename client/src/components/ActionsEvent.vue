@@ -90,8 +90,8 @@
           </span>
           <span v-else>
             <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
-            <p class="leftMargin">Start: {{(eventPart.start).replace("T", " ").replace(":00.000Z", "")}}</p>
-            <p class="leftMargin">End: {{ (eventPart.end).replace("T", " ").replace(":00.000Z", "") }}</p>
+            <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
+            <p class="leftMargin">End: {{ (eventPart.end) }}</p>
           </span>
           <v-divider></v-divider>
           <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
@@ -296,6 +296,7 @@ export default {
       //console.log(this.toSnakeCase(this.eventPart.title));
       //console.log(this.dateSaved);
       //console.log(this.time);
+      //console.log(this.user.TZ);
       //console.log(this.numberHours);
       if (!this.dateSaved || !this.time) {
         this.answer = "Please fill out all the fields to schedule the event.";
@@ -304,22 +305,68 @@ export default {
           "Are you sure you want to schedule this event?"
         );
         if (confirmation == true) {
-          let start = this.dateSaved + " " + this.time.toString() + ":00";
-          let timeEnd = parseInt(this.time.substring(0,2)) + this.numberHours;
-          if (timeEnd > 23) {
-            timeEnd -= 24;
-            let dateDay = new Date(this.dateSaved);
+          let timeStart = parseInt(this.time.substring(0,2)) - this.user.TZ;
+          let dateSavedStart = this.dateSaved;
+          if (timeStart < 0) {
+            timeStart += 24;
+            let dateDay = new Date(dateSavedStart);
             let newDate = new Date(
-              dateDay.setTime(dateDay.getTime() + 1 * 86400000)
+              dateDay.setTime(dateDay.getTime() - 1 * 86400000)
             );
-            this.dateSaved =
+            dateSavedStart =
               newDate.getFullYear() +
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
               ("0" + (newDate.getDate())).slice(-2);
           }
-          let end = this.dateSaved + " " + timeEnd + ":00:00";
+          if (timeStart > 23) {
+            timeStart -= 24;
+            let dateDay = new Date(dateSavedStart);
+            let newDate = new Date(
+              dateDay.setTime(dateDay.getTime() + 1 * 86400000)
+            );
+            dateSavedStart =
+              newDate.getFullYear() +
+              "-" +
+              ("0" + (newDate.getMonth() + 1)).slice(-2) +
+              "-" +
+              ("0" + (newDate.getDate())).slice(-2);
+          }
+          let start = dateSavedStart + " " + timeStart + ":00:00";
+          //console.log(start);
+          let timeEnd = parseInt(this.time.substring(0,2)) - this.user.TZ + this.numberHours;
+          //console.log(this.dateSaved);
+          let dateSavedEnd = this.dateSaved;
+          if (timeEnd < 0) {
+            timeEnd += 24;
+            let dateDay = new Date(dateSavedEnd);
+            let newDate = new Date(
+              dateDay.setTime(dateDay.getTime() - 1 * 86400000)
+            );
+            dateSavedEnd =
+              newDate.getFullYear() +
+              "-" +
+              ("0" + (newDate.getMonth() + 1)).slice(-2) +
+              "-" +
+              ("0" + (newDate.getDate())).slice(-2);
+          }
+
+          if (timeEnd > 23) {
+            timeEnd -= 24;
+            let dateDay = new Date(dateSavedEnd);
+            let newDate = new Date(
+              dateDay.setTime(dateDay.getTime() + 1 * 86400000)
+            );
+            dateSavedEnd =
+              newDate.getFullYear() +
+              "-" +
+              ("0" + (newDate.getMonth() + 1)).slice(-2) +
+              "-" +
+              ("0" + (newDate.getDate())).slice(-2);
+          }
+          let end = dateSavedEnd + " " + timeEnd + ":00:00";
+          //console.log(end);
           const data = {
             event_id: this.url,
             scheduled: "true",
