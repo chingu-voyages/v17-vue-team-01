@@ -2,8 +2,8 @@
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
 
-      <h3 class="mb-5">Event title: {{ eventPart.title }}</h3>
-      <h3 class="mb-5">Event details: {{ eventPart.details }}</h3>
+      <h2 class="mb-5">Title: {{ eventPart.title }}</h2>
+      <h4 class="mb-5">Details: {{ eventPart.details }}</h4>
       <div v-if="!eventPart.scheduled">
         <div v-if="typeof advisableTimeslots != 'string'" >
         <p class="mb-5">The following timeslots are already selected by all participants:</p>
@@ -15,7 +15,7 @@
           <p class="mb-5"> {{advisableTimeslots}} </p>
         </div>
       </div>      
-      <h3>Users:</h3>
+      <h4>Users:</h4>
       
       <v-list :shaped ="shaped">
       <div>
