@@ -431,7 +431,7 @@ export default {
                 "ChinguTime_" +
                   this.toSnakeCase(this.eventPart.title) +
                   "_" +
-                  this.eventPart.start.substring(0,13) +
+                  this.eventPart.start.substring(0,13).replace(" ", "T") +
                   ".ics"
               );
               document.body.appendChild(link);
