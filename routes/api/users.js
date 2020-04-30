@@ -172,6 +172,7 @@ router.post('/update', (req, res) => {
         });
       }
       for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
+      if(req.body.TZ == 0) params.TZ = 0;
       User.findOneAndUpdate({
         _id: decoded._id,
       },
