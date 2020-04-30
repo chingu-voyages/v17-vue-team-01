@@ -60,7 +60,7 @@
               <br>
               Username: {{username || user.username}}
               <br>
-              Timezone: {{time || user.TZ}}
+              Timezone (UTC): {{time || user.TZ}}
             </h3>
           </v-card-text>
         </v-card>
