@@ -18,17 +18,34 @@
             }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
+       
+<!-- <v-toolbar-side-icon class="hidden-sm-and-up">small</v-toolbar-side-icon> -->
+<!-- <v-toolbar-title class="hidden-sm-and-up">small</v-toolbar-title>
+<v-toolbar-title class="hidden-xs-only">big</v-toolbar-title>
+<v-spacer></v-spacer> -->
+
           <v-menu bottom right>
-            <template v-slot:activator="{ on }">
-              <v-btn icon lv-on="on">
-                <v-icon right v-on="on">mdi-dots-vertical
-                  <span>{{ typeToLabel[type] }}</span>
-                </v-icon>
-                
-                <!-- <v-icon right>mdi-menu-down</v-icon> -->
-                
+
+            <template v-slot:activator="{ on }">     
+           
+            <v-toolbar-title class="hidden-sm-and-up">
+              <v-btn icon v-on="on">
+                <v-icon>mdi-dots-vertical</v-icon>
               </v-btn>
-            </template>
+            </v-toolbar-title>    
+              
+              <v-toolbar-title class="hidden-xs-only">
+              <v-btn outlined
+                color="grey darken-2"
+                v-on="on"
+                >
+                <span>{{ typeToLabel[type] }}</span>
+                <v-icon right>mdi-menu-down</v-icon>
+              </v-btn>
+            </v-toolbar-title>
+             
+            </template> 
+
             <v-list>
               <v-list-item @click="type = 'day'">
                 <v-list-item-title>Day</v-list-item-title>
@@ -43,11 +60,12 @@
                 <v-list-item-title>4 days</v-list-item-title>
               </v-list-item>
             </v-list>
+
           </v-menu>
+
         </v-toolbar>
-
-
       </v-sheet>
+
       <v-sheet height="70vh" class="calendarRows">
         <v-calendar
           ref="calendar"
@@ -70,12 +88,16 @@
         >
           <v-card color="grey lighten-4" flat>
             <v-toolbar :color="selectedEvent.color" dark>
-              <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
+              <v-toolbar-title v-html="selectedEvent.title"></v-toolbar-title>
             </v-toolbar>
+            
+            <v-card-text>
+             <span v-html="selectedEvent.details"></span>
+            </v-card-text>
+
             <v-card-text>
               <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
-                <v-list-item-group color="primary">
-                  
+                <v-list-item-group color="primary">              
                   <template v-for="user in selectedEvent.users">
                     <v-list-item :inactive="inactive" :key="user">
                       <v-list-item-content class="text-left">
@@ -87,6 +109,7 @@
                 </v-list-item-group>
               </v-list>
             </v-card-text>
+
             <v-card-actions>
               <v-btn text color="secondary" @click="selectedOpen = false">Cancel</v-btn>
             </v-card-actions>
@@ -128,6 +151,8 @@ export default {
     ]
   }),
   mounted() {
+    console.log(this.$vuetify.breakpoint);
+
     if (this.usertoken) {
       this.axios
         .get("https://chingutime.herokuapp.com/api/users/profile", {
@@ -167,6 +192,7 @@ export default {
           )
           .then(
             response => (
+              console.log(`response.data: ${response.data}`),
               this.serverResponse.push(response.data), this.convertToEvent()
             )
           )
@@ -178,7 +204,7 @@ export default {
       var date = new Date(
         Date.UTC(dateArray[0], dateArray[1] - 1, dateArray[2])
       );
-      const month = date.toLocaleString("en-US", { month: "long" });
+      const month = date.toLocaleString("en-US", { month: "short" });
       return `${month} ${dateArray[0]}`;
     },
     viewDay({ date }) {
@@ -244,10 +270,7 @@ export default {
   margin-top: 8px;
 }
 .calendarTitle {
-  margin-left: 5px;
+  font-size: 18px;
 }
-// @media screen and (max-width: 600px) {
-//   .calendarTitle {
-//     font-size: 15px;
-// }
+
 </style>
