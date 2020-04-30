@@ -1,118 +1,104 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <v-card v-if="eventPart && advisableTimeslots" class="mx-auto" max-width="360">
-          <h1 class="leftMargin">Event Actions</h1>
-          <p
-            class="leftMargin"
-            v-if="user.username == eventPart.users[0].username"
-          >You are the event creator</p>
-          <span v-if="eventPart.scheduled == false">
-            <v-divider></v-divider>
-            <v-card-text>
+    <v-card v-if="eventPart && advisableTimeslots" class="mx-auto">
+      <h1 class="leftMargin">Event Actions</h1>
+      <p
+        class="leftMargin"
+        v-if="user.username == eventPart.users[0].username"
+      >You are the event creator</p>
+      <span v-if="eventPart.scheduled == false">
+        <v-divider></v-divider>
+        <v-card-text>
+          <input
+            class="input"
+            v-on:keyup.enter="addUser"
+            type="text"
+            name="username"
+            v-model="username"
+            placeholder="Username"
+          >
+        </v-card-text>
+        <v-card-actions class="justify-center topNegativeMargin">
+          <v-btn @click="addUser" class="center" color="success">Add user</v-btn>
+        </v-card-actions>
+        <v-divider></v-divider>
+        <v-card-text v-if="eventPart.users.length > 1">
+          <v-dialog ref="dialog" v-model="modal" :return-value.sync="date" persistent width="290px">
+            <template v-slot:activator="{ on }">
               <input
                 class="input"
-                v-on:keyup.enter="addUser"
-                type="text"
-                name="username"
-                v-model="username"
-                placeholder="Username"
+                v-model="dateSaved"
+                placeholder="Select date to schedule"
+                v-on="on"
               >
-            </v-card-text>
-            <v-card-actions class="justify-center topNegativeMargin">
-              <v-btn @click="addUser" class="center" color="success">Add user</v-btn>
-            </v-card-actions>
-            <v-divider></v-divider>
-            <v-card-text v-if="eventPart.users.length > 1">
-              <v-dialog
-                ref="dialog"
-                v-model="modal"
-                :return-value.sync="date"
-                
-                persistent
-                width="290px"
-              >
-                <template v-slot:activator="{ on }">
-                  <input
-                    class="input"
-                    v-model="dateSaved"
-                    placeholder="Select date to schedule"
-                    v-on="on"
-                  >
-                </template>
-                <v-date-picker
-                  v-model="date"
-                  :min="eventPart.possibleDays[0]"
-                  :max="eventPart.possibleDays[eventPart.possibleDays.length-1]"
-                >
-                  <v-spacer></v-spacer>
-                  <v-btn text color="primary" @click="modal = false">Cancel</v-btn>
-                  <v-btn text color="primary" :disabled="!date" @click="dateSelector(input)">OK</v-btn>
-                </v-date-picker>
-              </v-dialog>
-              
-              <select v-model="time" class="input" placeholder="Times" label="Time">
-                <option disabled value>Please select time to schedule</option>
-                <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
-              </select>
-              <select v-model="numberHours" class="input" placeholder="numberHours" label="numberHour">
-                <option disabled value>Amount of hours in the event</option>
-                <option v-for="zone1 in zones1" v-bind:value="zone1.number" :key="zone1.number">{{zone1.display}}</option>
-              </select>
+            </template>
+            <v-date-picker
+              v-model="date"
+              :min="eventPart.possibleDays[0]"
+              :max="eventPart.possibleDays[eventPart.possibleDays.length-1]"
+            >
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="modal = false">Cancel</v-btn>
+              <v-btn text color="primary" :disabled="!date" @click="dateSelector(input)">OK</v-btn>
+            </v-date-picker>
+          </v-dialog>
 
-            </v-card-text>
-            <v-card-actions
-              class="justify-center topNegativeMargin"
-              v-if="eventPart.users.length > 1"
-            >
-              <v-btn @click="schedule" class="center" color="primary">Schedule Event</v-btn>
-            </v-card-actions>
-            <v-divider></v-divider>
-            <v-card-text
-              v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1"
-            >
-              <select v-model="userDelete" class="input" placeholder="Users" label="Users">
-                <option disabled value>Please select User</option>
-                <option
-                  v-for="userDel in eventPart.users.slice(1)"
-                  :value="userDel.username"
-                  :key="userDel"
-                >{{userDel.username}}</option>
-              </select>
-            </v-card-text>
-            <v-card-actions
-              class="justify-center topNegativeMargin"
-              v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1"
-            >
-              <v-btn @click="removeUser" class="center" color="warning">Remove user</v-btn>
-            </v-card-actions>
-          </span>
-          <span v-else>
-            <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
-            <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
-            <p class="leftMargin">End: {{ (eventPart.end) }}</p>
-          </span>
-          <v-divider></v-divider>
-          <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
-            <v-btn @click="downloadIcs" class="center" color="success">Download ics</v-btn>
-          </v-card-actions>
-          <v-divider></v-divider>
-          <v-card-actions
-            class="justify-center"
-            v-if="user.username == eventPart.users[0].username"
-          >
-            <v-btn @click="deleteEvent" class="center" color="red darken-4">Delete Event</v-btn>
-          </v-card-actions>
-        </v-card>
-        <br>
-        <v-card class="mx-auto" max-width="360" v-if="answer">
-          <v-card-text>
-            <h3>{{ answer }}</h3>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
+          <select v-model="time" class="input" placeholder="Times" label="Time">
+            <option disabled value>Please select time to schedule</option>
+            <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
+          </select>
+          <select v-model="numberHours" class="input" placeholder="numberHours" label="numberHour">
+            <option disabled value>Amount of hours in the event</option>
+            <option
+              v-for="zone1 in zones1"
+              v-bind:value="zone1.number"
+              :key="zone1.number"
+            >{{zone1.display}}</option>
+          </select>
+        </v-card-text>
+        <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1">
+          <v-btn @click="schedule" class="center" color="primary">Schedule Event</v-btn>
+        </v-card-actions>
+        <v-divider></v-divider>
+        <v-card-text
+          v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1"
+        >
+          <select v-model="userDelete" class="input" placeholder="Users" label="Users">
+            <option disabled value>Please select User</option>
+            <option
+              v-for="userDel in eventPart.users.slice(1)"
+              :value="userDel.username"
+              :key="userDel"
+            >{{userDel.username}}</option>
+          </select>
+        </v-card-text>
+        <v-card-actions
+          class="justify-center topNegativeMargin"
+          v-if="user.username == eventPart.users[0].username && eventPart.users.length > 1"
+        >
+          <v-btn @click="removeUser" class="center" color="warning">Remove user</v-btn>
+        </v-card-actions>
+      </span>
+      <span v-else>
+        <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
+        <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
+        <p class="leftMargin">End: {{ (eventPart.end) }}</p>
+      </span>
+      <v-divider></v-divider>
+      <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
+        <v-btn @click="downloadIcs" class="center" color="success">Download ics</v-btn>
+      </v-card-actions>
+      <v-divider></v-divider>
+      <v-card-actions class="justify-center" v-if="user.username == eventPart.users[0].username">
+        <v-btn @click="deleteEvent" class="center" color="red darken-4">Delete Event</v-btn>
+      </v-card-actions>
+    </v-card>
+    <br>
+    <v-card class="mx-auto" max-width="360" v-if="answer">
+      <v-card-text>
+        <h3>{{ answer }}</h3>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
@@ -135,19 +121,40 @@ export default {
       modal2: false,
       time: "",
       zones: [
-        "00:00","01:00","02:00","03:00","04:00","05:00","06:00","07:00","08:00","09:00","10:00",
-        "11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00",
-        "21:00","22:00","23:00"
+        "00:00",
+        "01:00",
+        "02:00",
+        "03:00",
+        "04:00",
+        "05:00",
+        "06:00",
+        "07:00",
+        "08:00",
+        "09:00",
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+        "18:00",
+        "19:00",
+        "20:00",
+        "21:00",
+        "22:00",
+        "23:00"
       ],
       zones1: [
-        {number:1,display:"For one hour"},
-        {number:2,display:"For two hours"},
-        {number:3,display:"For three hours"},
-        {number:4,display:"For four hours"},
-        {number:5,display:"For five hours"}
+        { number: 1, display: "For one hour" },
+        { number: 2, display: "For two hours" },
+        { number: 3, display: "For three hours" },
+        { number: 4, display: "For four hours" },
+        { number: 5, display: "For five hours" }
       ],
       menu2: false,
-      numberHours: 1 
+      numberHours: 1
     };
   },
   computed() {},
@@ -158,13 +165,12 @@ export default {
           0,
           this.advisableTimeslots[0].indexOf(" ")
         );
-        this.time =
-          parseInt(
-            this.advisableTimeslots[0].substring(
-              this.advisableTimeslots[0].indexOf(" "),
-              this.advisableTimeslots[0].indexOf("00") + 1
-            )
-          );
+        this.time = parseInt(
+          this.advisableTimeslots[0].substring(
+            this.advisableTimeslots[0].indexOf(" "),
+            this.advisableTimeslots[0].indexOf("00") + 1
+          )
+        );
         if (this.time < 0) {
           this.time += 24;
           let dateDay = new Date(this.date);
@@ -176,7 +182,7 @@ export default {
             "-" +
             ("0" + (newDate.getMonth() + 1)).slice(-2) +
             "-" +
-            ("0" + (newDate.getDate())).slice(-2);
+            ("0" + newDate.getDate()).slice(-2);
         }
         if (this.time > 23) {
           this.time -= 24;
@@ -189,10 +195,10 @@ export default {
             "-" +
             ("0" + (newDate.getMonth() + 1)).slice(-2) +
             "-" +
-            ("0" + (newDate.getDate())).slice(-2);
+            ("0" + newDate.getDate()).slice(-2);
         }
         if (this.time < 10) {
-          this.time = "0"+this.time;
+          this.time = "0" + this.time;
         }
         this.time += ":00";
         this.dateSaved = this.date;
@@ -276,7 +282,7 @@ export default {
         };
         this.axios
           .post("https://chingutime.herokuapp.com/api/events/delete", data, {
-              //.post("http://localhost:5000/api/events/delete", data, {
+            //.post("http://localhost:5000/api/events/delete", data, {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
@@ -305,7 +311,7 @@ export default {
           "Are you sure you want to schedule this event?"
         );
         if (confirmation == true) {
-          let timeStart = parseInt(this.time.substring(0,2)) - this.user.TZ;
+          let timeStart = parseInt(this.time.substring(0, 2)) - this.user.TZ;
           let dateSavedStart = this.dateSaved;
           if (timeStart < 0) {
             timeStart += 24;
@@ -318,7 +324,7 @@ export default {
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
-              ("0" + (newDate.getDate())).slice(-2);
+              ("0" + newDate.getDate()).slice(-2);
           }
           if (timeStart > 23) {
             timeStart -= 24;
@@ -331,11 +337,14 @@ export default {
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
-              ("0" + (newDate.getDate())).slice(-2);
+              ("0" + newDate.getDate()).slice(-2);
           }
           let start = dateSavedStart + " " + timeStart + ":00:00";
           //console.log(start);
-          let timeEnd = parseInt(this.time.substring(0,2)) - this.user.TZ + this.numberHours;
+          let timeEnd =
+            parseInt(this.time.substring(0, 2)) -
+            this.user.TZ +
+            this.numberHours;
           //console.log(this.dateSaved);
           let dateSavedEnd = this.dateSaved;
           if (timeEnd < 0) {
@@ -349,7 +358,7 @@ export default {
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
-              ("0" + (newDate.getDate())).slice(-2);
+              ("0" + newDate.getDate()).slice(-2);
           }
 
           if (timeEnd > 23) {
@@ -363,7 +372,7 @@ export default {
               "-" +
               ("0" + (newDate.getMonth() + 1)).slice(-2) +
               "-" +
-              ("0" + (newDate.getDate())).slice(-2);
+              ("0" + newDate.getDate()).slice(-2);
           }
           let end = dateSavedEnd + " " + timeEnd + ":00:00";
           //console.log(end);
@@ -395,7 +404,7 @@ export default {
                   "_" +
                   this.dateSaved +
                   "T" +
-                  this.time.substring(0,2) +
+                  this.time.substring(0, 2) +
                   ".ics"
               );
               document.body.appendChild(link);
@@ -413,34 +422,35 @@ export default {
     downloadIcs() {
       //console.log(this.eventPart.start.substring(0,13));
       this.axios
-            .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`, {
-                //.get(`http://localhost:5000/api/events/download/${this.url}`, {
-              headers: {
+        .get(
+          `https://chingutime.herokuapp.com/api/events/download/${this.url}`,
+          {
+            //.get(`http://localhost:5000/api/events/download/${this.url}`, {
+            headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
                 .replace(/"/g, "")
-              },
-              responseType: "blob"
-            })
-            .then(response => {
-              const url = window.URL.createObjectURL(new Blob([response.data]));
-              const link = document.createElement("a");
-              link.href = url;
-              link.setAttribute(
-                "download",
-                "ChinguTime_" +
-                  this.toSnakeCase(this.eventPart.title) +
-                  "_" +
-                  this.eventPart.start.substring(0,13).replace(" ", "T") +
-                  ".ics"
-              );
-              document.body.appendChild(link);
-              link.click();
-              this.answer =
-                "Here you have you ics file.";
-            })
-            .catch(error => (console.log(error), (this.answer = error)));
-        
+            },
+            responseType: "blob"
+          }
+        )
+        .then(response => {
+          const url = window.URL.createObjectURL(new Blob([response.data]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute(
+            "download",
+            "ChinguTime_" +
+              this.toSnakeCase(this.eventPart.title) +
+              "_" +
+              this.eventPart.start.substring(0, 13).replace(" ", "T") +
+              ".ics"
+          );
+          document.body.appendChild(link);
+          link.click();
+          this.answer = "Here you have you ics file.";
+        })
+        .catch(error => (console.log(error), (this.answer = error)));
     }
   }
 };

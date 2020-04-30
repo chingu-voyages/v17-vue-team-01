@@ -1,5 +1,6 @@
 <template>
-  <v-row class="mb-6">
+ <v-container>
+    <v-row>
     <v-col cols="12" md="4">
       <ActionsEvent :url="url" :eventPart="eventPart" :advisableTimeslots="advisableTimeslots"/>
     </v-col>
@@ -13,6 +14,7 @@
       />
     </v-col>
   </v-row>
+ </v-container>
 </template>
 
 <script>
