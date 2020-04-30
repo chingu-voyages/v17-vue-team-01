@@ -1,6 +1,7 @@
-# chingutime.netlify.app
+# App 
+http://chingutime.netlify.app
 
-Vue-team-v17 Backend
+## Vue-team-v17 Backend
 
 1. Clone repository
 2. npm install
