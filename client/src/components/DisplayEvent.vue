@@ -355,14 +355,14 @@ export default {
         possibles.push(possible);
         //console.log(i+1); 
         //console.log(size); 
-        if (i+1 == size && TZ >= 0 && users[0].username != username){ 
+        if (i+1 == size && TZ >= 0 ){ 
           //console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
           possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
           possibles.push(possible);
         }
-        if (i == 0 && TZ-users[0].TZ < 0 && users[0].username != username){ 
+        if (i == 0 && TZ-users[0].TZ < 0 ){ 
           //console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
