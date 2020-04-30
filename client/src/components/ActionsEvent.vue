@@ -95,7 +95,7 @@
           </span>
           <v-divider></v-divider>
           <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
-            <v-btn @click="downloadIcs" class="center" color="primary">Download ics</v-btn>
+            <v-btn @click="downloadIcs" class="center" color="success">Download ics</v-btn>
           </v-card-actions>
           <v-divider></v-divider>
           <v-card-actions
