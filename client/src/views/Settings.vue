@@ -41,7 +41,7 @@
               placeholder=" New Password"
             >
             <select v-model="time" class="input" placeholder="Timezone" label="Timezone">
-              <option disabled value>Please select timezone(UTC)</option>
+              <option disabled value>Please select timezone</option>
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
           </v-card-text>
@@ -60,7 +60,7 @@
               <br>
               Username: {{username || user.username}}
               <br>
-              Timezone (UTC): {{time || user.TZ}}
+              Timezone: {{time || "UTC " + user.TZ}}
             </h3>
           </v-card-text>
         </v-card>
