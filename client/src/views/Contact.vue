@@ -14,7 +14,9 @@
     <input class="mt-3" required name="name" v-model="name" placeholder="Name" type="text" autocomplete="off">
 		<input required name="email" v-model="email" placeholder="E-mail" type="email" autocomplete="off">
 		<textarea name="message" rows="4" v-model="message" placeholder="Message"></textarea>
-    <button class="button" type="submit">Send</button>
+      <v-card-actions class="justify-center">
+        <v-btn type="submit" color="primary">Send</v-btn>
+      </v-card-actions>
   </form>
             <br>
             <h3>Our Team:</h3>
