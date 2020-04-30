@@ -60,7 +60,7 @@
               <br>
               Username: {{username || user.username}}
               <br>
-              Timezone: UTC {{time || user.TZ}}
+              Timezone: {{time || user.TZ}}
             </h3>
           </v-card-text>
         </v-card>
@@ -82,43 +82,43 @@ export default {
       time: "",
       settings: {},
       zones: [
-        "+14:00 Samoa",
-        "+13:45	New Zealand",
-        "+13:00 New Zealand",
-        "+12:00	Fiji",
-        "+11:00	Australia",
-        "+10:30	Australia",
-        "+10:00	Queensland/Australia",
-        "+09:30	Northern Territory/Australia",
-        "+09:00	Japan, South Korea",
-        "+08:45	Western Australia",
-        "+08:00	China, Philippines",
-        "+07:00	Indonesia",
-        "+06:30	Myanmar",
-        "+06:00	Bangladesh",
-        "+05:45	Nepal",
-        "+05:30	India",
-        "+05:00	Pakistan",
-        "+04:30	Iran and Afghanistan",
-        "+04:00	Azerbaijan",
-        "+03:00	Moscow/Russia",
-        "+02:00	Greece",
-        "+01:00	Germany",
-        "+00:00	United Kingdom",
-        "-01:00	Cabo Verde",
-        "-02:00	Brazil",
-        "-02:30 Canada",
-        "-03:00	Brazil and Argentina",
-        "-04:00 USA New York",
-        "-05:00 USA Chicago",
-        "-06:00 USA Mexico City",
-        "-07:00 USA Los Angeles",
-        "-08:00 Alaska/USA",
-        "-09:00 Alaska/USA",
-        "-09:30 Marquesas Islands",
-        "-10:00	Hawaii/USA",
-        "-11:00	American Samoa",
-        "-12:00	US Minor Outlying Islands"
+        "UTC +14:00 Kiribati",
+        "UTC +13:00 Samoa/Tonga",
+        "UTC +12:45 New Zealand",
+        "UTC +12:00	Fiji/New Zealand",
+        "UTC +11:00	Australia/Micronesia",
+        "UTC +10:30	Australia",
+        "UTC +10:00	Queensland/Syndey Australia",
+        "UTC +09:30	Northern Territory/Australia",
+        "UTC +09:00	Japan, South Korea",
+        "UTC +08:45	Western Australia",
+        "UTC +08:00	China, Philippines",
+        "UTC +07:00	Indonesia",
+        "UTC +06:30	Myanmar",
+        "UTC +06:00	Bangladesh",
+        "UTC +05:45	Nepal",
+        "UTC +05:30	India",
+        "UTC +05:00	Pakistan",
+        "UTC +04:30	Iran/Afghanistan",
+        "UTC +04:00	Dubai/Georgia",
+        "UTC +03:00	Turkey/Iraq",
+        "UTC +02:00	Germany/Austria",
+        "UTC +01:00	United Kingdom/Portugal",
+        "UTC +00:00	Iceland/Morocco",
+        "UTC -01:00	Cabo Verde",
+        "UTC -02:00	Brazil",
+        "UTC -02:30 Canada",
+        "UTC -03:00	Brazil/Argentina",
+        "UTC -04:00 USA New York",
+        "UTC -05:00 USA Chicago",
+        "UTC -06:00 USA Mexico City",
+        "UTC -07:00 USA Los Angeles",
+        "UTC -08:00 Alaska/USA",
+        "UTC -09:00 Alaska/USA",
+        "UTC -09:30 Marquesas Islands",
+        "UTC -10:00	Hawaii/USA",
+        "UTC -11:00	American Samoa",
+        "UTC -12:00	US Minor Outlying Islands"
       ]
     };
   },
@@ -161,6 +161,7 @@ export default {
           zone *= -1;
         }
         this.settings.TZ = zone;
+        console.log(`zone: ${zone}`);
       }
       if (this.name) {
         this.settings.name = this.name;

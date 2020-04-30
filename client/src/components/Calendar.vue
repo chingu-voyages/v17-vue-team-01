@@ -192,7 +192,7 @@ export default {
           )
           .then(
             response => (
-              console.log(response.data),
+              console.log(`response.data: ${response.data}`),
               this.serverResponse.push(response.data), this.convertToEvent()
             )
           )

@@ -87,7 +87,7 @@ export default {
         "UTC +04:00	Dubai/Georgia",
         "UTC +03:00	Turkey/Iraq",
         "UTC +02:00	Germany/Austria",
-        "UTC +01:00	United Kingdom",
+        "UTC +01:00	United Kingdom/Portugal",
         "UTC +00:00	Iceland/Morocco",
         "UTC -01:00	Cabo Verde",
         "UTC -02:00	Brazil",
