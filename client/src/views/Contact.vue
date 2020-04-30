@@ -58,7 +58,7 @@
               
             </v-row>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="justify-center">
             <v-btn to="/" color="primary">Back Home</v-btn>
           </v-card-actions>
         </v-card>
@@ -117,8 +117,8 @@ textarea {
 }
 
 .button {
-	background: #da552f;
-	border: solid 1px #da552f;
+	background: green;
+	border: solid 1px green;
 	color: white;
 	cursor: pointer;
 	padding: 10px 50px;
@@ -126,10 +126,10 @@ textarea {
 	text-transform: uppercase;
 }
 
-.button:hover {
-	background: #ea532a;
-	border: solid 1px #ea532a;
-}
+// .button:hover {
+// 	background: #ea532a;
+// 	border: solid 1px #ea532a;
+// }
 
 input[type="email"],
 input[type="text"],
