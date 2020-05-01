@@ -81,7 +81,9 @@
             </v-card-text>
             <v-card-actions>
               <v-tooltip bottom>
+                <template>
               <v-btn text color="primary" :to="eventLink(selectedEvent.id)">View</v-btn>
+              </template>
               <span>view event details/download ics</span>
               </v-tooltip>
               <v-btn text color="danger" @click="selectedOpen = false">Close</v-btn>
