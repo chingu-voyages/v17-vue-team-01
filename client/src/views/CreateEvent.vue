@@ -34,6 +34,8 @@
               disabled
             >
           </v-col>
+          </v-row>
+          <v-row justify="center">
           <v-col>
             <v-color-picker
               hide-inputs
