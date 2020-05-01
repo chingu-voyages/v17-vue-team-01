@@ -291,8 +291,7 @@ export default {
           })
           .then(
             response => (
-              this.$router.push({ name: "Home", params: { user: this.user } }),
-              location.reload()
+              this.$router.push({ name: "Home", params: { user: this.user } })
             )
           )
           .catch(error => (console.log(error), (this.answer = error)));
