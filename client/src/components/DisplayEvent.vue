@@ -356,7 +356,7 @@ export default {
         possibles.push(possible);
         //console.log(i+1); 
         //console.log(size); 
-        if (i+1 == size && TZ >= 0 ){ 
+        if (i+1 == size && TZ >= 0 && TZ != users[0].TZ){ 
           //console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));

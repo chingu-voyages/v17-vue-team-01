@@ -302,7 +302,7 @@ export default {
       return n;
     },
     datesFormatterArray(input) {
-      return `${input[0].toString()}-${this.numbering(input[1]).toString()}-${input[2].toString()}`
+      return `${input[0].toString()}-${this.numbering(input[1]).toString()}-${this.numbering(input[2]).toString()}`
     }
   }
 };
