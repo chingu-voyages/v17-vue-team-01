@@ -15,7 +15,7 @@
 		<input required name="email" v-model="email" placeholder="E-mail" type="email" autocomplete="off">
 		<textarea name="message" rows="4" v-model="message" placeholder="Message"></textarea>
       <v-card-actions class="justify-center">
-        <v-btn type="submit" color="primary">Send</v-btn>
+        <v-btn type="submit" color="success">Send</v-btn>
       </v-card-actions>
   </form>
             <br>
