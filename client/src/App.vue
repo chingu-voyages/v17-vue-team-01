@@ -10,7 +10,7 @@
           <v-img v-bind="props" gradient="to top right, rgba(12,93,156,1), rgba(44,113,165,.5)"></v-img>
         </template>
         <v-toolbar-title>
-          <v-btn text x-large to="/">Chingu-Time</v-btn>
+          <v-btn text x-large to="/">Chingu Time</v-btn>
         </v-toolbar-title>
 
         <v-spacer></v-spacer>
