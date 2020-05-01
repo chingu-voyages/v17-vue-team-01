@@ -80,7 +80,11 @@
               </v-list>
             </v-card-text>
             <v-card-actions>
-              <v-btn text color="secondary" @click="selectedOpen = false">Cancel</v-btn>
+              <v-tooltip bottom>
+              <v-btn text color="primary" :to="eventLink(selectedEvent.id)">View</v-btn>
+              <span>view event details/download ics</span>
+              </v-tooltip>
+              <v-btn text color="danger" @click="selectedOpen = false">Close</v-btn>
             </v-card-actions>
           </v-card>
         </v-menu>
@@ -226,6 +230,9 @@ export default {
         result.push(input[i].username);
       }
       return result;
+    },
+    eventLink(id) {
+      return "/event/" + id;
     }
   }
 };
