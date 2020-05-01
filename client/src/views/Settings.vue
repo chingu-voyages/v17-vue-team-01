@@ -54,13 +54,13 @@
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
             <h3>
-              Email: {{email || user.email}}
+              Email: {{user.email}}
               <br>
-              Name: {{name || user.name}}
+              Name: {{user.name}}
               <br>
-              Username: {{username || user.username}}
+              Username: {{user.username}}
               <br>
-              Timezone: {{time || "UTC " + user.TZ}}
+              Timezone: {{"UTC " + user.TZ}}
             </h3>
           </v-card-text>
         </v-card>
