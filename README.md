@@ -11,13 +11,13 @@ Chingu.io voyage 17 project Vue-01 team!
 ## Description
 
 This is an ongoing project with multiple purposes in mind.<br/>
-First of all we wanted to create an easy, simple way to schedule events/meetings for people in different timezones. <br/>
-Secondly, this functions as a project to learn vue.js, a major frontend library, node.js as the backend and MongoDB as the database.<br/>If possible this project will be constantly updated and will hopefully have new features.
+First of all, we wanted to create an easy, simple way to schedule events/meetings for people in different timezones. <br/>
+Secondly, this functions as a project to learn vue.js, a major frontend library, node.js as the backend and MongoDB as the database.<br/>If possible, this project will be constantly updated and will hopefully have new features in the future.
 
 ## Chingu
 
 This project is part of the [Chingu](https://chingu.io) program.<br/>
-"Chingu is a remote 6-week program for web developers. <br/>You will build a project in a remote team and level-up with the technical and soft skills required in a professional software job."<br/>
+"Chingu is a remote 6-week program for web developers. <br/>You will build a project in a remote team and level up with the technical and soft skills required in a professional software job."<br/>
 Please visit them at the link above!
 
 ## Livesite
@@ -36,13 +36,13 @@ Live website can be found under: [chingutime](https://chingutime.netlify.app/)
   * Mobile App (PWA)
 * Future
   * Work with non hourly timezones
-  * Unschedule events
+  * Unschedule events/Edit scheduled events
   * Send emails on schedule 
 
 ## Roadmap
 
-A finished MVP version of the website is currently live <br/>
-The current Roadmap is correct existing bugs and issues in beta version, and afterwards start implementing new features
+A finished MVP version of the website is currently live. <br/>
+The current Roadmap for us is to correct existing bugs and issues in beta version, and afterwards we will start implementing new features.
 
 ## Project setup
 
