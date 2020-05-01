@@ -230,7 +230,22 @@ export default {
       }
     },
     transformTimestamp(input) {
-      return input.slice(0, 10) + " " + input.slice(11, 16);
+      let time = parseInt(input.slice(11, 14)) + this.user.TZ;
+      let day = input.slice(0, 10);
+      if(time < 0){
+        let dateDay = new Date(day);
+        let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+        day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+        time = time + 24;
+      }
+      if(time > 23){
+        let dateDay = new Date(day);
+        let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+        day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+        time = time - 24;
+      }
+      //console.log(input.slice(0, 10) + " " + time + ":00");
+      return day + " " + time + ":00";
     },
     transformUsers(input) {
       let result = [];
