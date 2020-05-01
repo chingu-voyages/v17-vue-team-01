@@ -90,7 +90,7 @@
       </v-card-actions>
       <v-divider></v-divider>
       <v-card-actions class="justify-center" v-if="user.username == eventPart.users[0].username">
-        <v-btn @click="deleteEvent" class="center" color="red darken-4">Delete Event</v-btn>
+        <v-btn @click="deleteEvent" class="center" color="error">Delete Event</v-btn>
       </v-card-actions>
     </v-card>
     <br>
@@ -291,8 +291,7 @@ export default {
           })
           .then(
             response => (
-              this.$router.push({ name: "Home", params: { user: this.user } }),
-              location.reload()
+              this.$router.push({ name: "Home", params: { user: this.user } })
             )
           )
           .catch(error => (console.log(error), (this.answer = error)));

@@ -2,8 +2,9 @@
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
 
-      <h2 class="mb-5">Title: {{ eventPart.title }}</h2>
-      <h4 class="mb-5">Details: {{ eventPart.details }}</h4>
+      <h2 class="mb-5">{{ eventPart.title }}</h2>
+      <h4 class="mb-5">Details:</h4>
+      <p class="mb-5">{{ eventPart.details }}</p>
       <div v-if="!eventPart.scheduled">
         <div v-if="typeof advisableTimeslots != 'string'" >
         <p class="mb-5">The following timeslots are already selected by all participants:</p>
@@ -25,8 +26,8 @@
       </div>
       </v-list>
       <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
-      <p v-else class="mt-5">Current Event Calendar:</p>
-
+      <h4 v-else class="mt-5">Current Event Calendar:</h4>
+      <br>
             <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin">
               <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>

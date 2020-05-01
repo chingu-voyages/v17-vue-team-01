@@ -95,6 +95,12 @@ export default {
       return advisableTimeslots;
     },
     handleScheduled(eventPart){
+      for (let index = 0; index < eventPart.possibleDays.length; index++) {
+        if (eventPart.possibleDays[index].length<10) {
+          eventPart.possibleDays[index] = eventPart.possibleDays[index].slice(0,-1) + "0" + eventPart.possibleDays[index].slice(8)
+        }       
+      }
+      
       //console.log(typeof(advisableTimeslots));
       if(eventPart.scheduled == true){
         

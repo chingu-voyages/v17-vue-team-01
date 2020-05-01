@@ -158,12 +158,6 @@ export default {
   },
   methods: {
     reset() {},
-    numbering(n) {
-      if (n < 10) {
-        return `0${n}`;
-      }
-      return n;
-    },
     processFormFirst() {
       if (this.dates[0] == null || this.dates[1] == null) {
         this.answer = "Please select 2 dates as a range.<br> Ex: 21-04-2020 - 22-04-2020";
@@ -174,6 +168,7 @@ export default {
       if (
         !this.name ||
         !this.color ||
+        !this.details ||
         this.dates[0] == null ||
         this.dates[1] == null
       ) {
@@ -295,10 +290,16 @@ export default {
             "-" +
             this.numbering(array[1]).toString() +
             "-" +
-            array[2].toString()
+            this.numbering(array[2]).toString()
         );
       }
       return formatted;
+    },
+    numbering(n) {
+      if (n < 10) {
+        return `0${n}`;
+      }
+      return n;
     },
     datesFormatterArray(input) {
       return `${input[0].toString()}-${this.numbering(input[1]).toString()}-${input[2].toString()}`
