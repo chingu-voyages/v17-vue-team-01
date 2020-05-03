@@ -49,6 +49,8 @@ The current Roadmap for us is to correct existing bugs and issues in beta versio
 To implement the backend server you need to:
 
 ### Clone repository
+
+### Install packages
 ```
 npm install
 ```
@@ -65,7 +67,8 @@ nodemon app.js
 node app.js
 ```
 ### To implement a development database you need to:
-Create an account with mongoDB and start a local database
+Create an account with mongoDB and start a local database <br/>
+Local backend will be connected with local mongoDB on localhost port 27017
 ### Change all API routes to localhost server instead chingutime server
 ### To implement the frontend server you need to:
 ```
@@ -92,7 +95,7 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ## Packages
 
 For Frontend Packages please refere here:
-[Package.json](client/package.json)
+[Package.json](client/package.json) <br/> 
 For Backend Packages please refere here:
 [Package.json](package.json)
 
