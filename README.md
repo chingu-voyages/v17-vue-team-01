@@ -48,8 +48,7 @@ The current Roadmap for us is to correct existing bugs and issues in beta versio
 
 To implement the backend server you just need to:
 
-Clone repository
-
+### Clone repository
 ```
 npm install
 ```
@@ -65,13 +64,10 @@ nodemon app.js
 ```
 node app.js
 ```
-
-To implement a development database you just need to:
-
+### To implement a development database you just need to:
 Create an account with mongoDB and start a local database
-
+### Change all API routes to localhost server instead chingutime server:
 To implement the frontend server you just need to:
-
 ```
 cd client
 ```
@@ -87,25 +83,30 @@ npm run serve
 npm run build
 ```
 
+### Full Backend Reference can be found here:
+See [Backend Readme](README_BE.md).
+
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
 ## Packages
 
-- [vue.js](https://vuejs.org/) - My prefered front end library. Vue is amazing
-- [random-color](https://www.npmjs.com/package/random-color) - Nice package to create random colors with flexible requirements 
-- [vue-cookie-law](https://www.npmjs.com/package/vue-cookie-law) - Simple cookie compliency component which was very easy to install. Great stuff
+For Frontend Packages please refere here:
+[Package.json](client/package.json)
+For Backend Packages please refere here:
+[Package.json](package.json)
 
-## Author(s)
+## Authors
 
 - [Youngmi Lee](https://github.com/ally0426) - Also known as [Ally](https://ally0426.github.io/Basic_Portfolio/). Looking for a full stack developer position(MERN)
 - [Oleksandr Malakhov](https://github.com/Alexever17) - Also known as Alexever17. Hobby web dev. Maker of games and reader of novels
 - [Marcos Mendes](https://github.com/MarcosMe) - Also known as [MarcosMe](https://marcosmendes.eu). Technical Support. Fullstack developer. RaspberryPi tinker
 
-
 ## Contributing
+
 Contributing is very welcome. Just open a pull request if you want to help out.<br/> 
 Just make sure not to make any big changes to the overall structure! Thanks.
 
 ## License
+
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
