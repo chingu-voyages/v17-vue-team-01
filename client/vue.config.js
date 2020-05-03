@@ -3,8 +3,9 @@ module.exports = {
     "vuetify"
   ],
   pwa: {
-    themeColor: '#225c88',
-    msTileColor: '#FFF'
+    themeColor: '#1976d2',
+    msTileColor: '#FFF',
+    name: 'Chingu Time'
   },
   devServer: {
     proxy: 'https://chingutime.herokuapp.com/',
