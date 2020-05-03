@@ -2,7 +2,7 @@
 
 Make scheduling a meeting across different timezones easier with Chingu Time!
 
-Chingu.io voyage 17 project Vue-01 team!
+This Project is part of the [Chingu.io](https:chingu.io) Voyages - [#17 - Project Vue-01]
 
 ## Preview
 
@@ -46,7 +46,7 @@ The current Roadmap for us is to correct existing bugs and issues in beta versio
 
 ## Project setup
 
-To implement the backend server you just need to:
+To implement the backend server you need to:
 
 ### Clone repository
 ```
@@ -64,10 +64,10 @@ nodemon app.js
 ```
 node app.js
 ```
-### To implement a development database you just need to:
+### To implement a development database you need to:
 Create an account with mongoDB and start a local database
-### Change all API routes to localhost server instead chingutime server:
-To implement the frontend server you just need to:
+### Change all API routes to localhost server instead chingutime server
+### To implement the frontend server you need to:
 ```
 cd client
 ```
@@ -104,8 +104,8 @@ For Backend Packages please refere here:
 
 ## Contributing
 
-Contributing is very welcome. Just open a pull request if you want to help out.<br/> 
-Just make sure not to make any big changes to the overall structure! Thanks.
+Contributing is very welcome. Open a pull request if you want to help out.<br/> 
+Make sure not to make any big changes to the overall structure! Thanks.
 
 ## License
 
