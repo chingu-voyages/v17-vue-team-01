@@ -1,6 +1,6 @@
 # Chingu Time 
 
-Make scheduling a meeting across different timezones easier with Chingu Time!
+Make scheduling meetings across different timezones easier with Chingu Time!
 
 This Project is part of the [Chingu.io](https:chingu.io) Voyages - [#17 - Project Vue-01]
 
