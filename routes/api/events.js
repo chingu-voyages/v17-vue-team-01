@@ -112,7 +112,7 @@ router.get('/show/:id', function(req, res)  {
               } 
             }
             if(advisable_timeslots.length == 0){
-              advisable_timeslots = "Still no advisable timeslots";
+              advisable_timeslots = "Advisable timeslots not available. They will be generated once there are timeslots selected by all participants";
             }
           }
           else{
@@ -326,6 +326,10 @@ router.post('/update', (req, res) => {
     let params = {};
 
     for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
+    if(req.body.scheduled == 'false'){
+      params.start = null;
+      params.end = null;
+    }
     Event.findOneAndUpdate({
       _id: params.event_id,
     },
@@ -340,6 +344,7 @@ router.post('/update', (req, res) => {
           console.log("Something wrong when updating data!");
       }
       doc ? console.log("Event updated!") : console.log("Nothing to change!");
+
       if(doc.scheduled == true && params.scheduled == 'true'){
         console.log("We should send emails and/or create ics file for download");
         let users_data = [];

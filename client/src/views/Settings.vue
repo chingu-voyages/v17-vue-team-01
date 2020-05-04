@@ -45,7 +45,7 @@
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="justify-center">
             <v-btn @click="processForm" color="success">Update Info</v-btn>
             <v-btn to="/" color="primary">Back Home</v-btn>
           </v-card-actions>
@@ -53,6 +53,8 @@
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
+            <h3 class="red--text">{{ answerValidate }}</h3>
+            <br>
             <h2>Here is your current info:</h2>
             <br>
             <h3>
@@ -77,6 +79,7 @@ export default {
   data() {
     return {
       answer: true,
+      answerValidate: "",
       username: null,
       password: null,
       name: null,
@@ -126,21 +129,27 @@ export default {
     processForm() {
       let confirmation = confirm("Confirm changes?");
       if (confirmation == true) {
-        this.axios
-          .post(
-            "https://chingutime.herokuapp.com/api/users/update",
-            //.post("http://localhost:5000/api/users/update",
-            this.selectFields(),
-            {
-              headers: { "x-access-token": this.usertoken }
-            }
-          )
-          .then(
-            response => (
-              (this.answer = response.data.msg), this.savingChanges(response)
+        console.log(this.email);
+        if(this.email != null && !this.validateEmail(this.email)){
+          this.answerValidate = "Please use a valid email address.";
+        } 
+        else{
+          this.axios
+            .post(
+              "https://chingutime.herokuapp.com/api/users/update",
+              //.post("http://localhost:5000/api/users/update",
+              this.selectFields(),
+              {
+                headers: { "x-access-token": this.usertoken }
+              }
             )
-          )
-          .catch(error => (console.log(error), (this.answer = error)));
+            .then(
+              response => (
+                (this.answer = response.data.msg), this.savingChanges(response)
+              )
+            )
+            .catch(error => (console.log(error), (this.answer = error)));
+        }
       }
     },
     selectFields() {
@@ -156,13 +165,15 @@ export default {
         console.log(`zone: ${zone}`);
       }
       if (this.name) {
-        this.settings.name = this.name;
+        this.settings.name = this.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        //prevent javascript or html injection
       }
       if (this.password) {
         this.settings.password = this.password;
       }
       if (this.username) {
-        this.settings.username = this.username;
+        this.settings.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        //prevent javascript or html injection
       }
       if (this.email) {
         this.settings.email = this.email;
@@ -184,6 +195,10 @@ export default {
         localStorage.setItem("user", JSON.stringify(response.data));
         location.reload();
       }
+    },
+    validateEmail(email) {
+      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
     }
   }
 };

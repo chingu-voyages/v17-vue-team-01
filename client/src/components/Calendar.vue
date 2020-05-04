@@ -160,7 +160,10 @@ export default {
               this.eventIDs[j]
             }`,
             {
-              //.get(`http://localhost:5000/api/events/show/${this.url}`, {
+              //.get(`http://localhost:5000/api/events/show/${
+              //this.eventIDs[j]
+            //}`,
+            //{
               headers: {
                 "x-access-token": localStorage
                   .getItem("usertoken")

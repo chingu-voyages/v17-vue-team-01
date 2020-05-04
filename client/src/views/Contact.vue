@@ -11,9 +11,9 @@
               <v-icon>mdi-email</v-icon> chingutime(at)gmail.com
             </h3> -->
   <form class="form" method="POST" action="https://formspree.io/chingutime@gmail.com" data-netlify="true">
-    <input class="mt-3" required name="name" v-model="name" placeholder="Name" type="text" autocomplete="off">
-		<input required name="email" v-model="email" placeholder="E-mail" type="email" autocomplete="off">
-		<textarea name="message" rows="4" v-model="message" placeholder="Message"></textarea>
+    <input class="input" required name="name" v-model="name" placeholder="Name" type="text" autocomplete="off">
+		<input class="input" required name="email" v-model="email" placeholder="E-mail" type="email" autocomplete="off">
+		<textarea class="input" name="message" rows="4" v-model="message" placeholder="Message"></textarea>
       <v-card-actions class="justify-center">
         <v-btn type="submit" color="success">Send</v-btn>
       </v-card-actions>
@@ -104,14 +104,26 @@ export default {
 	flex-direction: column;
 	font-size: 16px;
 }
-input[type="email"],
-input[type="text"],
-textarea {
+//input[type="email"],
+//input[type="text"],
+/*textarea {
 	border: solid 1px #e8e8e8;
 	font-family: 'Roboto', sans-serif;
 	padding: 10px 7px;
 	margin-bottom: 15px;
 	outline: none;
+}*/
+textarea,
+.input {
+  color: black;
+  display: block;
+  border: 1px solid black;
+  width: 96%;
+
+  border-radius: 3px;
+  padding: 10px 5px;
+  margin: 0 0 10px 0;
+  font-size: 18px;
 }
 
 textarea {
@@ -133,9 +145,9 @@ textarea {
 // 	border: solid 1px #ea532a;
 // }
 
-input[type="email"],
-input[type="text"],
-textarea,
+//input[type="email"],
+//input[type="text"],
+//textarea,
 .button {
 	font-size: 15px;
 	border-radius: 3px

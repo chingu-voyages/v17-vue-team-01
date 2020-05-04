@@ -1,12 +1,17 @@
 <template>
   <v-container>
-    <v-card v-if="eventPart && advisableTimeslots" class="mx-auto">
+    <v-card v-if="eventPart && advisableTimeslots" class="mx-auto" outlined tile>
       <h1 class="leftMargin">Event Actions</h1>
       <p
         class="leftMargin"
         v-if="user.username == eventPart.users[0].username"
       >You are the event creator</p>
-      <span v-if="eventPart.scheduled == false">
+      <p
+        class="leftMargin"
+        v-if="eventPart.users.length == 1"
+      >Please add more users</p>
+
+      <div v-if="eventPart.scheduled == false">
         <v-divider></v-divider>
         <v-card-text>
           <input
@@ -57,7 +62,7 @@
           </select>
         </v-card-text>
         <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1">
-          <v-btn @click="schedule" class="center" color="primary">Schedule Event</v-btn>
+          <v-btn @click="scheduleEvent" class="center" color="primary">Schedule Event</v-btn>
         </v-card-actions>
         <v-divider></v-divider>
         <v-card-text
@@ -78,16 +83,20 @@
         >
           <v-btn @click="removeUser" class="center" color="warning">Remove user</v-btn>
         </v-card-actions>
-      </span>
-      <span v-else>
+      </div>
+      <div v-else>
         <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
         <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
         <p class="leftMargin">End: {{ (eventPart.end) }}</p>
-      </span>
       <v-divider></v-divider>
-      <v-card-actions class="justify-center" v-if="eventPart.scheduled == true">
+      <v-card-actions class="justify-center">
         <v-btn @click="downloadIcs" class="center" color="success">Download ics</v-btn>
       </v-card-actions>
+      <v-divider></v-divider>
+      <v-card-actions class="justify-center" >
+        <v-btn @click="unscheduleEvent" class="center" color="warning">Unschedule Event</v-btn>
+      </v-card-actions>
+      </div>
       <v-divider></v-divider>
       <v-card-actions class="justify-center" v-if="user.username == eventPart.users[0].username">
         <v-btn @click="deleteEvent" class="center" color="error">Delete Event</v-btn>
@@ -223,6 +232,9 @@ export default {
       if (!this.user.username) {
         this.answer = "Please fill out a username.";
       } else {
+        //prevent javascript or html injection
+        this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
         const data = {
           event_id: this.url,
           username: this.username
@@ -297,12 +309,7 @@ export default {
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
-    schedule() {
-      //console.log(this.toSnakeCase(this.eventPart.title));
-      //console.log(this.dateSaved);
-      //console.log(this.time);
-      //console.log(this.user.TZ);
-      //console.log(this.numberHours);
+    scheduleEvent() {
       if (!this.dateSaved || !this.time) {
         this.answer = "Please fill out all the fields to schedule the event.";
       } else {
@@ -418,6 +425,40 @@ export default {
         }
       }
     },
+
+    unscheduleEvent() {
+        let confirmation = confirm(
+          "Are you sure you want to unschedule this event?"
+        );
+        if (confirmation == true) {
+          //console.log(end);
+          const data = {
+            event_id: this.url,
+            scheduled: "false",
+            start: null,
+            end: null
+          };
+          this.axios
+            //.post("https://chingutime.herokuapp.com/api/events/update", data, {
+              .post("http://localhost:5000/api/events/update", data, {
+              headers: {
+                "x-access-token": localStorage
+                  .getItem("usertoken")
+                  .replace(/"/g, ""),
+              },
+            })
+            .then(response => this.handleResponse(response))
+              
+            .catch(error => (console.log(error), (this.answer = error)));
+        }
+      
+    },
+
+
+
+
+
+
     downloadIcs() {
       //console.log(this.eventPart.start.substring(0,13));
       this.axios

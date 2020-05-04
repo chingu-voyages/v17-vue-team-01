@@ -13,6 +13,7 @@
               name="username"
               v-model="username"
               placeholder="Username"
+              maxlength="20"
             >
             <input
               class="input"
@@ -21,10 +22,11 @@
               name="password"
               v-model="password"
               placeholder="Password"
+              maxlength="25"
             >
           </v-card-text>
-          <v-card-actions>
-            <v-btn @click="getToken" color="success">Login</v-btn>
+          <v-card-actions class="justify-center">
+            <v-btn @click="getToken" color="success">Log in</v-btn>
             <v-btn to="/register" class="leftMargin" color="primary">Register Here</v-btn>
           </v-card-actions>
         </v-card>
@@ -91,6 +93,9 @@ export default {
       if (!this.username || !this.password) {
         this.answer = "Please fill out all the fields.";
       } else {
+        //prevent javascript or html injection
+        this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
         this.axios
           .post("https://chingutime.herokuapp.com/api/users/login", {
            // .post("http://localhost:5000/api/users/login", {
