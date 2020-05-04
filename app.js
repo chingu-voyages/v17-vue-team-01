@@ -4,9 +4,11 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const cors = require('cors');
 const passport = require('passport');
+const dotenv = require('dotenv');
 
 // Initialize the app
 const app = express();
+dotenv.config();
 
 // Middleware
 // Form Data Middleware
@@ -29,7 +31,7 @@ app.use(passport.initialize());
 require('./config/passport')(passport);
 
 // Bring in the Database Config and connect with the database
-const db = require('./config/keys').mongoURI;
+const db = process.env.MONGODB_URI || "mongodb://localhost/vue-team-v17";
 mongoose.connect(db, {
     useNewUrlParser: true,
     useFindAndModify: false,

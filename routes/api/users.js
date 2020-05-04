@@ -3,7 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const key = require('../../config/keys').secret;
+const key = require('../../config/settings').secret;
 const User = require('../../model/User');
 const Event = require('../../model/Event');
 
@@ -88,7 +88,6 @@ router.post('/login', (req, res) => {
         username: req.body.username
     }).then(user => {
         if (!user) {
-            console.log("entrou");
             return res.status(200).json({
                 success: false,
                 msg: "Username is not found."

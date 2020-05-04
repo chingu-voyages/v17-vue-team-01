@@ -3,7 +3,7 @@ module.exports = {
     "vuetify"
   ],
   pwa: {
-    themeColor: '#1976d2',
+    themeColor: '#1c5485',
     msTileColor: '#FFF',
     name: 'Chingu Time'
   },
