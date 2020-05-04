@@ -1,9 +1,9 @@
 <template>
+  <v-container>
   <v-card class="pa-2" outlined tile>
     <v-sheet v-if="eventPart">
-
       <h2 class="mb-5">{{ eventPart.title }}</h2>
-      <h4 class="mb-5">Details:</h4>
+      <h4 class="mb-2">Details:</h4>
       <p class="mb-5">{{ eventPart.details }}</p>
       <div v-if="!eventPart.scheduled">
         <div v-if="typeof advisableTimeslots != 'string'" >
@@ -17,7 +17,6 @@
         </div>
       </div>      
       <h4>Users:</h4>
-      
       <v-list :shaped ="shaped">
       <div>
         <span class="mr-8 mb-8" :inactive="inactive" v-for="(participants, i) in eventPart.users" :key="i">
@@ -25,8 +24,11 @@
         </span>
       </div>
       </v-list>
-      <p v-if="eventPart.scheduled" class="mt-5">Event is already scheduled, nonetheless here you have the calendar:</p>
-      <h4 v-else class="mt-5">Current Event Calendar:</h4>
+      <div v-if="eventPart.scheduled">
+        <h4 class="mt-5">Event is already scheduled!</h4>
+      </div>  
+      <div v-else>
+      <h4 class="mt-5">Current Event Calendar:</h4>
       <br>
             <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin">
               <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
@@ -88,9 +90,10 @@
             <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin" >
               <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
             </v-card-actions>
-    </v-sheet>
-      
+      </div>      
+    </v-sheet>  
   </v-card>
+  </v-container>
 </template>
 
 <script>
@@ -265,7 +268,7 @@ export default {
           let day;
           //console.log(document.getElementById(myId));
           if(document.getElementById(myId).checked){
-            if(user.TZ == 0 && this.eventPart.users[0].TZ < user.TZ){
+            if(user.TZ == 0 && this.eventPart.users[0].TZ <= user.TZ){
               day = this.eventPart.possibleDays[i]; 
             }
             else{

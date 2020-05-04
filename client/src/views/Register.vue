@@ -13,6 +13,7 @@
               name="email"
               v-model="email"
               placeholder="Email"
+              maxlength="50"
             >
             <input
               class="input"
@@ -21,6 +22,7 @@
               name="name"
               v-model="name"
               placeholder="Name"
+              maxlength="30"
             >
             <input
               class="input"
@@ -29,6 +31,7 @@
               name="username"
               v-model="username"
               placeholder="Username"
+              maxlength="20"
             >
             <input
               class="input"
@@ -37,13 +40,14 @@
               name="password"
               v-model="password"
               placeholder="Password"
+              maxlength="25"
             >
             <select v-model="time" class="input" placeholder="Timezone" label="Timezone">
               <option disabled value="">Please select timezone</option>
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
           </v-card-text>
-          <v-card-actions>
+          <v-card-actions class="justify-center">
             <v-btn @click="processForm" color="success">Create Account</v-btn>
             <v-btn to="/" class="leftMargin" color="primary">Login Here</v-btn>
           </v-card-actions>
@@ -109,30 +113,43 @@ export default {
       ) {
         this.answer = "Please fill out all the fields.";
       } else {
-        let direction = this.time.slice(4, 5);
-        let identifier = this.time.slice(5, 7);
-        let addition = this.time.slice(8, 10);
+        if(!this.validateEmail(this.email)){
+          this.answer = "Please use a valid email address.";
+        } 
+        else{
+          //prevent javascript or html injection
+          this.name = this.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-        let zone = Number(identifier + "." + addition);
-        if (direction == "-") {
-          zone *= -1;
+          let direction = this.time.slice(4, 5);
+          let identifier = this.time.slice(5, 7);
+          let addition = this.time.slice(8, 10);
+
+          let zone = Number(identifier + "." + addition);
+          if (direction == "-") {
+            zone *= -1;
+          }
+
+          this.axios
+            .post("https://chingutime.herokuapp.com/api/users/register", {
+              name: this.name,
+              email: this.email,
+              username: this.username,
+              password: this.password,
+              confirm_password: this.password,
+              TZ: zone
+            })
+            .then(response => (this.answer = response.data.msg))
+            .catch(error => (console.log(error), (this.answer = error)));
         }
-
-        this.axios
-          .post("https://chingutime.herokuapp.com/api/users/register", {
-            name: this.name,
-            email: this.email,
-            username: this.username,
-            password: this.password,
-            confirm_password: this.password,
-            TZ: zone
-          })
-          .then(response => (this.answer = response.data.msg))
-          .catch(error => (console.log(error), (this.answer = error)));
       }
+    },
+    validateEmail(email) {
+      let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      return re.test(String(email).toLowerCase());
     }
   }
-};
+}
 </script>
 
 <style lang="scss">

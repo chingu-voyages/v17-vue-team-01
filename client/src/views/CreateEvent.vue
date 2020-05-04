@@ -208,6 +208,10 @@ export default {
           .post(
             "https://chingutime.herokuapp.com/api/events/create",
             {
+          //.post(
+            //"http://localhost:5000/api/events/create",
+            //{
+
               title: this.createdEvent.eventName,
               details: this.createdEvent.eventDetails,
               color: this.createdEvent.eventColor,
@@ -251,6 +255,9 @@ export default {
         .post(
           "https://chingutime.herokuapp.com/api/timeslots/create",
           {
+        //.post(
+          //"http://localhost:5000/api/timeslots/create",
+          //{    
             "event_id": this.createdEvent.eventId,
             timeslots: this.createdEvent.eventTimeslots
           },
