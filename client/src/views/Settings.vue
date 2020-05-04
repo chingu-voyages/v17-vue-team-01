@@ -4,7 +4,7 @@
       <v-col>
         <v-card class="mx-auto" max-width="360">
           <v-card-text>
-            <h1>Change User Information</h1>
+            <h1>Change Your Info</h1>
             <br>
             <h3>Each Field can be set individually or left empty</h3>
             <br>
@@ -46,13 +46,15 @@
             </select>
           </v-card-text>
           <v-card-actions>
-            <v-btn @click="processForm" color="success">Update Information</v-btn>
+            <v-btn @click="processForm" color="success">Update Info</v-btn>
             <v-btn to="/" color="primary">Back Home</v-btn>
           </v-card-actions>
         </v-card>
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
+            <h2>Here are your current info:</h2>
+            <br>
             <h3>
               Email: {{user.email}}
               <br>

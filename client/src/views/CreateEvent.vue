@@ -1,5 +1,5 @@
 <template>
-  <v-col>
+<v-row justify="center">
     <v-card class="mx-auto text-center" max-width="740" v-if="!eventFirstValidate">
       <v-card-text>
         <h1>Create a new Event!</h1>
@@ -20,8 +20,7 @@
           v-model="details"
           placeholder="Event details"
         >
-        <v-row justify="center">
-          <v-col>
+
             <v-date-picker no-title v-model="dates" range></v-date-picker>
             <br>
             <br>
@@ -33,10 +32,7 @@
               label="Date range"
               disabled
             >
-          </v-col>
-          </v-row>
-          <v-row justify="center">
-          <v-col>
+
             <v-color-picker
               hide-inputs
               hide-canvas
@@ -44,9 +40,6 @@
               show-swatches
               swatches-max-height="226"
             ></v-color-picker>
-          </v-col>
-        </v-row>
-
         <br>
         <v-row justify="center">
           <v-btn color="success" class="mr-4" @click="processFormFirst">Save</v-btn>
@@ -54,7 +47,9 @@
         </v-row>
       </v-card-text>
     </v-card>
+
     <br v-if="!eventFirstValidate">
+
     <v-card class="mx-auto" scrollable max-width="1200" v-if="eventFirstValidate">
       <v-card-text>
         <h1>Select the times</h1>
@@ -106,7 +101,7 @@
         <h3 v-html="answer"></h3>
       </v-card-text>
     </v-card>
-  </v-col>
+  </v-row>
 </template>
 
 <script>

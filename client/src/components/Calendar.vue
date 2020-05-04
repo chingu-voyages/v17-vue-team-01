@@ -17,11 +17,19 @@
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-menu bottom right>
-            <template v-slot:activator="{ on }">
-              <v-btn outlined color="grey darken-2" v-on="on">
-                <span>{{ typeToLabel[type] }}</span>
-                <v-icon right>mdi-menu-down</v-icon>
-              </v-btn>
+             <template v-slot:activator="{ on }">
+              <v-toolbar-title class="hidden-sm-and-up">
+                <v-btn icon v-on="on">
+                  <v-icon>mdi-dots-vertical</v-icon>
+                </v-btn>
+              </v-toolbar-title>
+
+              <v-toolbar-title class="hidden-xs-only">
+                <v-btn outlined color="grey darken-2" v-on="on">
+                  <span>{{ typeToLabel[type] }}</span>
+                  <v-icon right>mdi-menu-down</v-icon>
+                </v-btn>
+              </v-toolbar-title>
             </template>
             <v-list>
               <v-list-item @click="type = 'day'">
@@ -174,9 +182,9 @@ export default {
     title(value) {
       let dateArray = value.split("-");
       var date = new Date(
-        Date.UTC(dateArray[0], dateArray[1], dateArray[2])
+        Date.UTC(dateArray[0], dateArray[1] - 1, dateArray[2])
       );
-      const month = date.toLocaleString("en-US", { month: "long" });
+      const month = date.toLocaleString("en-US", { month: "short" });
       return `${month} ${dateArray[0]}`;
     },
     viewDay({ date }) {

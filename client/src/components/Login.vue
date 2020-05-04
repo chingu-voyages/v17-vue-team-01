@@ -37,7 +37,8 @@
       </v-col>
     </v-row>
 
-      <v-row
+      <v-row 
+      v-if="logging"
         class="fill-height"
         align-content="center"
         justify="center"
@@ -50,13 +51,14 @@
         </v-col>
         <v-col cols="6">
           <v-progress-linear
-            color="deep-purple accent-4"
+            color="green accent-4"
             indeterminate
             rounded
             height="6"
           ></v-progress-linear>
         </v-col>
       </v-row>
+
   </v-container>
 </template>
 
@@ -68,13 +70,15 @@ export default {
       password: null,
       username: null,
       answer: null,
-      serverResponse: null
+      serverResponse: null,
+      logging: false
     };
   },
   mounted() {},
   watch: {},
   methods: {
     getToken() {
+      let logging = !logging;
       if (!this.username || !this.password) {
         this.answer = "Please fill out all the fields.";
       } else {
