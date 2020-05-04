@@ -53,7 +53,7 @@
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
-            <h2>Here are your current info:</h2>
+            <h2>Here is your current info:</h2>
             <br>
             <h3>
               Email: {{user.email}}
