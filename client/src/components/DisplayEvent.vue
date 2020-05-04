@@ -255,6 +255,7 @@ export default {
       let sizePossibleDays = this.eventPart.possibleDays.length;
       if(this.eventPart.users[0].username != user.username) sizePossibleDays = this.eventPart.possibleDays.length + 1;
       //console.log(this.eventPart.possibleDays);
+      //console.log(sizePossibleDays);
       let confirmation = confirm("Are you sure you want to add timeslots? Previous created timeslots will be replaced!");
       if (confirmation == true) {
       
@@ -278,21 +279,65 @@ export default {
                 }
             }
             if(user.TZ > 0){
+              if(user.TZ-this.eventPart.users[0].TZ < 0){
+                if(sizePossibleDays == this.eventPart.possibleDays.length){
+                  day = this.eventPart.possibleDays[i];
+                }
+                else{
+                  if(i == 0){
+                  day = new Date(this.eventPart.possibleDays[0]);
+                  let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+                  day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                  }
+                  //if(i == sizePossibleDays-1){
+                    //day = new Date(this.eventPart.possibleDays[i-1]);
+                    //let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+                    //day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                    //day = this.eventPart.possibleDays[i-1];
+                  //}
+                  //if(i != 0){
+                  else{
+                    day = this.eventPart.possibleDays[i-1];
+                  }
+                }
+              }
+              else{
+                if(sizePossibleDays == this.eventPart.possibleDays.length){
+                  day = this.eventPart.possibleDays[i];
+                }
+                else{
+                  /*if(i == 0){
+                  day = new Date(this.eventPart.possibleDays[0]);
+                  let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+                  day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                  }*/
+                  if(i == sizePossibleDays-1){
+                    day = new Date(this.eventPart.possibleDays[i-1]);
+                    let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+                    day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+                  }
+                  //if(i != sizePossibleDays-1){
+                  else{
+                    day = this.eventPart.possibleDays[i];
+                  }
+                }
+              }
               /*if(i == 0){
                 day = new Date(this.eventPart.possibleDays[0]);
                 let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
                 day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-              }*/
+                console.log(day)
+              }
               if(i == sizePossibleDays-1){
                 day = new Date(this.eventPart.possibleDays[i-1]);
                 let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
                 day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
                 //console.log(day)
               }
-              //if(i != 0 && i != sizePossibleDays-1){
-              else{  
+              if(i != 0 && i != sizePossibleDays-1){
+              //else{  
                 day = this.eventPart.possibleDays[i];
-              }
+              }*/
             }
 
             if(user.TZ < 0){

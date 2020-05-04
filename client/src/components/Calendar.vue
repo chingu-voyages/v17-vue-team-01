@@ -16,8 +16,9 @@
             }}
           </v-toolbar-title>
           <v-spacer></v-spacer>
+
           <v-menu bottom right>
-             <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ on }">
               <v-toolbar-title class="hidden-sm-and-up">
                 <v-btn icon v-on="on">
                   <v-icon>mdi-dots-vertical</v-icon>
@@ -31,6 +32,7 @@
                 </v-btn>
               </v-toolbar-title>
             </template>
+
             <v-list>
               <v-list-item @click="type = 'day'">
                 <v-list-item-title>Day</v-list-item-title>
@@ -48,6 +50,7 @@
           </v-menu>
         </v-toolbar>
       </v-sheet>
+
       <v-sheet height="70vh" class="calendarRows">
         <v-calendar
           ref="calendar"
@@ -73,28 +76,20 @@
               <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
             </v-toolbar>
             <v-card-text>
-              <v-list :shaped="shaped" max-height="35vh" class="overflow-y-auto">
-                <v-list-item-group color="primary">
-                  
-                  <template v-for="user in selectedEvent.users">
-                    <v-list-item :inactive="inactive" :key="user">
-                      <v-list-item-content class="text-left">
-                        <v-list-item-title>{{ user }}</v-list-item-title>
-                        <v-list-item-subtitle></v-list-item-subtitle>
-                      </v-list-item-content>
-                    </v-list-item>
-                  </template>
-                </v-list-item-group>
-              </v-list>
-            </v-card-text>
-            <v-card-actions>
-              <v-tooltip bottom>
-                <template>
-              <v-btn text color="primary" :to="eventLink(selectedEvent.id)">View</v-btn>
+              <h3>{{selectedEvent.details}}</h3>
+              <br>
+              <h4>Start: {{selectedEvent.start}}</h4>
+              <h4>End: {{selectedEvent.end}}</h4>
+              <br>
+              <h4>Users:</h4>
+              <template v-for="user in selectedEvent.users">
+                <h4 :key="user">{{ user }}</h4>
               </template>
-              <span>view event details/download ics</span>
-              </v-tooltip>
-              <v-btn text color="danger" @click="selectedOpen = false">Close</v-btn>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-btn color="primary" :to="eventLink(selectedEvent.id)">View</v-btn>
+              <v-btn color="danger" @click="selectedOpen = false">Close</v-btn>
             </v-card-actions>
           </v-card>
         </v-menu>
@@ -134,6 +129,8 @@ export default {
     ]
   }),
   mounted() {
+    this.today = this.getTodayDate();
+    this.value = this.today;
     if (this.usertoken) {
       this.axios
         .get("https://chingutime.herokuapp.com/api/users/profile", {
@@ -151,8 +148,6 @@ export default {
   },
   methods: {
     setup() {
-      this.today = this.getTodayDate();
-      this.value = this.today;
       for (let i = 0; i < this.user.events.length; i++) {
         if (this.user.events[i].scheduled == true) {
           this.eventIDs.push(this.user.events[i]["_id"]);
@@ -161,7 +156,9 @@ export default {
       for (let j = 0; j < this.eventIDs.length; j++) {
         this.axios
           .get(
-            `https://chingutime.herokuapp.com/api/events/show/${this.eventIDs[j]}`,
+            `https://chingutime.herokuapp.com/api/events/show/${
+              this.eventIDs[j]
+            }`,
             {
               //.get(`http://localhost:5000/api/events/show/${this.url}`, {
               headers: {
@@ -221,9 +218,10 @@ export default {
       if (this.eventIDs.length == this.serverResponse.length) {
         for (let i = 0; i < this.serverResponse.length; i++) {
           this.events.push({
+            id: this.serverResponse[i][0]["_id"],
             color: this.serverResponse[i][0].color,
             end: this.transformTimestamp(this.serverResponse[i][0].end),
-            title: this.serverResponse[i][0].title,
+            name: this.serverResponse[i][0].title,
             details: this.serverResponse[i][0].details,
             start: this.transformTimestamp(this.serverResponse[i][0].start),
             users: this.transformUsers(this.serverResponse[i][0].users)
@@ -232,7 +230,22 @@ export default {
       }
     },
     transformTimestamp(input) {
-      return input.slice(0, 10) + " " + input.slice(11, 16);
+      let time = parseInt(input.slice(11, 14)) + this.user.TZ;
+      let day = input.slice(0, 10);
+      if(time < 0){
+        let dateDay = new Date(day);
+        let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
+        day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+        time = time + 24;
+      }
+      if(time > 23){
+        let dateDay = new Date(day);
+        let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
+        day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
+        time = time - 24;
+      }
+      //console.log(day + " " + time + ":00");
+      return day + " " + time + ":00";
     },
     transformUsers(input) {
       let result = [];
@@ -253,6 +266,6 @@ export default {
   margin-top: 8px;
 }
 .calendarTitle {
-  margin-left: 5px;
+  font-size: 18px;
 }
 </style>
