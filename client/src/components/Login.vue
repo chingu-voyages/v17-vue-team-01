@@ -4,7 +4,7 @@
       <v-col>
         <v-card class="mx-auto" max-width="360">
           <v-card-text class="text-left">
-            <h1>Login</h1>
+            <h1>Log in</h1>
             <br>
             <input
               class="input"
