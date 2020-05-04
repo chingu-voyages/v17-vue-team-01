@@ -4,7 +4,7 @@
       <v-col>
         <v-card class="mx-auto" max-width="360">
           <v-card-text class="text-left">
-            <h1>Register</h1>
+            <h1>Login</h1>
             <br>
             <input
               class="input"
@@ -34,10 +34,19 @@
             <h3>{{ answer }}</h3>
           </v-card-text>
         </v-card>
+
+        <v-card class="mx-auto" max-width="360">
+          <v-card-text>
+            <h2><strong>CHINGU TIME</strong> makes scheduling meetings across different timezones easier.</h2>
+            <br>
+            <h3>You can log in and create a new meeting/event or select your available timeslots if you are part of a meeting.</h3>
+          </v-card-text>
+        </v-card>
+
       </v-col>
     </v-row>
 
-        <v-row 
+    <v-row 
       v-if="logging"
         class="fill-height"
         align-content="center"
