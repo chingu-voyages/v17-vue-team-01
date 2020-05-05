@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row v-if="!logging">
       <v-col>
         <v-card class="mx-auto" max-width="360">
           <v-card-text class="text-left">
@@ -34,40 +34,18 @@
             <h3>{{ answer }}</h3>
           </v-card-text>
         </v-card>
-
-        <v-card class="mx-auto" max-width="360">
-          <v-card-text>
-            <h2><strong>CHINGU TIME</strong> makes scheduling meetings across different timezones easier.</h2>
-            <br>
-            <h3>You can log in and create a new meeting/event or select your available timeslots if you are part of a meeting.</h3>
-          </v-card-text>
-        </v-card>
-
       </v-col>
     </v-row>
 
-    <v-row 
-      v-if="logging"
-        class="fill-height"
-        align-content="center"
-        justify="center"
-      >
-        <v-col
-          class="subtitle-1 text-center"
-          cols="12"
-        >
-          Logging in...
-        </v-col>
-        <v-col cols="6">
-          <v-progress-linear
-            color="green accent-4"
-            indeterminate
-            rounded
-            height="6"
-          ></v-progress-linear>
-        </v-col>
-      </v-row>
-
+    <v-row v-if="logging" class="fill-height" align-content="center" justify="center">
+      <v-col class="subtitle-1 text-center" cols="12">
+        <v-card class="mx-auto" max-width="360">
+          <br>
+          <p>Connecting</p>
+          <v-progress-linear color="green accent-4" indeterminate rounded height="6"></v-progress-linear>
+        </v-card>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -87,13 +65,14 @@ export default {
   watch: {},
   methods: {
     getToken() {
-      let logging = !logging;
+      this.logging = true;
+      
       if (!this.username || !this.password) {
         this.answer = "Please fill out all the fields.";
       } else {
         this.axios
           .post("https://chingutime.herokuapp.com/api/users/login", {
-           // .post("http://localhost:5000/api/users/login", {
+            // .post("http://localhost:5000/api/users/login", {
             username: this.username,
             password: this.password
           })
