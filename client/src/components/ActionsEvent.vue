@@ -439,8 +439,8 @@ export default {
             end: null
           };
           this.axios
-            //.post("https://chingutime.herokuapp.com/api/events/update", data, {
-              .post("http://localhost:5000/api/events/update", data, {
+            .post("https://chingutime.herokuapp.com/api/events/update", data, {
+              //.post("http://localhost:5000/api/events/update", data, {
               headers: {
                 "x-access-token": localStorage
                   .getItem("usertoken")
