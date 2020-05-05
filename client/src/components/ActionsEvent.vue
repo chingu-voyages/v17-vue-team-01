@@ -418,7 +418,7 @@ export default {
               this.answer =
                 "Congrats, event " +
                 this.eventPart.title +
-                " is scheduled! Here you have you ics file.";
+                " is scheduled! Here you have your ics file.";
               this.$router.push({ name: "Home", params: { user: this.user } });
             })
             .catch(error => (console.log(error), (this.answer = "Could not get ics file :( please contact support")));
@@ -488,7 +488,7 @@ export default {
           );
           document.body.appendChild(link);
           link.click();
-          this.answer = "Here you have you ics file.";
+          this.answer = "Here you have your ics file.";
         })
         .catch(error => (console.log(error), (this.answer = error)));
     }

@@ -194,6 +194,9 @@ export default {
         this.answer = "Currently only a range of 10 dates are selectable";
         window.scrollBy(0, 200);
       } else {
+        //prevent javascript or html injection
+        this.name = this.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        this.details = this.details.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         window.scrollTo(0, 0);
         this.createdEvent = {
           eventName: this.name,
