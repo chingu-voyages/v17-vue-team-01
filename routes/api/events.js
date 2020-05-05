@@ -145,48 +145,11 @@ router.get('/download/:id', function(req, res)  {
             msg: "Event not found."
           });
         }
-        const filename = result.title.replace(/\s/g, '') + '_' + req.params.id;
-        if(!fs.existsSync(filename + '.ics')){
-          let users_data = [];
-          User.find({
-            _id: { $in: result.users }
-        }
-        , function(err, users){
-            users.forEach(function(user) { 
-                users_data.push({name: user.name, email: user.email});
-            });
-          let hours = Math.abs(result.end - result.start) / 36e5;
-          let hourStart = result.start.getHours();// - decoded.TZ;
-          let day = result.start.getDate();
-          const event = {
-            start: [result.start.getFullYear(), (result.start.getMonth()+1), day, parseInt(hourStart), result.start.getMinutes() ],
-            duration: { hours: hours, minutes: 0 },
-            title: result.title,
-            description: result.description,
-            status: 'CONFIRMED',
-            busyStatus: 'BUSY',
-            organizer: { name: decoded.name, email: decoded.email },
-            attendees: users_data,
-            productId: 'ChinguTime'
-          }
-          ics.createEvent(event, (error, value) => {
-            if (error) {
-              console.log(error)
-              return
-            }
-            const filename = result.title.replace(/\s/g, '') + '_' + event_id;
-            writeFileSync(filename + '.ics', value);
-
-            console.log("Request event " + event_id + " ics download! Here you have you ics file.");
-            return res.download(filename + '.ics');
-          });
-        });
-        }
-        else{
-          console.log("Request event " + event_id + " ics download! Here you have you ics file.");
-          return res.download(filename + '.ics');
-        }
+        const filename = result.title.replace(/\s/g, '') + 
+        //'_' + result.start.getFullYear() + (result.start.getMonth()+1) + result.start.getDate() +'T'+ result.start.getHours() +
+        '_' + req.params.id;
         
+        return res.download(filename + '.ics');
       });  
   }); 
 });

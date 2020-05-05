@@ -421,7 +421,7 @@ export default {
                 " is scheduled! Here you have you ics file.";
               this.$router.push({ name: "Home", params: { user: this.user } });
             })
-            .catch(error => (console.log(error), (this.answer = "Could not get ics file :( please contact support")));
+            .catch(error => (console.log(error), (this.answer = error)));
         }
       }
     },

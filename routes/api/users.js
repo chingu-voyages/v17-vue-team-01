@@ -90,7 +90,7 @@ router.post('/login', (req, res) => {
         if (!user) {
             return res.status(200).json({
                 success: false,
-                msg: "Username not found."
+                msg: "Username is not found."
             });
         }
         // If there is user we are now going to compare the password
