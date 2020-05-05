@@ -71,6 +71,7 @@ export default {
       
       if (!this.username || !this.password) {
         this.answer = "Please fill out all the fields.";
+        this.logging = false;
       } else {
         //prevent javascript or html injection
         this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -82,12 +83,13 @@ export default {
             password: this.password
           })
           .then(response => this.userfoundCheck(response))
-          .catch(error => (console.log(error), (this.answer = error)));
+          .catch(error => (console.log(error), (this.answer = error), (this.logging = false)));
       }
     },
     userfoundCheck(response) {
       if (!response.data.token) {
         this.answer = response.data.msg;
+        this.logging = false;
       } else {
         this.serverResponse = response.data.token.slice(7);
         this.tokenReceived(this.serverResponse);
