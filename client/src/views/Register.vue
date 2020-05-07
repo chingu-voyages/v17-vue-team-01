@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-row>
+    <v-row v-if="!logging">
       <v-col>
         <v-card class="mx-auto" max-width="360">
           <v-card-text>
@@ -43,7 +43,7 @@
               maxlength="25"
             >
             <select v-model="time" class="input" placeholder="Timezone" label="Timezone">
-              <option disabled value="">Please select timezone</option>
+              <option disabled value>Please select timezone</option>
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
           </v-card-text>
@@ -55,20 +55,28 @@
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
-            <h3>{{ answer }}</h3>
+            <h2>{{ answer }}</h2>
           </v-card-text>
         </v-card>
       </v-col>
     </v-row>
+
+    <Logging v-if="logging"/>
   </v-container>
 </template>
 
 <script>
+import Logging from "../components/Logging.vue";
+
 export default {
   name: "Register",
+  components: {
+    Logging
+  },
   data() {
     return {
       time: "",
+      logging: false,
       zones: [
         "UTC +14:00 Kiribati",
         "UTC +13:00 Samoa/Tonga",
@@ -113,13 +121,14 @@ export default {
       ) {
         this.answer = "Please fill out all the fields.";
       } else {
-        if(!this.validateEmail(this.email)){
+        if (!this.validateEmail(this.email)) {
           this.answer = "Please use a valid email address.";
-        } 
-        else{
+        } else {
           //prevent javascript or html injection
           this.name = this.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-          this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          this.username = this.username
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;");
 
           let direction = this.time.slice(4, 5);
           let identifier = this.time.slice(5, 7);
@@ -130,8 +139,11 @@ export default {
             zone *= -1;
           }
 
+          this.logging = true;
+
           this.axios
             .post("https://chingutime.herokuapp.com/api/users/register", {
+              //.post("http://localhost:5000/api/users/register", {
               name: this.name,
               email: this.email,
               username: this.username,
@@ -139,8 +151,15 @@ export default {
               confirm_password: this.password,
               TZ: zone
             })
-            .then(response => (this.answer = response.data.msg))
-            .catch(error => (console.log(error), (this.answer = error)));
+            .then(response => {
+              this.answer = response.data.msg;
+              this.logging = false;
+            })
+            .catch(error => {
+              console.log(error);
+              this.answer = error;
+              this.logging = false;
+            });
         }
       }
     },
@@ -149,7 +168,7 @@ export default {
       return re.test(String(email).toLowerCase());
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
