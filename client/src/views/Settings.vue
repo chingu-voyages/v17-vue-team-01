@@ -54,7 +54,7 @@
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
             <h3 class="red--text">{{ answerValidate }}</h3>
-            <br>
+            <br v-if="answerValidate">
             <h2>Here is your current info:</h2>
             <br>
             <h3>
@@ -129,7 +129,6 @@ export default {
     processForm() {
       let confirmation = confirm("Confirm changes?");
       if (confirmation == true) {
-        console.log(this.email);
         if(this.email != null && !this.validateEmail(this.email)){
           this.answerValidate = "Please use a valid email address.";
         } 
@@ -162,7 +161,6 @@ export default {
           zone *= -1;
         }
         this.settings.TZ = zone;
-        console.log(`zone: ${zone}`);
       }
       if (this.name) {
         this.settings.name = this.name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
