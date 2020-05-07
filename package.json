@@ -17,6 +17,7 @@
   "author": "vue-team-v17",
   "license": "MIT",
   "dependencies": {
+    "@sendgrid/mail": "^7.1.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "concurrently": "^4.1.0",
@@ -27,6 +28,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.5",
     "passport": "^0.4.0",
-    "passport-jwt": "^4.0.0"
+    "passport-jwt": "^4.0.0",
+    "path": "^0.12.7",
+    "sendgrid": "^5.2.3"
   }
 }

@@ -9,8 +9,15 @@ const Event = require('../../model/Event');
 const Timeslot = require('../../model/Timeslot');
 const mongoose = require('mongoose');
 const { writeFileSync } = require('fs');
-const fs = require('fs')
+const fs = require('fs');
 const ics = require('ics');
+
+// sendgrid setting
+const path = require('path');
+require('dotenv').config({ path: '../../.env' });
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey("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");
 
 /**
  * @route POST api/events/create
@@ -192,6 +199,80 @@ router.get('/download/:id', function(req, res)  {
 });
 
 /**
+ * @route GET api/events/send
+ * @desc Send email for event
+ * @access Private
+ */
+
+router.get('/send/:id', function(req, res)  {
+  let token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  
+  jwt.verify(token, key, function(err, decoded) {
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+
+      let event_id = req.params.id;
+      Event.findOne( {_id: event_id}  ).then((result) => {
+        if (!result) {
+          return res.status(200).json({
+            success: false,
+            msg: "Event not found."
+          });
+        }
+        const filename = result.title.replace(/\s/g, '') + '_' + req.params.id;
+          // let users_data = [];
+          User.find({
+            _id: { $in: result.users }
+        }
+        , function(err, users){
+          let users_data = [];
+          console.log(`users: ${ users }`)
+            users.forEach(function(user) { 
+                users_data.push({name: user.name, email: user.email});
+            });
+          let hours = Math.abs(result.end - result.start) / 36e5;
+          let hourStart = result.start.getHours();// - decoded.TZ;
+          let day = result.start.getDate();
+
+          // const event = {
+          //   start: [result.start.getFullYear(), (result.start.getMonth()+1), day, parseInt(hourStart), result.start.getMinutes() ],
+          //   duration: { hours: hours, minutes: 0 },
+          //   title: result.title,
+          //   description: result.description,
+          //   status: 'CONFIRMED',
+          //   busyStatus: 'BUSY',
+          //   organizer: { name: decoded.name, email: decoded.email },
+          //   // attendees: users_data,
+          //   productId: 'ChinguTime'
+          // }
+          
+          let toList = [];
+            users.forEach(function(user) {
+           toList.push(user.email);   
+          });
+
+          sgMail.send({
+            to: toList,
+            from: 'chingutime@gmail.com',
+            subject: result.title,
+            // text: result.details,
+            html: `'<h3>${result.details}: ${result.start.getMonth()+1}-${day}-${result.start.getFullYear()} ${hourStart}:00 for ${hours} hour(s)</h3>'`
+          }, function(err, msg) {
+            if(err) {
+              return res.send(`${err} error occurred!`);
+            }
+            console.log('Email sent!');
+            res.send(msg);
+            
+          });
+         
+        });
+        
+      });  
+  }); 
+});
+
+/**
  * @route POST api/events/add
  * @desc Adds user to event, getting user by username
  * @access Public
@@ -219,27 +300,48 @@ router.post('/add', (req, res) => {
         username: username,
         events: {$ne: event_id}
       },
-      { $push: {events: [event_id] }} ,function(err, doc){
+      { $push: {events: [event_id] }} ,function(err, user){
         if(err){
             console.log("Something wrong when updating data!");
         }
-        doc ? console.log("Added this event to user's profile!") : console.log("Event already in this user!");
-
+        user ? console.log("Added this event to user's profile!") : console.log("Event already in this user!");
+        //console.log("user:" + user);
+        
         if(doc){
           Event.findOneAndUpdate({
             _id: event_id,
             users: {$ne: user_id}
           },
-          { $push: {users: user_id }},function(err, doc){
+          { $push: {users: user_id }},function(err, event){
             if(err){
                 console.log("Something wrong when updating data!");
             }
-            doc ? console.log("Added this user to event!") : console.log("User already has this event!");
+            event ? console.log("Added this user to event!") : console.log("User already has this event!");
+            //console.log("Event:" + event)
+            //console.log(user.email)
+            //console.log(event.title)
+            //console.log(event_id)
+          /*sgMail.send({
+            to: user.email,
+            from: 'chingutime@gmail.com',
+            subject: 'You were added to event ' + event.title,
+            // text: result.details,
+            html: `'<h3>You've been added to event '+ event.title +'on Chingu Time! <br>Want to add your timeslots? +
+            + Continue <a href="https://chingutime.netlify.com/event/`+ event_id+`">HERE</a></h3>'`
+          }, function(err, msg) {
+            if(err) {
+              return res.status(200).json({
+                success: false,
+                msg: "User added but couldn't send the email with error: " + err
+              });
+            }
+            console.log('Email sent!');
+            //res.send(msg);
+          });*/
           });
-
           return res.status(200).json({
             success: true,
-            msg: "Congrats, user " + username + " is in event " + event_id
+            msg: "Congrats, user " + username + " is in event " + event_id + ". Email sent!"
           });
         }
         else{
@@ -430,10 +532,42 @@ router.post('/update', (req, res) => {
           '_' + params.event_id;
           writeFileSync(filename + '.ics', value);
         });
+          let toList = [];
+          users.forEach(function(user) {
+            toList.push(user.email);   
+          });
+          const filename = doc.title.replace(/\s/g, '') + 
+          //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
+          '_' + params.event_id;
+          /*sgMail.send({
+            to: toList,
+            from: 'chingutime@gmail.com',
+            subject: doc.title + ' scheduled!',
+            // text: result.details,
+            html: `'<h3>Event '+ doc.title +' is now schedule! You can find attached ics file for calendar update.</h3>'`,
+              attachments: [
+              {
+                content: attachment,
+                filename: filename + '.ics',
+                type: "application/ics",
+                disposition: "attachment"
+              }
+            ]
+          }, function(err, msg) {
+            if(err) {
+              return res.status(200).json({
+                success: false,
+                msg: "Event scheduled but couldn't send the email with error: " + err
+              });
+            }
+            console.log('Email sent!');
+            //res.send(msg);
+          });*/
+
         console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
-        const filename = doc.title.replace(/\s/g, '') + 
+        //const filename = doc.title.replace(/\s/g, '') + 
         //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
-        '_' + params.event_id;
+        //'_' + params.event_id;
         return res.download(filename + '.ics');
       });
       }
