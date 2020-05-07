@@ -1,107 +1,114 @@
 <template>
-<v-row justify="center">
-    <v-card class="mx-auto text-center" max-width="740" v-if="!eventFirstValidate">
-      <v-card-text>
-        <h1>Create a new Event!</h1>
-        <br>
-        <input
-          class="input input-long"
-          v-on:keyup.enter="processFormFirst"
-          type="text"
-          name="name"
-          v-model="name"
-          placeholder="Event name"
-        >
-        <input
-          class="input input-long"
-          v-on:keyup.enter="processFormFirst"
-          type="text"
-          name="datails"
-          v-model="details"
-          placeholder="Event details"
-        >
-
-            <v-date-picker no-title v-model="dates" range></v-date-picker>
-            <br>
-            <br>
-            <input
-              class="input"
-              type="text"
-              name="Date range"
-              v-model="dateRangeText"
-              label="Date range"
-              disabled
-            >
-
-            <v-color-picker
-              hide-inputs
-              hide-canvas
-              v-model="color"
-              show-swatches
-              swatches-max-height="226"
-            ></v-color-picker>
-        <br>
-        <v-row justify="center">
-          <v-btn color="success" class="mr-4" @click="processFormFirst">Save</v-btn>
-          <v-btn to="/" color="primary">Back Home</v-btn>
-        </v-row>
-      </v-card-text>
-    </v-card>
-
-    <br v-if="!eventFirstValidate">
-
-    <v-card class="mx-auto" scrollable max-width="1200" v-if="eventFirstValidate">
-      <v-card-text>
-        <h1>Select the times</h1>
-        <br>
-        <v-row align="center" justify="center" no-gutters>
-          <template v-for="(slot, i) in slots">
-            <v-col :key="`slot-${i}`">
-              <v-card class="mx-auto" max-width="110" :value="slot">
-                <h2 class="timeslotName">
-                  {{
-                  createdEvent.eventDates[i][2] + " " + months[createdEvent.eventDates[i][1]].slice(0, 3)
-                  }}
-                </h2>
-                <v-col>
-                  <template v-for="n in 24">
-                    <label
-                      class="checkbox-label"
-                      :key="`checkbox-label-${i}-${n}`"
-                      :for="`checkbox-${i}-${n}`"
-                    >
-                      {{numbering(n-1)}}:00
-                      <input
-                        :key="`checkbox-${i}-${n}`"
-                        type="checkbox"
-                        :id="`checkbox-${i}-${n}`"
-                        :value="n-1"
-                        v-model="slotItems[i]"
-                        class="checkbox"
-                      >
-                      <span class="checkmark"></span>
-                    </label>
-                  </template>
-                </v-col>
-              </v-card>
+  <v-container>
+    <v-row justify="center">
+      <v-card class="mx-auto text-center" max-width="740" v-if="!eventFirstValidate">
+        <v-card-text>
+          <h1>Create a new Event!</h1>
+          <br>
+          <input
+            class="input input-long"
+            v-on:keyup.enter="processFormFirst"
+            type="text"
+            name="name"
+            v-model="name"
+            placeholder="Event name"
+          >
+          <input
+            class="input input-long"
+            v-on:keyup.enter="processFormFirst"
+            type="text"
+            name="datails"
+            v-model="details"
+            placeholder="Event details"
+          >
+          <v-row>
+            <v-col cols="12" md="6">
+              <v-date-picker no-title v-model="dates" range></v-date-picker>
               <br>
+              <br>
+              <input
+                class="input"
+                type="text"
+                name="Date range"
+                v-model="dateRangeText"
+                label="Date range"
+                disabled
+              >
             </v-col>
-          </template>
-        </v-row>
-        <br>
-        <v-row justify="center">
-          <v-btn :disabled="!valid" color="success" class="mr-4" @click="processFormSecond">Save</v-btn>
-          <!-- <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn> -->
-          <v-btn to="/" color="primary" v-if="!eventFirstValidate">Back Home</v-btn>
-        </v-row>
-      </v-card-text>
-    </v-card>
-    <v-card class="mx-auto" max-width="360" v-if="answer">
-      <v-card-text>
-        <h3 v-html="answer"></h3>
-      </v-card-text>
-    </v-card>
-  </v-row>
+            <v-col cols="12" md="6">
+              <v-color-picker
+                hide-inputs
+                hide-canvas
+                v-model="color"
+                show-swatches
+                swatches-max-height="226"
+              ></v-color-picker>
+            </v-col>
+          </v-row>
+
+          <br>
+          <v-row justify="center">
+            <v-btn color="success" class="mr-4" @click="processFormFirst">Save</v-btn>
+            <v-btn to="/" color="primary">Back Home</v-btn>
+          </v-row>
+        </v-card-text>
+      </v-card>
+
+      <br v-if="!eventFirstValidate">
+
+      <v-card class="mx-auto" scrollable max-width="1200" v-if="eventFirstValidate">
+        <v-card-text>
+          <h1>Select the times</h1>
+          <br>
+          <v-row align="center" justify="center" no-gutters>
+            <template v-for="(slot, i) in slots">
+              <v-col :key="`slot-${i}`">
+                <v-card class="mx-auto" max-width="110" :value="slot">
+                  <h2 class="timeslotName">
+                    {{
+                    createdEvent.eventDates[i][2] + " " + months[createdEvent.eventDates[i][1]].slice(0, 3)
+                    }}
+                  </h2>
+                  <v-col>
+                    <template v-for="n in 24">
+                      <label
+                        class="checkbox-label"
+                        :key="`checkbox-label-${i}-${n}`"
+                        :for="`checkbox-${i}-${n}`"
+                      >
+                        {{numbering(n-1)}}:00
+                        <input
+                          :key="`checkbox-${i}-${n}`"
+                          type="checkbox"
+                          :id="`checkbox-${i}-${n}`"
+                          :value="n-1"
+                          v-model="slotItems[i]"
+                          class="checkbox"
+                        >
+                        <span class="checkmark"></span>
+                      </label>
+                    </template>
+                  </v-col>
+                </v-card>
+                <br>
+              </v-col>
+            </template>
+          </v-row>
+          <br>
+          <v-row justify="center">
+            <v-btn :disabled="!valid" color="success" class="mr-4" @click="processFormSecond">Save</v-btn>
+            <!-- <v-btn color="error" class="mr-4" @click="reset">Reset Form</v-btn> -->
+            <v-btn to="/" color="primary" v-if="!eventFirstValidate">Back Home</v-btn>
+          </v-row>
+        </v-card-text>
+      </v-card>
+      <v-card class="mx-auto" max-width="360" v-if="answer">
+        <v-card-text>
+          <h3 v-html="answer"></h3>
+        </v-card-text>
+      </v-card>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -157,7 +164,8 @@ export default {
     reset() {},
     processFormFirst() {
       if (this.dates[0] == null || this.dates[1] == null) {
-        this.answer = "Please select 2 dates as a range.<br> Ex: 21-04-2020 - 22-04-2020";
+        this.answer =
+          "Please select 2 dates as a range.<br> Ex: 21-04-2020 - 22-04-2020";
         window.scrollBy(0, 200);
         return;
       }
@@ -188,7 +196,8 @@ export default {
       );
 
       if (d1.getTime() > d2.getTime()) {
-        this.answer = "Please select the range with the earlier date first.<br> Ex: 21-04-2020 - 22-04-2020";
+        this.answer =
+          "Please select the range with the earlier date first.<br> Ex: 21-04-2020 - 22-04-2020";
         window.scrollBy(0, 200);
       } else if (this.dateNames(d1, d2).length > 10) {
         this.answer = "Currently only a range of 10 dates are selectable";
@@ -211,9 +220,9 @@ export default {
           .post(
             "https://chingutime.herokuapp.com/api/events/create",
             {
-          //.post(
-            //"http://localhost:5000/api/events/create",
-            //{
+              //.post(
+              //"http://localhost:5000/api/events/create",
+              //{
 
               title: this.createdEvent.eventName,
               details: this.createdEvent.eventDetails,
@@ -258,10 +267,10 @@ export default {
         .post(
           "https://chingutime.herokuapp.com/api/timeslots/create",
           {
-        //.post(
-          //"http://localhost:5000/api/timeslots/create",
-          //{    
-            "event_id": this.createdEvent.eventId,
+            //.post(
+            //"http://localhost:5000/api/timeslots/create",
+            //{
+            event_id: this.createdEvent.eventId,
             timeslots: this.createdEvent.eventTimeslots
           },
           {
@@ -274,7 +283,7 @@ export default {
         .catch(error => (console.log(error), (this.answer = error)));
 
       this.$router.push({ name: "Home" });
-      location.reload()
+      location.reload();
     },
     dateNames(d1, d2) {
       let oneDay = 24 * 3600 * 1000;
@@ -309,12 +318,21 @@ export default {
       return n;
     },
     datesFormatterArray(input) {
-      return `${input[0].toString()}-${this.numbering(input[1]).toString()}-${this.numbering(input[2]).toString()}`
+      return `${input[0].toString()}-${this.numbering(
+        input[1]
+      ).toString()}-${this.numbering(input[2]).toString()}`;
     }
   }
 };
 </script>
 <style lang="scss" scoped>
+.v-color-picker {
+  align-self: inherit;
+  @media (max-width: 959px) {
+    margin-left: calc((100% - 300px) / 2);
+  }
+}
+
 .v-input--selection-controls {
   margin-top: 0px;
   padding-top: 4px;
