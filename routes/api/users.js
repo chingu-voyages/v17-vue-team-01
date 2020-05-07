@@ -164,7 +164,7 @@ router.post('/update', (req, res) => {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
   
       let params = {};
-      if (Object.keys(req.body).length == 0) {
+      if (Object.keys(req.body).length == 2 && (req.body.email == null && req.body.username == null)) {
         return res.status(200).json({
             success: false,
             msg: "Update failed, there are no fields to update."
@@ -172,29 +172,40 @@ router.post('/update', (req, res) => {
       }
       for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
       if(req.body.TZ == 0) params.TZ = 0;
-      User.findOneAndUpdate({
-        _id: decoded._id,
-      },
-      params,function(err, doc){
-        // Hash the password
-        if(params.password){
-            bcrypt.genSalt(10, (err, salt) => {
-                bcrypt.hash(params.password, salt, (err, hash) => {
-                    if (err) throw err;
-                    params.password = hash;
-                    doc.password = hash;
-                    doc.save();
-                });
+      // Check for the Unique Email or unique username
+      User.find({$or:[{email: params.email},{username: params.username}]}).then(user => {
+        if (user.length != 0) {
+            return res.status(200).json({
+                success: false,
+                msg: "This email/username is already in use."
             });
         }
-        if(err){
-            console.log("Something wrong when updating!");
-        }
-        doc ? console.log("Updated!") : console.log("User not found!");
-        return res.status(200).json({
-            success: true,
-            msg: "Congrats, user is updated!"  
-      });
+        else{
+            User.findOneAndUpdate({
+                _id: decoded._id,
+            },
+            params,function(err, doc){
+                // Hash the password
+                if(params.password){
+                    bcrypt.genSalt(10, (err, salt) => {
+                        bcrypt.hash(params.password, salt, (err, hash) => {
+                            if (err) throw err;
+                            params.password = hash;
+                            doc.password = hash;
+                            doc.save();
+                        });
+                    });
+                }
+                if(err){
+                    console.log("Something wrong when updating!");
+                }
+                doc ? console.log("Updated!") : console.log("User not found!");
+                return res.status(200).json({
+                    success: true,
+                    msg: "Congrats, user is updated!"  
+                });
+            });
+        } 
     });
     });   
   });

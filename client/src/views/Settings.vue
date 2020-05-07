@@ -129,7 +129,7 @@ export default {
     processForm() {
       let confirmation = confirm("Confirm changes?");
       if (confirmation == true) {
-        if(this.email != null && !this.validateEmail(this.email)){
+        if(this.email != null && this.email != "" && !this.validateEmail(this.email)){
           this.answerValidate = "Please use a valid email address.";
         } 
         else{
@@ -144,7 +144,7 @@ export default {
             )
             .then(
               response => (
-                (this.answer = response.data.msg), this.savingChanges(response)
+                (this.answer = response.data.msg), (this.answerValidate = response.data.msg), this.savingChanges(response)
               )
             )
             .catch(error => (console.log(error), (this.answer = error)));
@@ -169,12 +169,19 @@ export default {
       if (this.password) {
         this.settings.password = this.password;
       }
-      if (this.username) {
+      if (this.username && this.username != "") {
         this.settings.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         //prevent javascript or html injection
       }
-      if (this.email) {
+      else{
+        this.settings.username = null
+      }
+      
+      if (this.email && this.email != "") {
         this.settings.email = this.email;
+      }
+      else{
+        this.settings.email = null
       }
       return this.settings;
     },

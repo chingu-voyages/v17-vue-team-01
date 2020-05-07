@@ -53,10 +53,13 @@
           </v-row>
         </v-card-text>
       </v-card>
-
+      
       <br v-if="!eventFirstValidate">
-
-      <v-card class="mx-auto" scrollable max-width="1200" v-if="eventFirstValidate">
+    
+      <v-card class="mx-auto text-center" scrollable max-width="1200" v-if="eventFirstValidate">
+        <v-card-text>
+          <h3 class="green--text">Event created! Do you want to add your timeslots?</h3>
+        </v-card-text>
         <v-card-text>
           <h1>Select the times</h1>
           <br>
@@ -102,12 +105,14 @@
           </v-row>
         </v-card-text>
       </v-card>
-      <v-card class="mx-auto" max-width="360" v-if="answer">
-        <v-card-text>
-          <h3 v-html="answer"></h3>
-        </v-card-text>
-      </v-card>
+      
     </v-row>
+    <br>
+    <v-card class="mx-auto text-center" max-width="360" v-if="answer">
+      <v-card-text>
+        <h3 class="red--text" v-html="answer"></h3>
+      </v-card-text>
+    </v-card>
   </v-container>
 </template>
 
