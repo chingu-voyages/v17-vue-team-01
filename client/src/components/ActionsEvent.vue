@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <v-card v-if="eventPart && advisableTimeslots" class="mx-auto" outlined tile>
+    <v-card v-if="eventPart && advisableTimeslots" class="mx-auto">
       <h1 class="leftMargin">Event Actions</h1>
       <p
         class="leftMargin"

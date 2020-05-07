@@ -1,6 +1,6 @@
 <template>
   <v-container>
-  <v-card class="pa-2" outlined tile>
+  <v-card class="pa-2">
     <v-sheet v-if="eventPart">
       <h2 class="mb-5">{{ eventPart.title }}</h2>
       <h4 class="mb-2">Details:</h4>
