@@ -261,7 +261,9 @@ router.get('/send/:id', function(req, res)  {
             if(err) {
               return res.send(`${err} error occurred!`);
             }
-            res.send('Email sent!').then(console.log('Email sent!'));
+            console.log('Email sent!');
+            res.send(msg);
+            
           });
          
         });
@@ -298,27 +300,48 @@ router.post('/add', (req, res) => {
         username: username,
         events: {$ne: event_id}
       },
-      { $push: {events: [event_id] }} ,function(err, doc){
+      { $push: {events: [event_id] }} ,function(err, user){
         if(err){
             console.log("Something wrong when updating data!");
         }
-        doc ? console.log("Added this event to user's profile!") : console.log("Event already in this user!");
-
+        user ? console.log("Added this event to user's profile!") : console.log("Event already in this user!");
+        //console.log("user:" + user);
+        
         if(doc){
           Event.findOneAndUpdate({
             _id: event_id,
             users: {$ne: user_id}
           },
-          { $push: {users: user_id }},function(err, doc){
+          { $push: {users: user_id }},function(err, event){
             if(err){
                 console.log("Something wrong when updating data!");
             }
-            doc ? console.log("Added this user to event!") : console.log("User already has this event!");
+            event ? console.log("Added this user to event!") : console.log("User already has this event!");
+            //console.log("Event:" + event)
+            //console.log(user.email)
+            //console.log(event.title)
+            //console.log(event_id)
+          /*sgMail.send({
+            to: user.email,
+            from: 'chingutime@gmail.com',
+            subject: 'You were added to event ' + event.title,
+            // text: result.details,
+            html: `'<h3>You've been added to event '+ event.title +'on Chingu Time! <br>Want to add your timeslots? +
+            + Continue <a href="https://chingutime.netlify.com/event/`+ event_id+`">HERE</a></h3>'`
+          }, function(err, msg) {
+            if(err) {
+              return res.status(200).json({
+                success: false,
+                msg: "User added but couldn't send the email with error: " + err
+              });
+            }
+            console.log('Email sent!');
+            //res.send(msg);
+          });*/
           });
-
           return res.status(200).json({
             success: true,
-            msg: "Congrats, user " + username + " is in event " + event_id
+            msg: "Congrats, user " + username + " is in event " + event_id + ". Email sent!"
           });
         }
         else{
@@ -509,10 +532,42 @@ router.post('/update', (req, res) => {
           '_' + params.event_id;
           writeFileSync(filename + '.ics', value);
         });
+          let toList = [];
+          users.forEach(function(user) {
+            toList.push(user.email);   
+          });
+          const filename = doc.title.replace(/\s/g, '') + 
+          //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
+          '_' + params.event_id;
+          /*sgMail.send({
+            to: toList,
+            from: 'chingutime@gmail.com',
+            subject: doc.title + ' scheduled!',
+            // text: result.details,
+            html: `'<h3>Event '+ doc.title +' is now schedule! You can find attached ics file for calendar update.</h3>'`,
+              attachments: [
+              {
+                content: attachment,
+                filename: filename + '.ics',
+                type: "application/ics",
+                disposition: "attachment"
+              }
+            ]
+          }, function(err, msg) {
+            if(err) {
+              return res.status(200).json({
+                success: false,
+                msg: "Event scheduled but couldn't send the email with error: " + err
+              });
+            }
+            console.log('Email sent!');
+            //res.send(msg);
+          });*/
+
         console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
-        const filename = doc.title.replace(/\s/g, '') + 
+        //const filename = doc.title.replace(/\s/g, '') + 
         //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
-        '_' + params.event_id;
+        //'_' + params.event_id;
         return res.download(filename + '.ics');
       });
       }
