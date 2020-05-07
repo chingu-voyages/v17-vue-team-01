@@ -9,8 +9,15 @@ const Event = require('../../model/Event');
 const Timeslot = require('../../model/Timeslot');
 const mongoose = require('mongoose');
 const { writeFileSync } = require('fs');
-const fs = require('fs')
+const fs = require('fs');
 const ics = require('ics');
+
+// sendgrid setting
+const path = require('path');
+require('dotenv').config({ path: '../../.env' });
+const sgMail = require('@sendgrid/mail');
+
+sgMail.setApiKey("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");
 
 /**
  * @route POST api/events/create
@@ -186,6 +193,78 @@ router.get('/download/:id', function(req, res)  {
           console.log("Request event " + event_id + " ics download! Here you have you ics file.");
           return res.download(filename + '.ics');
         }
+        
+      });  
+  }); 
+});
+
+/**
+ * @route GET api/events/send
+ * @desc Send email for event
+ * @access Private
+ */
+
+router.get('/send/:id', function(req, res)  {
+  let token = req.headers['x-access-token'];
+  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  
+  jwt.verify(token, key, function(err, decoded) {
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+
+      let event_id = req.params.id;
+      Event.findOne( {_id: event_id}  ).then((result) => {
+        if (!result) {
+          return res.status(200).json({
+            success: false,
+            msg: "Event not found."
+          });
+        }
+        const filename = result.title.replace(/\s/g, '') + '_' + req.params.id;
+          // let users_data = [];
+          User.find({
+            _id: { $in: result.users }
+        }
+        , function(err, users){
+          let users_data = [];
+          console.log(`users: ${ users }`)
+            users.forEach(function(user) { 
+                users_data.push({name: user.name, email: user.email});
+            });
+          let hours = Math.abs(result.end - result.start) / 36e5;
+          let hourStart = result.start.getHours();// - decoded.TZ;
+          let day = result.start.getDate();
+
+          // const event = {
+          //   start: [result.start.getFullYear(), (result.start.getMonth()+1), day, parseInt(hourStart), result.start.getMinutes() ],
+          //   duration: { hours: hours, minutes: 0 },
+          //   title: result.title,
+          //   description: result.description,
+          //   status: 'CONFIRMED',
+          //   busyStatus: 'BUSY',
+          //   organizer: { name: decoded.name, email: decoded.email },
+          //   // attendees: users_data,
+          //   productId: 'ChinguTime'
+          // }
+          
+          let toList = [];
+            users.forEach(function(user) {
+           toList.push(user.email);   
+          });
+
+          sgMail.send({
+            to: toList,
+            from: 'chingutime@gmail.com',
+            subject: result.title,
+            // text: result.details,
+            html: `'<h3>${result.details}: ${result.start.getMonth()+1}-${day}-${result.start.getFullYear()} ${hourStart}:00 for ${hours} hour(s)</h3>'`
+          }, function(err, msg) {
+            if(err) {
+              return res.send(`${err} error occurred!`);
+            }
+            res.send('Email sent!').then(console.log('Email sent!'));
+          });
+         
+        });
         
       });  
   }); 
