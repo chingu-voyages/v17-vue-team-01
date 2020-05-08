@@ -398,21 +398,29 @@ export default {
       //console.log(username);
       let size = possibleDays.length;
       if(TZ-users[0].TZ < 0) size = possibleDays.length + 1;
+      if(TZ < 0 && users[0].TZ < 0 && TZ-users[0].TZ > 0) size = possibleDays.length + 1;
       //if(TZ-users[0].TZ > 0 && users[0].TZ < 0) size = possibleDays.length + 1;
-      //console.log(size);
+      console.log(size);
       this.calculatePossibleDays.forEach(function (possible, i){ 
         possibles.push(possible);
-        //console.log(i+1); 
-        //console.log(size); 
+        //console.log(TZ); 
+        //console.log(users[0].TZ); 
+        if (TZ-users[0].TZ > 0 && i+(size-possibleDays.length+1) == size){ 
+          console.log("Last callback call at index " + i ); 
+          let day = new Date(possible);
+          let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+          possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+          possibles.push(possible);
+        }
         if (i+1 == size && TZ >= 0 && TZ != users[0].TZ){ 
-          //console.log("Last callback call at index " + i ); 
+          console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
           possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
           possibles.push(possible);
         }
         if (i == 0 && TZ-users[0].TZ < 0 ){ 
-          //console.log("Last callback call at index " + i ); 
+          console.log("Last callback call at index " + i ); 
           let day = new Date(possible);
           let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
           possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
