@@ -15,9 +15,13 @@ const ics = require('ics');
 // sendgrid setting
 const path = require('path');
 require('dotenv').config({ path: '../../.env' });
+require('dotenv').config({path: __dirname+'../../.env'});
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const sgMail = require('@sendgrid/mail');
 
-sgMail.setApiKey("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");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+//console.log(process.env.SENDGRID_API_KEY);
+
 
 /**
  * @route POST api/events/create
@@ -256,7 +260,7 @@ router.get('/send/:id', function(req, res)  {
             from: 'chingutime@gmail.com',
             subject: result.title,
             // text: result.details,
-            html: `'<h3>${result.details}: ${result.start.getMonth()+1}-${day}-${result.start.getFullYear()} ${hourStart}:00 for ${hours} hour(s)</h3>'`
+            html: `'<h3>${result.details}: ${result.start.getMonth()+1}-${day}-${result.start.getFullYear()}${hourStart}:00 for ${hours} hour(s)</h3>'`
           }, function(err, msg) {
             if(err) {
               return res.send(`${err} error occurred!`);
@@ -269,6 +273,7 @@ router.get('/send/:id', function(req, res)  {
       });  
   }); 
 });
+
 
 /**
  * @route POST api/events/add
