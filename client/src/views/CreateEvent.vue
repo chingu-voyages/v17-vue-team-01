@@ -53,10 +53,10 @@
           </v-row>
         </v-card-text>
       </v-card>
-      
+
       <br v-if="!eventFirstValidate">
-    
-      <v-card class="mx-auto text-center" scrollable max-width="1200" v-if="eventFirstValidate">
+
+      <v-card class="text-center" scrollable v-if="eventFirstValidate">
         <v-card-text>
           <h3 class="green--text">Event created! Do you want to add your timeslots?</h3>
         </v-card-text>
@@ -65,33 +65,32 @@
           <br>
           <v-row align="center" justify="center" no-gutters>
             <template v-for="(slot, i) in slots">
-              <v-col :key="`slot-${i}`">
-                <v-card class="mx-auto" max-width="110" :value="slot">
+              <v-col :key="`slot-${i}`" clos="12">
+                <v-card class="mx-auto timeslots-card" :value="slot">
                   <h2 class="timeslotName">
                     {{
                     createdEvent.eventDates[i][2] + " " + months[createdEvent.eventDates[i][1]].slice(0, 3)
                     }}
                   </h2>
-                  <v-col>
-                    <template v-for="n in 24">
-                      <label
-                        class="checkbox-label"
-                        :key="`checkbox-label-${i}-${n}`"
-                        :for="`checkbox-${i}-${n}`"
+
+                  <template v-for="n in 24">
+                    <label
+                      :class="`checkbox-label checkbox-label-${n-1}`"
+                      :key="`checkbox-label-${i}-${n}`"
+                      :for="`checkbox-${i}-${n}`"
+                    >
+                      <input
+                        :key="`checkbox-${i}-${n}`"
+                        type="checkbox"
+                        :id="`checkbox-${i}-${n}`"
+                        :value="n-1"
+                        v-model="slotItems[i]"
+                        class="checkbox"
                       >
-                        {{numbering(n-1)}}:00
-                        <input
-                          :key="`checkbox-${i}-${n}`"
-                          type="checkbox"
-                          :id="`checkbox-${i}-${n}`"
-                          :value="n-1"
-                          v-model="slotItems[i]"
-                          class="checkbox"
-                        >
-                        <span class="checkmark"></span>
-                      </label>
-                    </template>
-                  </v-col>
+                      <span class="checkmark" :style="cssVars">{{numbering(n-1)}}</span>
+                    </label>
+                  </template>
+                  <h4 class="undertitle-timeselection">Selections: from 0am to 23pm <br> in 1 hour intervals</h4>
                 </v-card>
                 <br>
               </v-col>
@@ -105,7 +104,6 @@
           </v-row>
         </v-card-text>
       </v-card>
-      
     </v-row>
     <br>
     <v-card class="mx-auto text-center" max-width="360" v-if="answer">
@@ -160,7 +158,12 @@ export default {
       if (this.dates) {
         return this.dates.join(" ~ ");
       }
-    }
+    },
+    cssVars(input) {
+      return {
+        '--bg-color': this.createdEvent.eventColor
+      }
+  }
   },
   mounted() {
     this.color = "#3f51b5";
@@ -288,7 +291,6 @@ export default {
         .catch(error => (console.log(error), (this.answer = error)));
 
       this.$router.push({ name: "Home" });
-      location.reload();
     },
     dateNames(d1, d2) {
       let oneDay = 24 * 3600 * 1000;
@@ -364,20 +366,67 @@ export default {
   }
 }
 
+.timeslots-card {
+  width: 320px;
+  min-width: 320px;
+  height: 375px;
+}
+
 //-----------------------------------------
 
 /* The checkbox-label */
 .checkbox-label {
-  display: block;
-  position: relative;
-  padding: 1px 0 0 30px;
-  margin-bottom: 12px;
+  display: inline-block;
+  position: absolute;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
   font-size: 16px;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+.undertitle-timeselection {
+  padding-top: 5px;
+}
+
+$prefix: checkbox-label;
+$top: 90px;
+$left: 142px;
+
+$font-list: (
+  0 $prefix $top + 50px $left,
+  1 $prefix $top + 60px $left + 40px,
+  2 $prefix $top + 84px $left + 72px,
+  3 $prefix $top + 120px $left + 85px,
+  4 $prefix $top + 156px $left + 72px,
+  5 $prefix $top + 180px $left + 40px,
+  6 $prefix $top + 190px $left,
+  7 $prefix $top + 180px $left - 40px,
+  8 $prefix $top + 156px $left - 72px,
+  9 $prefix $top + 120px $left - 85px,
+  10 $prefix $top + 84px $left - 72px,
+  11 $prefix $top + 60px $left - 40px,
+  12 $prefix $top $left,
+  13 $prefix $top + 20px $left + 64px,
+  14 $prefix $top + 60px $left + 114px,
+  15 $prefix $top + 120px $left + 135px,
+  16 $prefix $top + 180px $left + 114px,
+  17 $prefix $top + 220px $left + 64px,
+  18 $prefix $top + 240px $left,
+  19 $prefix $top + 220px $left - 64px,
+  20 $prefix $top + 180px $left - 114px,
+  21 $prefix $top + 120px $left - 135px,
+  22 $prefix $top + 60px $left - 114px,
+  23 $prefix $top + 20px $left - 64px
+);
+@each $value in $font-list {
+  .#{nth($value, 2)}-#{nth($value, 1)} {
+    top: nth($value, 3);
+    left: nth($value, 4);
+  }
 }
 
 /* Hide the browser's default checkbox */
@@ -394,8 +443,10 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  height: 24px;
-  width: 24px;
+  height: 35px;
+  width: 35px;
+  line-height: 35px;
+  border-radius: 50%;
   background-color: #eee;
 }
 
@@ -406,31 +457,6 @@ export default {
 
 /* When the checkbox is checked, add a blue background */
 .checkbox-label input:checked ~ .checkmark {
-  background-color: #2196f3;
-}
-
-/* Create the checkmark/indicator (hidden when not checked) */
-.checkmark:after {
-  content: "";
-  position: absolute;
-  display: none;
-}
-
-/* Show the checkmark when checked */
-.checkbox-label input:checked ~ .checkmark:after {
-  display: block;
-}
-
-/* Style the checkmark/indicator */
-.checkbox-label .checkmark:after {
-  left: 9px;
-  top: 6px;
-  width: 5px;
-  height: 10px;
-  border: solid white;
-  border-width: 0 3px 3px 0;
-  -webkit-transform: rotate(45deg);
-  -ms-transform: rotate(45deg);
-  transform: rotate(45deg);
+  background-color: var(--bg-color);
 }
 </style>
