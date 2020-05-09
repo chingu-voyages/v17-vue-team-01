@@ -8,7 +8,6 @@
       <div v-if="!eventPart.scheduled">
         <div v-if="typeof advisableTimeslots != 'string'" >
         <p class="mb-5">The following timeslots are already selected by all participants:</p>
-        
         <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
         <p>One timeslot is already added to schedule form fields.</p>
         </div>
@@ -30,10 +29,10 @@
       <div v-else>
       <h4 class="mt-5">Current Event Calendar:</h4>
       <br>
-            <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin">
-              <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
-            </v-card-actions>
-            <br>
+      <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin">
+        <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
+      </v-card-actions>
+      <br>
         <v-row align="center" justify="center" no-gutters>
           <template v-for="(day, i) in possible=computePossibleDays(eventPart.users, user.username, eventPart.possibleDays, user.TZ)">
             <v-col :key="`day-${i}`">
@@ -45,7 +44,6 @@
                 </h3>
                 <v-col>
                   <template v-for="n in 24">
-                    
                     <label
                       class="checkbox-label"
                       :key="`checkbox-label-${i}-${n}`"
@@ -58,13 +56,11 @@
                         :value="n-1"
                         class="checkbox"
                         :checked="computedChecked(day, n-1, user._id)"
-                        :disabled="computedDisabled(eventPart, user, i, n, possible)"
-                                  
+                        :disabled="computedDisabled(eventPart, user, i, n, possible)"           
                       >
                       <span class="numbering">{{numbering(n-1)}}:00</span>
                       <span class="checkmark"></span>
                     </label>
-                  
                     <span :key="`tooltip-label-${i}-${n}`">
                       <v-tooltip bottom :disabled="computedUserNames(day, n-1, eventPart.users) == null">
                         <template #activator="data">
@@ -77,15 +73,11 @@
                       <br>
                     </span>
                   </template>
-                  
                 </v-col>
               </v-card>
               <br>
-              
             </v-col>
-            
           </template>
-          
         </v-row>
             <v-card-actions v-if="!eventPart.scheduled" class="justify-center topNegativeMargin" >
               <v-btn @click="createTimeslots(user)" class="center" color="success">Change timeslots</v-btn>
@@ -112,14 +104,7 @@ export default {
       possible: []
     }
   },
-  watch: {
-
-  },
-  created() {
-
-  },
   methods: {
-
   pSBC: function(p,c0,c1,l){
 	let r,g,b,P,f,t,h,i=parseInt,m=Math.round,a=typeof(c1)=="string";
 	if(typeof(p)!="number"||p<-1||p>1||typeof(c0)!="string"||(c0[0]!='r'&&c0[0]!='#')||(c1&&!a))return null;
@@ -144,28 +129,21 @@ export default {
 	if(h)return"rgb"+(f?"a(":"(")+r+","+g+","+b+(f?","+m(a*1000)/1000:"")+")";
 	else return"#"+(4294967296+r*16777216+g*65536+b*256+(f?m(a*255):0)).toString(16).slice(1,f?undefined:-2)
 },
-
     numbering(n) {
       if (n < 10) {
         return `0${n}`;
       }
       return n;
     },
-
-    
-
     computedClass(i, n, c, numberUsers) {
       const colorBase = this.pSBC(0.9,c,false,true);
-      //console.log(colorBase);
       let nUsers = (0.9/numberUsers);
       let count = 0;
       this.changeToUserTZ.forEach(function (tmsl){ 
-
         if(i == tmsl.day && n == tmsl.time){
           count++;
         }
       })
-      
       if(count != 0){
         let color = this.pSBC(0.9-(nUsers*count),c,false,true);
         return color;
@@ -173,11 +151,9 @@ export default {
       else{
         return colorBase;
       }
-      
     },
     computedChecked(i, n, userId) {
       let checked;
-      //console.log(this.slotItems)
       this.changeToUserTZ.forEach(function (tmsl){ 
         if(i == tmsl.day && n == tmsl.time && userId == tmsl.user){
           checked = true;
@@ -185,10 +161,8 @@ export default {
       })
       return checked;
     },
-
     computedDisabled(eventPart, user, i, n, possible) {
       let disabled;
-      //console.log(user.TZ-eventPart.users[0].TZ)
       let diffFromCreator = user.TZ-eventPart.users[0].TZ;
       if(eventPart.scheduled == true) {
         disabled = true;
@@ -217,153 +191,47 @@ export default {
         }
       }
     },
-
-/*"eventPart.scheduled || 
-((eventPart.users[0].username != user.username && user.TZ > eventPart.users[0].TZ) && 
-((i == 0 && n < user.TZ+1) || (i == possible.length-1 && n > (user.TZ-eventPart.users[0].TZ)))) ||
-((eventPart.users[0].username != user.username && user.TZ < eventPart.users[0].TZ) && 
-((i == 0 && n < 24-user.TZ-eventPart.users[0].TZ+1) || (i == possible.length-1 && n > 24-user.TZ-eventPart.users[0].TZ)))"*/
-
-
-
-
     computedUsers(i, n) {
       let countU = 0;
-
       this.changeToUserTZ.forEach(function (tmsl){ 
-        if(i == tmsl.day && n == tmsl.time){
-          countU++;
-        }
+        if(i == tmsl.day && n == tmsl.time)countU++;
       })
       return countU;
     },
-
     computedUserNames(i, n, eventPartUsers) {
       let usernames = [];
       this.changeToUserTZ.forEach(function (tmsl){ 
         if(i == tmsl.day && n == tmsl.time){
           eventPartUsers.forEach(function (user){
-            if(tmsl.user == user._id) {
-              usernames.push(user.username);  
-            }
+            if(tmsl.user == user._id) usernames.push(user.username);  
           })  
         }
       })
-      if(usernames.length == 0)
-       return null;
+      if(usernames.length == 0) return null;
       return usernames;
     },
-
     createTimeslots(user){
       let sizePossibleDays = this.eventPart.possibleDays.length;
-      if(this.eventPart.users[0].username != user.username) sizePossibleDays = this.eventPart.possibleDays.length + 1;
-      //console.log(this.eventPart.possibleDays);
-      //console.log(sizePossibleDays);
+      let creator = this.eventPart.users[0];
+      let possibleDaysArray = [];
+      if(creator.username == user.username || user.TZ == creator.TZ) {
+        sizePossibleDays = this.eventPart.possibleDays.length;
+        possibleDaysArray = this.eventPart.possibleDays;
+      }
+      else{
+        //calculate new possibleDaysArray
+        sizePossibleDays = this.eventPart.possibleDays.length + 1;
+        possibleDaysArray = this.computePossibleDays(this.eventPart.users, user.username, this.eventPart.possibleDays, user.TZ);
+      }
       let confirmation = confirm("Are you sure you want to add timeslots? Previous created timeslots will be replaced!");
       if (confirmation == true) {
-      
       for(let i = 0; i < sizePossibleDays; i++){
         for(let n = 1; n < 25; n++){
           let myId = "checkbox-"+i+"-"+n;
           let day;
           //console.log(document.getElementById(myId));
           if(document.getElementById(myId).checked){
-            if(user.TZ == 0 && this.eventPart.users[0].TZ <= user.TZ){
-              day = this.eventPart.possibleDays[i]; 
-            }
-            else{
-                if(i == 0){
-                  day = new Date(this.eventPart.possibleDays[0]);
-                  let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
-                  day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                }
-                else{
-                  day = this.eventPart.possibleDays[i-1]; 
-                }
-            }
-            if(user.TZ > 0){
-              if(user.TZ-this.eventPart.users[0].TZ < 0){
-                if(sizePossibleDays == this.eventPart.possibleDays.length){
-                  day = this.eventPart.possibleDays[i];
-                }
-                else{
-                  if(i == 0){
-                  day = new Date(this.eventPart.possibleDays[0]);
-                  let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
-                  day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                  }
-                  //if(i == sizePossibleDays-1){
-                    //day = new Date(this.eventPart.possibleDays[i-1]);
-                    //let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-                    //day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                    //day = this.eventPart.possibleDays[i-1];
-                  //}
-                  //if(i != 0){
-                  else{
-                    day = this.eventPart.possibleDays[i-1];
-                  }
-                }
-              }
-              else{
-                if(sizePossibleDays == this.eventPart.possibleDays.length){
-                  day = this.eventPart.possibleDays[i];
-                }
-                else{
-                  /*if(i == 0){
-                  day = new Date(this.eventPart.possibleDays[0]);
-                  let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
-                  day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                  }*/
-                  if(i == sizePossibleDays-1){
-                    day = new Date(this.eventPart.possibleDays[i-1]);
-                    let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-                    day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                  }
-                  //if(i != sizePossibleDays-1){
-                  else{
-                    day = this.eventPart.possibleDays[i];
-                  }
-                }
-              }
-              /*if(i == 0){
-                day = new Date(this.eventPart.possibleDays[0]);
-                let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
-                day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                console.log(day)
-              }
-              if(i == sizePossibleDays-1){
-                day = new Date(this.eventPart.possibleDays[i-1]);
-                let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-                day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                //console.log(day)
-              }
-              if(i != 0 && i != sizePossibleDays-1){
-              //else{  
-                day = this.eventPart.possibleDays[i];
-              }*/
-            }
-
-            if(user.TZ < 0){
-              if(sizePossibleDays == this.eventPart.possibleDays.length){
-                day = this.eventPart.possibleDays[i];
-              }
-              else{
-                if(i == 0){
-                 day = new Date(this.eventPart.possibleDays[0]);
-                 let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
-                 day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-                }
-              /*if(i == sizePossibleDays-1){
-                day = new Date(this.eventPart.possibleDays[i-1]);
-                let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-                day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-              }*/
-                else{
-                  day = this.eventPart.possibleDays[i-1];
-                }
-              }
-              
-            }
+            day = possibleDaysArray[i]; 
             this.slotItems.push([day, n-1]);
           }
         }
@@ -372,7 +240,7 @@ export default {
           event_id: this.url,
           timeslots: this.slotItems
         };
-        console.log(this.slotItems);
+        //console.log(this.slotItems);
         this.axios
           .post("https://chingutime.herokuapp.com/api/timeslots/create", data, {
               //.post("http://localhost:5000/api/timeslots/create", data, {
@@ -394,52 +262,66 @@ export default {
 
     computePossibleDays(users, username, possibleDays, TZ){
       let possibles = [];
-      //console.log(users[0].username);
-      //console.log(username);
       let size = possibleDays.length;
-      if(TZ-users[0].TZ < 0) size = possibleDays.length + 1;
-      if(TZ < 0 && users[0].TZ < 0 && TZ-users[0].TZ > 0) size = possibleDays.length + 1;
-      //if(TZ-users[0].TZ > 0 && users[0].TZ < 0) size = possibleDays.length + 1;
-      console.log(size);
-      this.calculatePossibleDays.forEach(function (possible, i){ 
-        possibles.push(possible);
-        //console.log(TZ); 
-        //console.log(users[0].TZ); 
-        if (TZ-users[0].TZ > 0 && i+(size-possibleDays.length+1) == size){ 
-          console.log("Last callback call at index " + i ); 
-          let day = new Date(possible);
-          let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-          possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+      let creator = users[0];
+      if(username == creator.username || TZ == creator.TZ){
+        return possibleDays;
+      }
+      else{
+        this.calculatePossibleDays.forEach(function (possible, i){ 
           possibles.push(possible);
-        }
-        if (i+1 == size && TZ >= 0 && TZ != users[0].TZ){ 
-          console.log("Last callback call at index " + i ); 
-          let day = new Date(possible);
-          let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
-          possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-          possibles.push(possible);
-        }
-        if (i == 0 && TZ-users[0].TZ < 0 ){ 
-          console.log("Last callback call at index " + i ); 
-          let day = new Date(possible);
-          let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
-          possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
-          possibles.unshift(possible);
-        }
-      })
+          if(creator.TZ >= 0 && TZ >= 0){
+            if (i+1 == size && creator.TZ < TZ){ 
+              let day = new Date(possible);
+              let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+              possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+              possibles.push(possible);
+            }
+            if (i == 0 && creator.TZ > TZ){ 
+              let day = new Date(possible);
+              let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+              possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+              possibles.unshift(possible);
+            }
+          }
+          if(creator.TZ < 0 && TZ < 0){
+            if (i+1 == size && Math.abs(creator.TZ) > Math.abs(TZ)){ 
+              let day = new Date(possible);
+              let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+              possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+              possibles.push(possible);
+            }
+            if (i == 0 && Math.abs(creator.TZ) < Math.abs(TZ)){ 
+              let day = new Date(possible);
+              let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+              possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+              possibles.unshift(possible);
+            }
+          }
+          if(creator.TZ >= 0 && TZ < 0 && i == 0){
+            let day = new Date(possible);
+            let newDate = new Date(day.setTime( day.getTime() - 1 * 86400000 ));
+            possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+            possibles.unshift(possible);
+          }
+          if(creator.TZ < 0 && TZ >= 0&& i+1 == size){
+            let day = new Date(possible);
+            let newDate = new Date(day.setTime( day.getTime() + 1 * 86400000 ));
+            possible = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2);
+            possibles.push(possible);
+          }
+        })
+      }
       //console.log(possibles)
       return possibles;
     },
-
   },
   
   computed: {
-    
     calculatePossibleDays() {
       //console.log(eventPartUsers)
       return this.eventPart.possibleDays;
     },
-
     changeToUserTZ() {
       this.timeslotPart.forEach(timeslot => {
         timeslot.time = parseInt(timeslot.time) + parseInt(this.user.TZ);
@@ -456,7 +338,6 @@ export default {
           timeslot.time = timeslot.time - 24;
         }
       })
-      
       return this.timeslotPart;
     }
   }
