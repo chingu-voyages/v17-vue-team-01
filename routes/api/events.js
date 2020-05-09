@@ -20,8 +20,11 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+<<<<<<< HEAD
 //console.log(process.env.SENDGRID_API_KEY);
 
+=======
+>>>>>>> 7b6b1bc73ecdf0267dcf360e5b53662eab0b5ba9
 
 /**
  * @route POST api/events/create
