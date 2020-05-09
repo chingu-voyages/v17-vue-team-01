@@ -15,9 +15,11 @@ const ics = require('ics');
 // sendgrid setting
 const path = require('path');
 require('dotenv').config({ path: '../../.env' });
+require('dotenv').config({path: __dirname+'../../.env'});
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const sgMail = require('@sendgrid/mail');
 
-sgMail.setApiKey("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");
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 /**
  * @route POST api/events/create
