@@ -112,10 +112,10 @@ router.get('/show/:id', function(req, res)  {
                   candidate_timeslots[j] = candidate_timeslots[j].replace(/.$/, function(i) { return parseInt(i) + 1; });
                   //get count from candidate timeslot and check if is equal to number of users
                   if(parseInt(candidate_timeslots[j].slice(-1)) == number_users){
-                    console.log(`matched one: ${candidate_timeslots[j]}`);
+                    //console.log(`matched one: ${candidate_timeslots[j]}`);
                     advisable_timeslots.push(candidate_timeslots[j]);
                     advisable_timeslots.forEach(timeslot => timeslot.slice(-2). replace("T", " "));
-                    console.log(`advisable_timeslots: ${advisable_timeslots}`);
+                    //console.log(`advisable_timeslots: ${advisable_timeslots}`);
                   }  
                 } 
               } 
@@ -323,13 +323,12 @@ router.post('/add', (req, res) => {
             //console.log(user.email)
             //console.log(event.title)
             //console.log(event_id)
-          /*sgMail.send({
+          sgMail.send({
             to: user.email,
             from: 'chingutime@gmail.com',
             subject: 'You were added to event ' + event.title,
             // text: result.details,
-            html: `'<h3>You've been added to event '+ event.title +'on Chingu Time! <br>Want to add your timeslots? +
-            + Continue <a href="https://chingutime.netlify.com/event/`+ event_id+`">HERE</a></h3>'`
+            html: "<h3>You've been added to event " + event.title + " on <a href='https://chingutime.netlify.app'>Chingu Time App</a>! <br>Want to add your timeslots? Continue <a href='https://chingutime.netlify.app/event/" + event_id + "'>HERE</a></h3>"
           }, function(err, msg) {
             if(err) {
               return res.status(200).json({
@@ -337,9 +336,9 @@ router.post('/add', (req, res) => {
                 msg: "User added but couldn't send the email with error: " + err
               });
             }
-            console.log('Email sent!');
+            //console.log('Email sent!');
             //res.send(msg);
-          });*/
+          });
           });
           return res.status(200).json({
             success: true,
@@ -403,7 +402,6 @@ router.post('/remove', (req, res) => {
           });
         }
         else{
-          console.log("enters");
           Timeslot.deleteMany({ event: event_id, user: user_id }, function(err, result) {
             if (err) {
               console.log(err);
@@ -541,12 +539,15 @@ router.post('/update', (req, res) => {
           const filename = doc.title.replace(/\s/g, '') + 
           //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
           '_' + params.event_id;
-          /*sgMail.send({
+
+          attachment = fs.readFileSync(filename + '.ics').toString("base64");
+
+          sgMail.send({
             to: toList,
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
             // text: result.details,
-            html: `'<h3>Event '+ doc.title +' is now schedule! You can find attached ics file for calendar update.</h3>'`,
+            html: "<h3>Event " + doc.title + " is now schedule! You can find attached ics file for calendar update.</h3>",
               attachments: [
               {
                 content: attachment,
@@ -564,7 +565,7 @@ router.post('/update', (req, res) => {
             }
             console.log('Email sent!');
             //res.send(msg);
-          });*/
+          });
 
         console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
         //const filename = doc.title.replace(/\s/g, '') + 

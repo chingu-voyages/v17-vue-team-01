@@ -179,7 +179,7 @@ export default {
           return disabled;
         }
       }
-      if(eventPart.users[0].username != user.username && diffFromCreator <= 0 ){
+      if(eventPart.users[0].username != user.username && diffFromCreator < 0 ){
         //GMT 0 creator, GMT -8 user
         if(i == 0 && n < 24+user.TZ-eventPart.users[0].TZ+1){
           disabled = true;
@@ -242,8 +242,7 @@ export default {
         };
         //console.log(this.slotItems);
         this.axios
-          .post("https://chingutime.herokuapp.com/api/timeslots/create", data, {
-              //.post("http://localhost:5000/api/timeslots/create", data, {
+          .post(process.env.VUE_APP_BE_URL + "timeslots/create", data, {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
