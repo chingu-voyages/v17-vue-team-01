@@ -243,7 +243,8 @@ export default {
           username: this.username
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/add", data, 
+          .post("https://chingutime.herokuapp.com/api/events/add", data,
+          //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
           {
             headers: {
               "x-access-token": localStorage
@@ -268,7 +269,8 @@ export default {
           username: this.userDelete
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/remove", data, 
+          .post("https://chingutime.herokuapp.com/api/events/remove", data,
+          //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
               "x-access-token": localStorage
@@ -297,7 +299,8 @@ export default {
           event_id: this.url
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/delete", data, 
+          .post("https://chingutime.herokuapp.com/api/events/delete", data,
+          //.post(process.env.VUE_APP_BE_URL + "events/delete", data, 
           {
             headers: {
               "x-access-token": localStorage
@@ -393,7 +396,8 @@ export default {
             end: end
           };
           this.axios
-            .post(process.env.VUE_APP_BE_URL + "events/update", data,
+            .post("https://chingutime.herokuapp.com/api/events/update", data,
+            //.post(process.env.VUE_APP_BE_URL + "events/update", data,
              {
               headers: {
                 "x-access-token": localStorage
@@ -442,7 +446,8 @@ export default {
             end: null
           };
           this.axios
-            .post(process.env.VUE_APP_BE_URL + "events/update", data, 
+            .post("https://chingutime.herokuapp.com/api/events/update", data,
+            //.post(process.env.VUE_APP_BE_URL + "events/update", data, 
             {
               headers: {
                 "x-access-token": localStorage
@@ -458,7 +463,8 @@ export default {
 
     downloadIcs() {
       this.axios
-        .get(process.env.VUE_APP_BE_URL + "events/download" + this.url,
+        .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`,
+        //.get(process.env.VUE_APP_BE_URL + "events/download/" + this.url,
           {
             headers: {
               "x-access-token": localStorage

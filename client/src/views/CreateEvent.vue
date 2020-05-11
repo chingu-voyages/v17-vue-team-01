@@ -222,9 +222,8 @@ export default {
         };
 
         this.axios
-          .post(
-            process.env.VUE_APP_BE_URL + "events/create",
-            {
+            .post("https://chingutime.herokuapp.com/api/events/create",{
+          //.post(process.env.VUE_APP_BE_URL + "events/create",{
               title: this.createdEvent.eventName,
               details: this.createdEvent.eventDetails,
               color: this.createdEvent.eventColor,
@@ -265,7 +264,8 @@ export default {
       }
 
       this.axios
-        .post(process.env.VUE_APP_BE_URL + "timeslots/create",{
+          .post("https://chingutime.herokuapp.com/api/timeslots/create",{
+        //.post(process.env.VUE_APP_BE_URL + "timeslots/create",{
             event_id: this.createdEvent.eventId,
             timeslots: this.createdEvent.eventTimeslots
           },

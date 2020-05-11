@@ -78,7 +78,8 @@ export default {
     this.checkScheduled();
     if (this.usertoken) {
       this.axios
-        .get(process.env.VUE_APP_BE_URL + "users/profile", {
+        .get("https://chingutime.herokuapp.com/api/users/profile", {
+        //.get(process.env.VUE_APP_BE_URL + "users/profile", {
           headers: { "x-access-token": this.usertoken }
         })
         .then(response => {
