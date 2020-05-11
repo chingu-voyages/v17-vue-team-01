@@ -223,12 +223,8 @@ export default {
 
         this.axios
           .post(
-            "https://chingutime.herokuapp.com/api/events/create",
+            process.env.VUE_APP_BE_URL + "events/create",
             {
-              //.post(
-              //"http://localhost:5000/api/events/create",
-              //{
-
               title: this.createdEvent.eventName,
               details: this.createdEvent.eventDetails,
               color: this.createdEvent.eventColor,
@@ -269,12 +265,7 @@ export default {
       }
 
       this.axios
-        .post(
-          "https://chingutime.herokuapp.com/api/timeslots/create",
-          {
-            //.post(
-            //"http://localhost:5000/api/timeslots/create",
-            //{
+        .post(process.env.VUE_APP_BE_URL + "timeslots/create",{
             event_id: this.createdEvent.eventId,
             timeslots: this.createdEvent.eventTimeslots
           },

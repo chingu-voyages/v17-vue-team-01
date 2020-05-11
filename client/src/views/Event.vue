@@ -54,8 +54,7 @@ export default {
     //console.log(localStorage.getItem("usertoken").replace(/"/g, ""));
     if (this.user) {
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/show/${this.url}`, {
-          //.get(`http://localhost:5000/api/events/show/${this.url}`, {
+        .get(process.env.VUE_APP_BE_URL + "events/show/" + this.url, {
           headers: {
             "x-access-token": localStorage
               .getItem("usertoken")

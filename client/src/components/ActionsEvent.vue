@@ -216,6 +216,7 @@ export default {
   },
   methods: {
     allowedStep: m => m % 60 === 0,
+    
     toSnakeCase: str =>
       str &&
       str
@@ -224,10 +225,12 @@ export default {
         )
         .map(x => x.toLowerCase())
         .join("_"),
+
     dateSelector() {
       this.dateSaved = this.date;
       this.modal = false;
     },
+
     addUser() {
       if (!this.user.username) {
         this.answer = "Please fill out a username.";
@@ -240,8 +243,8 @@ export default {
           username: this.username
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/add", data, {
-            //  .post("http://localhost:5000/api/events/add", data, {
+          .post(process.env.VUE_APP_BE_URL + "events/add", data, 
+          {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
@@ -252,22 +255,21 @@ export default {
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
+
     removeUser() {
-      //console.log(this.userDelete);
       if (
         this.userDelete == "Please select a user to remove" ||
         !this.userDelete
       ) {
         this.answer = "Please select a user to remove.";
       } else {
-        //console.log(this.url);
         const data = {
           event_id: this.url,
           username: this.userDelete
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/remove", data, {
-            //  .post("http://localhost:5000/api/events/remove", data, {
+          .post(process.env.VUE_APP_BE_URL + "events/remove", data, 
+          {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
@@ -278,6 +280,7 @@ export default {
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
+
     handleResponse(response) {
       if (response.data.success == true) {
         this.answer = response.data.msg.replace(this.url, this.eventPart.title);
@@ -286,6 +289,7 @@ export default {
         this.answer = response.data.msg;
       }
     },
+
     deleteEvent() {
       let confirmation = confirm("Are you sure you want to delete this event?");
       if (confirmation == true) {
@@ -293,8 +297,8 @@ export default {
           event_id: this.url
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/delete", data, {
-            //.post("http://localhost:5000/api/events/delete", data, {
+          .post(process.env.VUE_APP_BE_URL + "events/delete", data, 
+          {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")
@@ -309,6 +313,7 @@ export default {
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
+
     scheduleEvent() {
       if (!this.dateSaved || !this.time) {
         this.answer = "Please fill out all the fields to schedule the event.";
@@ -318,9 +323,11 @@ export default {
         );
         if (confirmation == true) {
           let timeStart = parseInt(this.time.substring(0, 2)) - this.user.TZ;
+          console.log(timeStart);
           let dateSavedStart = this.dateSaved;
           if (timeStart < 0) {
             timeStart += 24;
+            console.log(timeStart);
             let dateDay = new Date(dateSavedStart);
             let newDate = new Date(
               dateDay.setTime(dateDay.getTime() - 1 * 86400000)
@@ -346,12 +353,10 @@ export default {
               ("0" + newDate.getDate()).slice(-2);
           }
           let start = dateSavedStart + " " + timeStart + ":00:00";
-          //console.log(start);
           let timeEnd =
             parseInt(this.time.substring(0, 2)) -
             this.user.TZ +
             this.numberHours;
-          //console.log(this.dateSaved);
           let dateSavedEnd = this.dateSaved;
           if (timeEnd < 0) {
             timeEnd += 24;
@@ -381,7 +386,6 @@ export default {
               ("0" + newDate.getDate()).slice(-2);
           }
           let end = dateSavedEnd + " " + timeEnd + ":00:00";
-          //console.log(end);
           const data = {
             event_id: this.url,
             scheduled: "true",
@@ -389,8 +393,8 @@ export default {
             end: end
           };
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update", data, {
-              //.post("http://localhost:5000/api/events/update", data, {
+            .post(process.env.VUE_APP_BE_URL + "events/update", data,
+             {
               headers: {
                 "x-access-token": localStorage
                   .getItem("usertoken")
@@ -431,7 +435,6 @@ export default {
           "Are you sure you want to unschedule this event?"
         );
         if (confirmation == true) {
-          //console.log(end);
           const data = {
             event_id: this.url,
             scheduled: "false",
@@ -439,8 +442,8 @@ export default {
             end: null
           };
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update", data, {
-              //.post("http://localhost:5000/api/events/update", data, {
+            .post(process.env.VUE_APP_BE_URL + "events/update", data, 
+            {
               headers: {
                 "x-access-token": localStorage
                   .getItem("usertoken")
@@ -451,21 +454,12 @@ export default {
               
             .catch(error => (console.log(error), (this.answer = error)));
         }
-      
     },
 
-
-
-
-
-
     downloadIcs() {
-      //console.log(this.eventPart.start.substring(0,13));
       this.axios
-        .get(
-          `https://chingutime.herokuapp.com/api/events/download/${this.url}`,
+        .get(process.env.VUE_APP_BE_URL + "events/download" + this.url,
           {
-            //.get(`http://localhost:5000/api/events/download/${this.url}`, {
             headers: {
               "x-access-token": localStorage
                 .getItem("usertoken")

@@ -135,8 +135,7 @@ export default {
         else{
           this.axios
             .post(
-              "https://chingutime.herokuapp.com/api/users/update",
-              //.post("http://localhost:5000/api/users/update",
+              process.env.VUE_APP_BE_URL + "users/update",
               this.selectFields(),
               {
                 headers: { "x-access-token": this.usertoken }
@@ -188,8 +187,7 @@ export default {
     savingChanges(response) {
       if (this.usertoken) {
         this.axios
-          .get("https://chingutime.herokuapp.com/api/users/profile", {
-            //  .get("http://localhost:5000/api/users/profile", {
+          .get(process.env.VUE_APP_BE_URL + "users/profile", {
             headers: { "x-access-token": this.usertoken }
           })
           .then(response => this.userUpdate(response));
