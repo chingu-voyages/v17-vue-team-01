@@ -546,11 +546,12 @@ router.post('/update', (req, res) => {
           attachment = fs.readFileSync(filename + '.ics').toString("base64");
 
           sgMail.send({
-            to: toList,
+            to: users[0].email,
+            bcc: toList,
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
             // text: result.details,
-            html: "<h3>Event " + doc.title + " is now schedule! You can find attached ics file for calendar update. Want to check event details and participants, continue <a href='https://chingutime.netlify.app/#/event/" + doc._id + "'>HERE</a></h3>",
+            html: "<h3>Event " + doc.title + " is now schedule! <br> You can find attached ics file for calendar update. <br> Want to check event details and participants, continue <a href='https://chingutime.netlify.app/#/event/" + doc._id + "'>HERE</a></h3>",
               attachments: [
               {
                 content: attachment,

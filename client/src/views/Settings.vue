@@ -40,10 +40,11 @@
               v-model="password"
               placeholder=" New Password"
             >
-            <select v-model="time" class="input" placeholder="Timezone" label="Timezone">
+            <select v-model="time" class="input" placeholder="Timezone" label="Timezone" v-if="canChangeTZ">
               <option disabled value>Please select timezone</option>
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
+            <p v-else style="margin-bottom: 0px;">You are the creator of pending events, you cannot change your timezone right now</p>
           </v-card-text>
           <v-card-actions class="justify-center">
             <v-btn @click="processForm" color="success">Update Info</v-btn>
@@ -85,6 +86,7 @@ export default {
       name: null,
       email: null,
       time: "",
+      canChangeTZ: true,
       settings: {},
       zones: [
         "UTC +14:00 Kiribati",
@@ -118,12 +120,27 @@ export default {
     };
   },
   mounted() {
-    // this.answer = `
-    // Email: ${this.user.email}  
-    // <br>Name: ${this.user.name}
-    // <br>Username: ${this.user.username}
-    // <br>Timezone: UTC ${this.user.TZ}
-    // `;
+    this.user.events.forEach(event => {
+      //axios get show route to see if user is the creator
+      this.axios
+        .get(`https://chingutime.herokuapp.com/api/events/show/${event._id}`, {
+        //.get(process.env.VUE_APP_BE_URL + "events/show/" + this.url, {
+          headers: {
+            "x-access-token": localStorage
+              .getItem("usertoken")
+              .replace(/"/g, "")
+          }
+        })
+        .then(response => {
+          if(response.data[0].users[0].username == this.user.username && response.data[0].scheduled == false) {
+            this.canChangeTZ = false; 
+            return;
+          }
+        }) //(this.event = response.data))
+        .catch(error => (console.log(error), (this.answer = error)));
+      //if(event.scheduled == false) this.canChangeTZ = false;
+      //return;
+    });
   },
   methods: {
     processForm() {

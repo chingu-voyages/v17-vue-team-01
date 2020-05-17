@@ -88,13 +88,17 @@
         <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
         <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
         <p class="leftMargin">End: {{ (eventPart.end) }}</p>
+        <p class="leftMargin" v-if="canUnschedule">Scheduled to start in {{ timeToEvent }} </p>
       <v-divider></v-divider>
       <v-card-actions class="justify-center">
         <v-btn @click="downloadIcs" class="center" color="success">Download ics</v-btn>
       </v-card-actions>
       <v-divider></v-divider>
-      <v-card-actions class="justify-center" >
+      <v-card-actions class="justify-center" v-if="canUnschedule">
         <v-btn @click="unscheduleEvent" class="center" color="warning">Unschedule Event</v-btn>
+      </v-card-actions>
+      <v-card-actions class="justify-center" v-else>
+        <p style="margin-bottom: 0px;">Event already passed, cannot unschedule it</p>
       </v-card-actions>
       </div>
       <v-divider></v-divider>
@@ -112,6 +116,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "ActionsEvent",
   props: {
@@ -163,11 +168,19 @@ export default {
         { number: 5, display: "For five hours" }
       ],
       menu2: false,
-      numberHours: 1
+      numberHours: 1,
+      canUnschedule: true,
+      timeToEvent: 0,
     };
   },
   computed() {},
   watch: {
+    eventPart: function() {
+      const now = moment();
+      if(now.diff(this.eventPart.start) > 0) this.canUnschedule = false;
+      let startForAsHours = this.eventPart.start;
+      this.timeToEvent = moment.duration(now.diff(startForAsHours)).humanize();
+    }, 
     advisableTimeslots: function() {
       if (typeof this.advisableTimeslots != "string") {
         this.date = this.advisableTimeslots[0].substring(
@@ -214,7 +227,12 @@ export default {
       }
     }
   },
+
   methods: {
+    moment: function () {
+      return moment();
+    },
+
     allowedStep: m => m % 60 === 0,
     
     toSnakeCase: str =>
