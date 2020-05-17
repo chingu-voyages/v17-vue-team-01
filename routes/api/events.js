@@ -331,7 +331,7 @@ router.post('/add', (req, res) => {
             from: 'chingutime@gmail.com',
             subject: 'You were added to event ' + event.title,
             // text: result.details,
-            html: "<h3>You've been added to event " + event.title + " on <a href='https://chingutime.netlify.app'>Chingu Time App</a>! <br>Want to add your timeslots? Continue <a href='https://chingutime.netlify.app/event/" + event_id + "'>HERE</a></h3>"
+            html: "<h3>You've been added to event " + event.title + " on <a href='https://chingutime.netlify.app'>Chingu Time App</a>! <br>Want to add your timeslots? Continue <a href='https://chingutime.netlify.app/#/event/" + event_id + "'>HERE</a></h3>"
           }, function(err, msg) {
             if(err) {
               return res.status(200).json({
@@ -550,7 +550,7 @@ router.post('/update', (req, res) => {
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
             // text: result.details,
-            html: "<h3>Event " + doc.title + " is now schedule! You can find attached ics file for calendar update.</h3>",
+            html: "<h3>Event " + doc.title + " is now schedule! You can find attached ics file for calendar update. Want to check event details and participants, continue <a href='https://chingutime.netlify.app/#/event/" + doc._id + "'>HERE</a></h3>",
               attachments: [
               {
                 content: attachment,
