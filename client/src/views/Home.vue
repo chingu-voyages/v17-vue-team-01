@@ -10,7 +10,7 @@
             <v-col>
               <v-card class="mx-auto" max-width="360">
                 <v-card-text>
-                  <h2>Schedule meetings across different timezones easier with Chingu Time!</h2>
+                  <h2>Schedule meetings across different timezones easier with ChinguTime!</h2>
                   <br>
                   <h3>You can log in and create a new meeting or event and select your available timeslots if you are part of a meeting.</h3>
                 </v-card-text>
