@@ -547,7 +547,7 @@ router.post('/update', (req, res) => {
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
             // text: result.details,
-            html: `'<h3>Event '+ doc.title +' is now scheduled! You can find the attached ics file for the calendar update.</h3>'`,
+            html: `'<h3>Event '+ doc.title +' iss now scheduled! You can find the attached ics file for the calendar update.</h3>'`,
               attachments: [
               {
                 content: attachment,
