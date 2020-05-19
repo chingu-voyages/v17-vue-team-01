@@ -20,8 +20,6 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') })
 const sgMail = require('@sendgrid/mail');
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-//console.log(process.env.SENDGRID_API_KEY);
-
 
 /**
  * @route POST api/events/create
@@ -45,7 +43,7 @@ router.post('/create', (req, res) => {
       if (!title || !details || !color || !possibleDays) {
         return res.status(200).json({
             success: false,
-            msg: "Event creation failed, there are missing fields."
+            msg: "Creating an event has failed because there are some missing fields."
         });
     }
 
@@ -64,13 +62,13 @@ router.post('/create', (req, res) => {
           },
           { $push: {events: [event._id]} },function(err, doc){
             if(err){
-                console.log("Something wrong when updating data!");
+                console.log("Something is wrong when updating data!");
             }
-            console.log("Added this event to user's profile!")
+            console.log("This event has been added to the user's profile!")
           });
         return res.status(201).json({
             success: true,
-            msg: "Congrats, " + event.title + " event is created under event_id of " + event._id
+            msg: "Congrats, " + event.title + " is created under the event_id of " + event._id
         });
       });    
     });
@@ -84,7 +82,7 @@ router.post('/create', (req, res) => {
 
 router.get('/show/:id', function(req, res)  {
   let token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
   
   jwt.verify(token, key, function(err, decoded) {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
@@ -94,7 +92,7 @@ router.get('/show/:id', function(req, res)  {
         if (!result) {
           return res.status(200).json({
             success: false,
-            msg: "Event not found."
+            msg: "The event was not found."
           });
         }
         let number_users = result.users.length;
@@ -114,20 +112,20 @@ router.get('/show/:id', function(req, res)  {
                   candidate_timeslots[j] = candidate_timeslots[j].replace(/.$/, function(i) { return parseInt(i) + 1; });
                   //get count from candidate timeslot and check if is equal to number of users
                   if(parseInt(candidate_timeslots[j].slice(-1)) == number_users){
-                    //console.log(`matched one: ${candidate_timeslots[j]}`);
+                    console.log(`matched one: ${candidate_timeslots[j]}`);
                     advisable_timeslots.push(candidate_timeslots[j]);
                     advisable_timeslots.forEach(timeslot => timeslot.slice(-2). replace("T", " "));
-                    //console.log(`advisable_timeslots: ${advisable_timeslots}`);
+                    console.log(`advisable_timeslots: ${advisable_timeslots}`);
                   }  
                 } 
               } 
             }
             if(advisable_timeslots.length == 0){
-              advisable_timeslots = "Advisable timeslots not available. They will be generated once there are timeslots selected by all participants";
+              advisable_timeslots = "Advisable timeslots are not available. They will be generated once there are some timeslots selected by all the participants";
             }
           }
           else{
-            Object.keys(timeslots).length != 0 ? advisable_timeslots = "Cannot advise timeslots for only one user" : advisable_timeslots = "No timeslots inserted yet";
+            Object.keys(timeslots).length != 0 ? advisable_timeslots = "Cannot advise timeslots for only one user" : advisable_timeslots = "No timeslots is inserted yet";
           }
           res.status(200).send([result, timeslots, advisable_timeslots]);
         });
@@ -143,10 +141,10 @@ router.get('/show/:id', function(req, res)  {
 
 router.get('/download/:id', function(req, res)  {
   let token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
   
   jwt.verify(token, key, function(err, decoded) {
-    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
 
       let event_id = req.params.id;
       Event.findOne( {_id: event_id}  ).then((result) => {
@@ -188,13 +186,13 @@ router.get('/download/:id', function(req, res)  {
             const filename = result.title.replace(/\s/g, '') + '_' + event_id;
             writeFileSync(filename + '.ics', value);
 
-            console.log("Request event " + event_id + " ics download! Here you have you ics file.");
+            console.log(event_id + " ics file to download! Here, you have your ics file.");
             return res.download(filename + '.ics');
           });
         });
         }
         else{
-          console.log("Request event " + event_id + " ics download! Here you have you ics file.");
+          console.log(event_id + " ics file to download! Here, you have your ics file.");
           return res.download(filename + '.ics');
         }
         
@@ -210,10 +208,10 @@ router.get('/download/:id', function(req, res)  {
 
 router.get('/send/:id', function(req, res)  {
   let token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
   
   jwt.verify(token, key, function(err, decoded) {
-    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
 
       let event_id = req.params.id;
       Event.findOne( {_id: event_id}  ).then((result) => {
@@ -285,10 +283,10 @@ router.get('/send/:id', function(req, res)  {
 router.post('/add', (req, res) => {
     
   let token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
   
   jwt.verify(token, key, function(err, decoded) {
-    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
   
     User.findOne( {username: req.body.username} ,function(err, doc){
       if (!doc) {
@@ -307,9 +305,9 @@ router.post('/add', (req, res) => {
       },
       { $push: {events: [event_id] }} ,function(err, user){
         if(err){
-            console.log("Something wrong when updating data!");
+            console.log("Something went wrong when updating data!");
         }
-        user ? console.log("Added this event to user's profile!") : console.log("Event already in this user!");
+        user ? console.log("This event was added to the user's event(s)!") : console.log("This event is already in this user's event(s)!");
         //console.log("user:" + user);
         
         if(doc){
@@ -319,39 +317,40 @@ router.post('/add', (req, res) => {
           },
           { $push: {users: user_id }},function(err, event){
             if(err){
-                console.log("Something wrong when updating data!");
+                console.log("Something went wrong when updating data!");
             }
-            event ? console.log("Added this user to event!") : console.log("User already has this event!");
-            //console.log("Event:" + event)
-            //console.log(user.email)
-            //console.log(event.title)
-            //console.log(event_id)
+            event ? console.log("This user was added to the event!") : console.log("The user is already part of this event!");
+            console.log("Event:" + event)
+            console.log(user.email)
+            console.log(event.title)
+            console.log(event_id)
           sgMail.send({
             to: user.email,
             from: 'chingutime@gmail.com',
-            subject: 'You were added to event ' + event.title,
+            subject: 'You were added to ' + event.title,
             // text: result.details,
-            html: "<h3>You've been added to event " + event.title + " on <a href='https://chingutime.netlify.app'>Chingu Time App</a>! <br>Want to add your timeslots? Continue <a href='https://chingutime.netlify.app/#/event/" + event_id + "'>HERE</a></h3>"
+            html: `'<h3>You've been added to '+ event.title +'on ChinguTime! <br>Want to add your timeslots? +
+            + Continue <a href="https://chingutime.netlify.com/#/event/`+ event_id+`">HERE</a></h3>'`
           }, function(err, msg) {
             if(err) {
               return res.status(200).json({
                 success: false,
-                msg: "User added but couldn't send the email with error: " + err
+                msg: "The use was added, but could not send the email with an error: " + err
               });
             }
-            //console.log('Email sent!');
+            console.log('Email sent!');
             //res.send(msg);
           });
           });
           return res.status(200).json({
             success: true,
-            msg: "Congrats, user " + username + " is in event " + event_id + ". Email sent!"
+            msg: "Congrats, " + username + " is in the event of" + event_id + ". An email was sent out!"
           });
         }
         else{
           return res.status(200).json({
             success: false,
-            msg: "User already has this event!"
+            msg: "The user is already part of this event!"
           });
         }
       });
@@ -367,10 +366,10 @@ router.post('/add', (req, res) => {
 router.post('/remove', (req, res) => {
     
   let token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
   
   jwt.verify(token, key, function(err, decoded) {
-    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
   
     let event_id = req.body.event_id;
     let user_id = decoded._id;
@@ -378,21 +377,21 @@ router.post('/remove', (req, res) => {
       if(!result){
         return res.status(200).json({
           success: false,
-          msg: "Event not found!"
+          msg: "Event was not found!"
         });
       }
       //check if it is the first user of the event
       if(result.users[0] != user_id){
         return res.status(200).json({
           success: false,
-          msg: "User is not the creator, cannot remove users!"
+          msg: "The user is not the creator, so s/he cannot remove the users from the event!"
         });
       }
       User.findOne( {username: req.body.username} ,function(err, doc){
         if (!doc) {
           return res.status(200).json({
             success: false,
-            msg: "User not found."
+            msg: "The user was not found."
           });
         }
         const user_id = doc._id;
@@ -401,10 +400,11 @@ router.post('/remove', (req, res) => {
         if(result.users[0].toString(2) == doc._id.toString(2)){
           return res.status(200).json({
             success: false,
-            msg: "User is the creator, cannot remove himself! Can always delete the event"
+            msg: "The user is the creator, so s/he cannot remove himself/herself from the event! You can always delete the event instead."
           });
         }
         else{
+          console.log("enters");
           Timeslot.deleteMany({ event: event_id, user: user_id }, function(err, result) {
             if (err) {
               console.log(err);
@@ -418,9 +418,9 @@ router.post('/remove', (req, res) => {
           },
           { $pull: {events: event_id }},function(err, doc){
             if(err){
-                console.log("Something wrong when updating data!");
+                console.log("Something went wrong when updating data!");
             }
-            doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
+            doc ? console.log("This event was removed from the user's profile!") : console.log("The event is not in this user's event(s)!");
             if(doc){
               Event.findOneAndUpdate({
                 _id: event_id,
@@ -428,20 +428,20 @@ router.post('/remove', (req, res) => {
               },
               { $pull: {users: user_id }} ,function(err, doc){
                 if(err){
-                    console.log("Something wrong when updating data!");
+                    console.log("Something went wrong when updating data!");
                 }
-                doc ? console.log("Removed this user from event!") : console.log("User not in this event!");
+                doc ? console.log("This user was removed from event!") : console.log("The user is not part of this event!");
         
               });
               return res.status(200).json({
                 success: true,
-                msg: "Congrats, user " + username + " is removed from event " + event_id
+                msg: "Congrats, " + username + " is removed from the event of " + event_id
               });
             }
             else{
               return res.status(200).json({
                 success: false,
-                msg: "User not in this event!"
+                msg: "The user is not part of this event!"
               });
             }
           });
@@ -460,10 +460,10 @@ router.post('/remove', (req, res) => {
  */
 router.post('/update', (req, res) => {
   let token = req.headers['x-access-token'];
-  if (!token) return res.status(401).send({ success: false, message: 'No token provided.' });
+  if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
   
   jwt.verify(token, key, function(err, decoded) {
-    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
+    if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
 
     let params = {};
 
@@ -479,13 +479,13 @@ router.post('/update', (req, res) => {
       if(!doc){
         return res.status(200).json({
           success: false,
-          msg: "Event not found!"
+          msg: "Event was not found!"
       });
       }
       if(err){
-          console.log("Something wrong when updating data!");
+          console.log("Something went wrong when updating data!");
       }
-      doc ? console.log("Event updated!") : console.log("Nothing to change!");
+      doc ? console.log("The event has been updated!") : console.log("Nothing to change!");
 
       if(doc.scheduled == true && params.scheduled == 'true'){
         console.log("We should send emails and/or create ics file for download");
@@ -542,16 +542,12 @@ router.post('/update', (req, res) => {
           const filename = doc.title.replace(/\s/g, '') + 
           //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
           '_' + params.event_id;
-
-          attachment = fs.readFileSync(filename + '.ics').toString("base64");
-
-          sgMail.send({
-            to: users[0].email,
-            bcc: toList,
+          /*sgMail.send({
+            to: toList,
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
             // text: result.details,
-            html: "<h3>Event " + doc.title + " is now schedule! <br> You can find attached ics file for calendar update. <br> Want to check event details and participants, continue <a href='https://chingutime.netlify.app/#/event/" + doc._id + "'>HERE</a></h3>",
+            html: `'<h3>Event '+ doc.title +' iss now scheduled! You can find the attached ics file for the calendar update.</h3>'`,
               attachments: [
               {
                 content: attachment,
@@ -564,14 +560,14 @@ router.post('/update', (req, res) => {
             if(err) {
               return res.status(200).json({
                 success: false,
-                msg: "Event scheduled but couldn't send the email with error: " + err
+                msg: "The event has been scheduled but couldn't send the email with an error: " + err
               });
             }
             console.log('Email sent!');
             //res.send(msg);
-          });
+          });*/
 
-        console.log("Congrats, event " + params.event_id + " is updated, scheduled event! Here you have you ics file.");
+        console.log("Congrats, " + params.event_id + " is updated as a scheduled event! Here, you have your ics file.");
         //const filename = doc.title.replace(/\s/g, '') + 
         //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
         //'_' + params.event_id;
@@ -581,7 +577,7 @@ router.post('/update', (req, res) => {
       else{
         return res.status(200).json({
           success: true,
-          msg: "Congrats, event " + params.event_id + " is updated "
+          msg: "Congrats, " + params.event_id + " has been updated."
         });
       } 
     });
@@ -606,7 +602,7 @@ router.post('/delete', (req, res) => {
       if(!result){
         return res.status(200).json({
           success: false,
-          msg: "Event not found!"
+          msg: "Event was not found!"
         });
       }
       
@@ -624,7 +620,7 @@ router.post('/delete', (req, res) => {
       if(result.users[0] != user_id){
         return res.status(200).json({
           success: false,
-          msg: "User is not the creator, cannot delete event!"
+          msg: "The user is not the creator, so s/he cannot delete the event!"
         });
       }
       Timeslot.deleteMany({ event: event_id }, function(err, result) {
@@ -642,18 +638,18 @@ router.post('/delete', (req, res) => {
         },
         { $pull: {events: event_id }} ,function(err, doc){
           if(err){
-              console.log("Something wrong when updating data!");
+              console.log("Something went wrong when updating data!");
           }
-          doc ? console.log("Removed this event from user's profile!") : console.log("Event not in this user!");
+          doc ? console.log("This event was removed from user's event(s)!") : console.log("The event is not in this user's event(s)!");
         }));
         Event.findOneAndDelete( {_id: event_id}  ).then((result) => {
           res.status(200).json({
             success: true,
-            msg: "Congrats, event " + result.title + " is deleted and removed from each user"
+            msg: "Congrats, " + result.title + " has been deleted and removed from each user's event(s)."
         });
         }) 
 
-        //still has to check if is already schedule, if so, delete ics file
+        //still has to check if is already scheduled, if so, delete ics file
         const filename = result.title.replace(/\s/g, '') + 
         //'_' + result.start.getFullYear() + (result.start.getMonth()+1) + result.start.getDate() +'T'+ result.start.getHours() + 
         '_' + req.body.event_id;

@@ -85,7 +85,7 @@
         </v-card-actions>
       </div>
       <div v-else>
-        <p class="leftMargin">{{eventPart.title}} is already scheduled!</p>
+        <p class="leftMargin">{{eventPart.title}} has already been scheduled!</p>
         <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
         <p class="leftMargin">End: {{ (eventPart.end) }}</p>
         <p class="leftMargin" v-if="canUnschedule">Scheduled to start in {{ timeToEvent }} </p>
@@ -442,9 +442,9 @@ export default {
               document.body.appendChild(link);
               link.click();
               this.answer =
-                "Congrats, event " +
+                "Congrats, " +
                 this.eventPart.title +
-                " is scheduled! Here you have your ics file.";
+                " has been scheduled! Here, you have your ics file.";
               this.$router.push({ name: "Home", params: { user: this.user } });
             })
             .catch(error => (console.log(error), (this.answer = "Could not get ics file :( please contact support")));
