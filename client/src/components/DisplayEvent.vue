@@ -8,7 +8,7 @@
       <div v-if="!eventPart.scheduled">
         <div v-if="typeof advisableTimeslots != 'string'" >
         <p class="mb-5">The following timeslots have already been selected by all the participants:</p>
-        <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
+        <p>{{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(tsml.slice(-5, -2)) + "00").join(" ") }} </p>
         <p>One timeslot has already been added to schedule an event.</p>
         </div>
         <div v-else class="mb-5">
