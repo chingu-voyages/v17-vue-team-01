@@ -329,7 +329,7 @@ router.post('/add', (req, res) => {
             from: 'chingutime@gmail.com',
             subject: 'You have been added to ' + event.title,
             // text: result.details,
-            html: `'<h3>You have been added to '+ event.title +'on ChinguTime! <br>Want to add your timeslots? +
+            html: `'<h3>You've been added to '+ event.title +'on ChinguTime! <br>Want to add your timeslots? +
             + Continue <a href="https://chingutime.netlify.com/#/event/`+ event_id+`">HERE</a></h3>'`
           }, function(err, msg) {
             if(err) {
