@@ -142,7 +142,7 @@ export default {
           this.logging = true;
 
           this.axios
-            .post("https://chingutime.herokuapp.com/api/users/register", {
+            .post("https://chingutime.herokuapp.com/api/users/register" || `${process.env.VUE_APP_BE_URL}/users/register`, {
             //.post(process.env.VUE_APP_BE_URL + "users/register", {
               name: this.name,
               email: this.email,

@@ -123,7 +123,7 @@ export default {
     this.user.events.forEach(event => {
       //axios get show route to see if user is the creator
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/show/${event._id}`, {
+        .get(`https://chingutime.herokuapp.com/api/events/show/${event._id}` || `${process.env.VUE_APP_BE_URL}/events/show/${this.url}`, {
         //.get(process.env.VUE_APP_BE_URL + "events/show/" + this.url, {
           headers: {
             "x-access-token": localStorage
@@ -151,7 +151,7 @@ export default {
         } 
         else{
           this.axios
-            .post("https://chingutime.herokuapp.com/api/users/update",
+            .post("https://chingutime.herokuapp.com/api/users/update" || `${process.env.VUE_APP_BE_URL}/users/update`,
             //.post(process.env.VUE_APP_BE_URL + "users/update",
               this.selectFields(),
               {
@@ -204,7 +204,7 @@ export default {
     savingChanges(response) {
       if (this.usertoken) {
         this.axios
-          .get("https://chingutime.herokuapp.com/api/users/profile", {
+          .get("https://chingutime.herokuapp.com/api/users/profile" || `${process.env.VUE_APP_BE_URL}/users/profile`, {
           //.get(process.env.VUE_APP_BE_URL + "users/profile", {
             headers: { "x-access-token": this.usertoken }
           })

@@ -242,7 +242,7 @@ export default {
         };
         //console.log(this.slotItems);
         this.axios
-          .post("https://chingutime.herokuapp.com/api/timeslots/create", data, {
+          .post("https://chingutime.herokuapp.com/api/timeslots/create" || `${process.env.VUE_APP_BE_URL}/timeslots/create`, data, {
           //.post(process.env.VUE_APP_BE_URL + "timeslots/create", data, {
             headers: {
               "x-access-token": localStorage
