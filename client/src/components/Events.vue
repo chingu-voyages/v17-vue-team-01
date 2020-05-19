@@ -34,6 +34,16 @@
           <br>
         </v-card>
         <v-btn v-else large color="blue darken-2" dark to="/create-event">Create new Event</v-btn>
+        <br>
+        <br>
+        <v-btn large color="blue darken-2" dark @click="exportEvents">Export Events</v-btn>
+        <br>
+        <br>
+        <v-card class="mx-auto" max-width="360" v-if="answer">
+          <v-card-text>
+            <h3>{{ answer }}</h3>
+          </v-card-text>
+        </v-card>
       </v-col>
       <v-col>
         <v-card class="mx-auto" min-width="250" tile>
@@ -69,7 +79,8 @@ export default {
     events: null,
     shaped: true,
     inactive: true,
-    check: false
+    check: false,
+    answer: null
   }),
   mounted() {
     if (this.user) {
@@ -109,7 +120,41 @@ export default {
       } else {
         this.check = false
       }
-    }
+    },
+    exportEvents() {
+      let confirmation = confirm(
+          "You will download ics file with scheduled events, do you want to continue?"
+        );
+        if (confirmation == true) {
+          this.axios
+            .get(`https://chingutime.herokuapp.com/api/events/export`,
+            //.get(process.env.VUE_APP_BE_URL + "events/export,
+              {
+                headers: {
+                  "x-access-token": localStorage
+                    .getItem("usertoken")
+                    .replace(/"/g, "")
+                },
+                responseType: "blob"
+              }
+            )
+            .then(response => {
+              const url = window.URL.createObjectURL(new Blob([response.data]));
+              const link = document.createElement("a");
+              link.href = url;
+              link.setAttribute(
+                "download",
+                "ChinguTime_" +
+                  this.user.username +
+                  "_exportedEvents.ics"
+              );
+              document.body.appendChild(link);
+              link.click();
+              this.answer = "Here you have your exported events.";
+            })
+            .catch(error => (console.log(error), (this.answer = error)));
+        }  
+    },
   }
 };
 </script>

@@ -7,9 +7,9 @@
       <p class="mb-5">{{ eventPart.details }}</p>
       <div v-if="!eventPart.scheduled">
         <div v-if="typeof advisableTimeslots != 'string'" >
-        <p class="mb-5">The following timeslots are already selected by all participants:</p>
-        <p>{{ advisableTimeslots.map(tsml => tsml.slice(0, -5)+ " " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
-        <p>One timeslot is already added to schedule form fields.</p>
+        <p class="mb-5">The following timeslots have already been selected by all the participants:</p>
+        <p>{{ advisableTimeslots.map(tsml => "Day " + tsml.slice(0, -5)+ " at " +(tsml.slice(-5, -2)) + "00").join(" and ") }} </p>
+        <p>One timeslot has already been added to schedule an event.</p>
         </div>
         <div v-else class="mb-5">
           <p class="mb-5"> {{advisableTimeslots}} </p>
@@ -24,7 +24,7 @@
       </div>
       </v-list>
       <div v-if="eventPart.scheduled">
-        <h4 class="mt-5">Event is already scheduled!</h4>
+        <h4 class="mt-5">The event has already been scheduled!</h4>
       </div>  
       <div v-else>
       <h4 class="mt-5">Current Event Calendar:</h4>
