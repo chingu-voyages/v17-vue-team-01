@@ -55,7 +55,7 @@
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
-            <h3 class="red--text">{{ answer }}</h3>
+            <h3 v-bind:class="{ 'green--text': success  }" class="red--text">{{ answer }}</h3>
           </v-card-text>
         </v-card>
       </v-col>
@@ -107,7 +107,8 @@ export default {
         "UTC -12:00	US Minor Outlying Islands"
       ],
       password: null,
-      answer: null
+      answer: null,
+      success: false,
     };
   },
   methods: {
@@ -153,6 +154,7 @@ export default {
             })
             .then(response => {
               this.answer = response.data.msg;
+              this.success = response.data.success;
               this.logging = false;
             })
             .catch(error => {
