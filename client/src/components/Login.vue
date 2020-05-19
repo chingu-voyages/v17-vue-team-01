@@ -33,7 +33,7 @@
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
           <v-card-text>
-            <h3>{{ answer }}</h3>
+            <h3 class="red--text">{{ answer }}</h3>
           </v-card-text>
         </v-card>
       </v-col>
