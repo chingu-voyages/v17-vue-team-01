@@ -327,10 +327,9 @@ router.post('/add', (req, res) => {
           sgMail.send({
             to: user.email,
             from: 'chingutime@gmail.com',
-            subject: 'You were added to ' + event.title,
+            subject: 'You have been added to ' + event.title,
             // text: result.details,
-            html: `'<h3>You've been added to '+ event.title +'on ChinguTime! <br>Want to add your timeslots? +
-            + Continue <a href="https://chingutime.netlify.com/#/event/`+ event_id+`">HERE</a></h3>'`
+            html: `<h3>You've been added to ' + event.title + 'on ChinguTime! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.com/#/event/`+ event_id+`">HERE</a></h3>'`
           }, function(err, msg) {
             if(err) {
               return res.status(200).json({

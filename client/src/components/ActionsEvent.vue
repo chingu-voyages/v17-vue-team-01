@@ -261,7 +261,7 @@ export default {
           username: this.username
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/add", data,
+          .post("https://chingutime.herokuapp.com/api/events/add" || `${process.env.VUE_APP_BE_URL}/events/add`, data,
           //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
           {
             headers: {
@@ -287,7 +287,7 @@ export default {
           username: this.userDelete
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/remove", data,
+          .post("https://chingutime.herokuapp.com/api/events/remove" || `${process.env.VUE_APP_BE_URL}/events/remove`, data,
           //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
@@ -317,7 +317,7 @@ export default {
           event_id: this.url
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/delete", data,
+          .post("https://chingutime.herokuapp.com/api/events/delete" || `${process.env.VUE_APP_BE_URL}/events/delete`, data,
           //.post(process.env.VUE_APP_BE_URL + "events/delete", data, 
           {
             headers: {
@@ -414,7 +414,7 @@ export default {
             end: end
           };
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update", data,
+            .post("https://chingutime.herokuapp.com/api/events/update" || `${process.env.VUE_APP_BE_URL}/events/update`, data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data,
              {
               headers: {
@@ -447,7 +447,7 @@ export default {
                 " has been scheduled! Here, you have your ics file.";
               this.$router.push({ name: "Home", params: { user: this.user } });
             })
-            .catch(error => (console.log(error), (this.answer = "Could not get ics file :( please contact support")));
+            .catch(error => (console.log(error), (this.answer = "Could not get the ics file :( Please contact support")));
         }
       }
     },
@@ -464,7 +464,7 @@ export default {
             end: null
           };
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update", data,
+            .post("https://chingutime.herokuapp.com/api/events/update" || `${process.env.VUE_APP_BE_URL}/events/update`, data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data, 
             {
               headers: {
@@ -481,7 +481,7 @@ export default {
 
     downloadIcs() {
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`,
+        .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}` || `${process.env.VUE_APP_BE_URL}/events/download/${this.url}`,
         //.get(process.env.VUE_APP_BE_URL + "events/download/" + this.url,
           {
             headers: {
@@ -506,7 +506,7 @@ export default {
           );
           document.body.appendChild(link);
           link.click();
-          this.answer = "Here you have your ics file.";
+          this.answer = "Here, you have your ics file.";
         })
         .catch(error => (console.log(error), (this.answer = error)));
     }
