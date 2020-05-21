@@ -45,7 +45,7 @@ router.post('/create', (req, res) => {
             success: false,
             msg: "Creating an event has failed because there are some missing fields."
         });
-    }
+      }
 
       const user_id = decoded._id;
       let newEvent = new Event({
@@ -195,7 +195,6 @@ router.get('/download/:id', function(req, res)  {
           console.log(event_id + " ics file to download! Here, you have your ics file.");
           return res.download(filename + '.ics');
         }
-        
       });  
   }); 
 });
@@ -257,19 +256,15 @@ router.get('/send/:id', function(req, res)  {
             to: toList,
             from: 'chingutime@gmail.com',
             subject: result.title,
-            // text: result.details,
             html: `'<h3>${result.details}: ${result.start.getMonth()+1}-${day}-${result.start.getFullYear()}${hourStart}:00 for ${hours} hour(s)</h3>'`
           }, function(err, msg) {
             if(err) {
               return res.send(`${err} error occurred!`);
             }
             console.log('Email sent!');
-            res.send(msg);
-            
+            res.send(msg); 
           });
-         
         });
-        
       });  
   }); 
 });
@@ -287,74 +282,137 @@ router.post('/add', (req, res) => {
   
   jwt.verify(token, key, function(err, decoded) {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
-  
-    User.findOne( {username: req.body.username} ,function(err, doc){
-      if (!doc) {
-        return res.status(200).json({
-          success: false,
-          msg: "User not found."
-        });
-      };
-      const user_id = doc._id;
-      const username = req.body.username;
-      const event_id = req.body.event_id;
-  
-      User.findOneAndUpdate({
-        username: username,
-        events: {$ne: event_id}
-      },
-      { $push: {events: [event_id] }} ,function(err, user){
-        if(err){
-            console.log("Something went wrong when updating data!");
-        }
-        user ? console.log("This event was added to the user's event(s)!") : console.log("This event is already in this user's event(s)!");
-        //console.log("user:" + user);
-        
-        if(doc){
-          Event.findOneAndUpdate({
-            _id: event_id,
-            users: {$ne: user_id}
-          },
-          { $push: {users: user_id }},function(err, event){
-            if(err){
-                console.log("Something went wrong when updating data!");
-            }
-            event ? console.log("This user was added to the event!") : console.log("The user is already part of this event!");
-            console.log("Event:" + event)
-            console.log(user.email)
-            console.log(event.title)
-            console.log(event_id)
-          sgMail.send({
-            to: user.email,
-            from: 'chingutime@gmail.com',
-            subject: 'You have been added to ' + event.title,
-            // text: result.details,
-            html: `<h3>You've been added to ' + event.title + 'on ChinguTime! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.com/#/event/`+ event_id+`">HERE</a></h3>'`
-          }, function(err, msg) {
-            if(err) {
-              return res.status(200).json({
-                success: false,
-                msg: "The use was added, but could not send the email with an error: " + err
-              });
-            }
-            console.log('Email sent!');
-            //res.send(msg);
-          });
-          });
-          return res.status(200).json({
-            success: true,
-            msg: "Congrats, " + username + " is in the event of" + event_id + ". An email was sent out!"
-          });
-        }
-        else{
+    
+    console.log(req.body.username);
+
+    let re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    let isEmail = re.test(String(req.body.username).toLowerCase());
+
+    if(!isEmail){
+      User.findOne( {username: req.body.username} ,function(err, doc){
+        if (!doc) {
           return res.status(200).json({
             success: false,
-            msg: "The user is already part of this event!"
+            msg: "User with this username not found."
           });
-        }
+        };
+        const user_id = doc._id;
+        const username = req.body.username;
+        const event_id = req.body.event_id;
+    
+        User.findOneAndUpdate({
+          username: username,
+          events: {$ne: event_id}
+        },
+        { $push: {events: [event_id] }} ,function(err, user){
+          if(err){
+              console.log("Something went wrong when updating data!");
+          }
+          user ? console.log("This event was added to the user's event(s)!") : console.log("This event is already in this user's event(s)!");
+          
+          if(doc){
+            Event.findOneAndUpdate({
+              _id: event_id,
+              users: {$ne: user_id}
+            },
+            { $push: {users: user_id }},function(err, event){
+              if(err){
+                  console.log("Something went wrong when updating data!");
+              }
+              event ? console.log("This user was added to the event!") : console.log("The user is already part of this event!");
+            
+              sgMail.send({
+                to: user.email,
+                from: 'chingutime@gmail.com',
+                subject: 'You have been added to ' + event.title,
+                html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">ChinguTime</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
+              }, function(err, msg) {
+                if(err) {
+                  return res.status(200).json({
+                    success: false,
+                    msg: "The use was added, but could not send the email with an error: " + err
+                  });
+                }
+                console.log('Email sent!');
+              });
+            });
+            return res.status(200).json({
+              success: true,
+              msg: "Congrats, user with username " + username + " is added to event with id: " + event_id + ". An email was sent out!"
+            });
+          }
+          else{
+            return res.status(200).json({
+              success: false,
+              msg: "The user is already part of this event!"
+            });
+          }
+        });
       });
-    });
-    });   
+    }
+    else{
+      User.findOne( {email: req.body.username} ,function(err, doc){
+        if (!doc) {
+          return res.status(200).json({
+            success: false,
+            msg: "User with this email not found."
+          });
+        };
+        const user_id = doc._id;
+        const email = req.body.username;
+        const event_id = req.body.event_id;
+    
+        User.findOneAndUpdate({
+          email: email,
+          events: {$ne: event_id}
+        },
+        { $push: {events: [event_id] }} ,function(err, user){
+          if(err){
+              console.log("Something went wrong when updating data!");
+          }
+          user ? console.log("This event was added to the user's event(s)!") : console.log("This event is already in this user's event(s)!");
+          
+          if(doc){
+            Event.findOneAndUpdate({
+              _id: event_id,
+              users: {$ne: user_id}
+            },
+            { $push: {users: user_id }},function(err, event){
+              if(err){
+                  console.log("Something went wrong when updating data!");
+              }
+              event ? console.log("This user was added to the event!") : console.log("The user is already part of this event!");
+            
+              sgMail.send({
+                to: user.email,
+                from: 'chingutime@gmail.com',
+                subject: 'You have been added to ' + event.title,
+                html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">ChinguTime</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
+              }, function(err, msg) {
+                if(err) {
+                  return res.status(200).json({
+                    success: false,
+                    msg: "The use was added, but could not send the email with an error: " + err
+                  });
+                }
+                console.log('Email sent!');
+              });
+            });
+            return res.status(200).json({
+              success: true,
+              msg: "Congrats, user with email " + email + " is added to event with id: " + event_id + ". An email was sent out!"
+            });
+          }
+          else{
+            return res.status(200).json({
+              success: false,
+              msg: "The user is already part of this event!"
+            });
+          }
+        });
+      });
+    }
+  });   
 });
 
 /**
@@ -371,7 +429,7 @@ router.post('/remove', (req, res) => {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
   
     let event_id = req.body.event_id;
-    let user_id = decoded._id;
+    //let user_id = decoded._id;
     Event.findOne( {_id: event_id}  ).then((result) => {
       if(!result){
         return res.status(200).json({
@@ -380,12 +438,12 @@ router.post('/remove', (req, res) => {
         });
       }
       //check if it is the first user of the event
-      if(result.users[0] != user_id){
+      /*if(result.users[0] != user_id){
         return res.status(200).json({
           success: false,
           msg: "The user is not the creator, so s/he cannot remove the users from the event!"
         });
-      }
+      }*/
       User.findOne( {username: req.body.username} ,function(err, doc){
         if (!doc) {
           return res.status(200).json({
@@ -450,8 +508,6 @@ router.post('/remove', (req, res) => {
     }); 
 });
 
-
-
 /**
  * @route POST api/events/update
  * @desc Update event
@@ -465,8 +521,8 @@ router.post('/update', (req, res) => {
     if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
 
     let params = {};
-
     for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
+
     if(req.body.scheduled == 'false'){
       params.start = null;
       params.end = null;
@@ -499,20 +555,6 @@ router.post('/update', (req, res) => {
         let hours = Math.abs(doc.end - doc.start) / 36e5;
         let hourStart = doc.start.getHours();// - decoded.TZ;
         let day = doc.start.getDate();
-        /*if(hourStart < 0){
-          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + ("0" + (doc.start.getDate())).slice(-2));
-          let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
-          day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
-          day = day.slice(-2);
-          hourStart = hourStart + 24;
-        }
-        if(hourStart > 23){
-          let dateDay = new Date(doc.start.getFullYear() + '-' + (doc.start.getMonth()+1) + '-' + ("0" + (doc.start.getDate())).slice(-2));
-          let newDate = new Date(dateDay.setTime( dateDay.getTime() + 1 * 86400000 ));
-          day = newDate.getFullYear() + '-' + ("0" + (newDate.getMonth() + 1)).slice(-2) + '-' + ("0" + (newDate.getDate())).slice(-2); 
-          day = day.slice(-2);
-          hourStart = hourStart - 24;
-        }*/
         const event = {
           start: [doc.start.getFullYear(), (doc.start.getMonth()+1), day, parseInt(hourStart), doc.start.getMinutes() ],
           duration: { hours: hours, minutes: 0 },
@@ -529,24 +571,20 @@ router.post('/update', (req, res) => {
             console.log(error)
             return
           }
-          const filename = doc.title.replace(/\s/g, '') + 
-          //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
-          '_' + params.event_id;
+          const filename = doc.title.replace(/\s/g, '') + '_' + params.event_id;
           writeFileSync(filename + '.ics', value);
         });
           let toList = [];
           users.forEach(function(user) {
             toList.push(user.email);   
           });
-          const filename = doc.title.replace(/\s/g, '') + 
-          //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
-          '_' + params.event_id;
-          /*sgMail.send({
-            to: toList,
+          const filename = doc.title.replace(/\s/g, '') + '_' + params.event_id;
+          sgMail.send({
+            to: users[0].email,
+            bcc: toList,
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
-            // text: result.details,
-            html: `'<h3>Event '+ doc.title +' iss now scheduled! You can find the attached ics file for the calendar update.</h3>'`,
+            html: `<h3>Event `+ doc.title +` from <a href="https://chingutime.netlify.app/#/">ChinguTime</a> in which you are a participant is now scheduled! <br>You can find the attached ics file for the calendar update.</h3>`,
               attachments: [
               {
                 content: attachment,
@@ -563,13 +601,10 @@ router.post('/update', (req, res) => {
               });
             }
             console.log('Email sent!');
-            //res.send(msg);
-          });*/
+          });
 
         console.log("Congrats, " + params.event_id + " is updated as a scheduled event! Here, you have your ics file.");
-        //const filename = doc.title.replace(/\s/g, '') + 
-        //'_' + doc.start.getFullYear() + (doc.start.getMonth()+1) + doc.start.getDate() +'T'+ doc.start.getHours() + 
-        //'_' + params.event_id;
+        
         return res.download(filename + '.ics');
       });
       }
@@ -604,16 +639,6 @@ router.post('/delete', (req, res) => {
           msg: "Event was not found!"
         });
       }
-      
-      //or if the event is scheduled and older than a week => still to do!
-      //const today = Date.now();
-      //today.setDate(today.getDate()-7);
-      /*if(result.scheduled == true && result.start < today){
-        return res.status(200).json({
-          success: false,
-          msg: "User is not the creator, cannot delete event!"
-        });
-      }*/
 
       //check if it is the first user of the event
       if(result.users[0] != user_id){
@@ -648,11 +673,7 @@ router.post('/delete', (req, res) => {
         });
         }) 
 
-        //still has to check if is already scheduled, if so, delete ics file
-        const filename = result.title.replace(/\s/g, '') + 
-        //'_' + result.start.getFullYear() + (result.start.getMonth()+1) + result.start.getDate() +'T'+ result.start.getHours() + 
-        '_' + req.body.event_id;
-       
+        const filename = result.title.replace(/\s/g, '') + '_' + req.body.event_id;
         //delete the file
         try {
           fs.unlinkSync(filename + '.ics')

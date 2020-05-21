@@ -89,7 +89,7 @@ export default {
     this.checkScheduled();
     if (this.usertoken) {
       this.axios
-        .get("https://chingutime.herokuapp.com/api/users/profile" || `${process.env.VUE_APP_BE_URL}/users/profile`, {
+        .get(process.env.VUE_APP_BE_URL + "users/profile" || "https://chingutime.herokuapp.com/api/users/profile", {
         //.get(process.env.VUE_APP_BE_URL + "users/profile", {
           headers: { "x-access-token": this.usertoken }
         })
@@ -127,8 +127,8 @@ export default {
         );
         if (confirmation == true) {
           this.axios
-            .get(`https://chingutime.herokuapp.com/api/events/export` || `${process.env.VUE_APP_BE_URL}/events/export`,
-            //.get(process.env.VUE_APP_BE_URL + "events/export,
+            .get(process.env.VUE_APP_BE_URL + "users/export" || `https://chingutime.herokuapp.com/api/users/export`,
+            //.get(process.env.VUE_APP_BE_URL + "events/export",
               {
                 headers: {
                   "x-access-token": localStorage
