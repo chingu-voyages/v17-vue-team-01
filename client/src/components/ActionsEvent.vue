@@ -274,7 +274,7 @@ export default {
           username: this.username
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/add" || "https://chingutime.herokuapp.com/api/events/add", data,
+          .post("https://chingutime.herokuapp.com/api/events/add", data,
           //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
           {
             headers: {
@@ -300,7 +300,7 @@ export default {
           username: this.userDelete
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/remove" || "https://chingutime.herokuapp.com/api/events/remove", data,
+          .post("https://chingutime.herokuapp.com/api/events/remove", data,
           //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
@@ -322,7 +322,7 @@ export default {
           username: this.user.username
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/remove" || "https://chingutime.herokuapp.com/api/events/remove", data,
+          .post("https://chingutime.herokuapp.com/api/events/remove", data,
           //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
@@ -353,7 +353,7 @@ export default {
           event_id: this.url
         };
         this.axios
-          .post(process.env.VUE_APP_BE_URL + "events/delete" || "https://chingutime.herokuapp.com/api/events/delete", data,
+          .post("https://chingutime.herokuapp.com/api/events/delete", data,
           //.post(process.env.VUE_APP_BE_URL + "events/delete", data, 
           {
             headers: {
@@ -450,7 +450,7 @@ export default {
             end: end
           };
           this.axios
-            .post(process.env.VUE_APP_BE_URL + "events/update" || "https://chingutime.herokuapp.com/api/events/update", data,
+            .post("https://chingutime.herokuapp.com/api/events/update", data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data,
              {
               headers: {
@@ -500,7 +500,7 @@ export default {
             end: null
           };
           this.axios
-            .post(process.env.VUE_APP_BE_URL + "events/update" || "https://chingutime.herokuapp.com/api/events/update", data,
+            .post("https://chingutime.herokuapp.com/api/events/update", data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data, 
             {
               headers: {
@@ -517,7 +517,7 @@ export default {
 
     downloadIcs() {
       this.axios
-        .get(process.env.VUE_APP_BE_URL + "events/download/" + this.url || `https://chingutime.herokuapp.com/api/events/download/${this.url}`,
+        .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`,
         //.get(process.env.VUE_APP_BE_URL + "events/download/" + this.url,
           {
             headers: {
