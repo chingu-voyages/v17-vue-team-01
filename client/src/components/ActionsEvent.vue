@@ -20,14 +20,14 @@
             type="text"
             name="username"
             v-model="username"
-            placeholder="Username"
+            placeholder="Username or email"
           >
         </v-card-text>
         <v-card-actions class="justify-center topNegativeMargin">
           <v-btn @click="addUser" class="center" color="success">Add user</v-btn>
         </v-card-actions>
         <v-divider></v-divider>
-        <v-card-text v-if="eventPart.users.length > 1">
+        <v-card-text v-if="eventPart.users.length > 1 && canSchedule">
           <v-dialog ref="dialog" v-model="modal" :return-value.sync="date" persistent width="290px">
             <template v-slot:activator="{ on }">
               <input
@@ -61,7 +61,10 @@
             >{{zone1.display}}</option>
           </select>
         </v-card-text>
-        <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1">
+        <v-card-text class="justify-center" v-else>
+          <p class="leftMargin" style="font-size: 1rem; margin-bottom: 0px;">Cannot schedule an event in the past</p>
+        </v-card-text>
+        <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1 && canSchedule">
           <v-btn @click="scheduleEvent" class="center" color="primary">Schedule Event</v-btn>
         </v-card-actions>
         <v-divider></v-divider>
@@ -83,6 +86,14 @@
         >
           <v-btn @click="removeUser" class="center" color="warning">Remove user</v-btn>
         </v-card-actions>
+
+        <v-card-actions
+          class="justify-center"
+          v-if="user.username != eventPart.users[0].username"
+        >
+          <v-btn @click="removeSelf" class="center" color="warning">Remove me</v-btn>
+        </v-card-actions>
+
       </div>
       <div v-else>
         <p class="leftMargin">{{eventPart.title}} has already been scheduled!</p>
@@ -170,6 +181,7 @@ export default {
       menu2: false,
       numberHours: 1,
       canUnschedule: true,
+      canSchedule: true,
       timeToEvent: 0,
     };
   },
@@ -180,6 +192,7 @@ export default {
       if(now.diff(this.eventPart.start) > 0) this.canUnschedule = false;
       let startForAsHours = this.eventPart.start;
       this.timeToEvent = moment.duration(now.diff(startForAsHours)).humanize();
+      if(now.diff(this.eventPart.possibleDays[0]) > 0 ) this.canSchedule = false;
     }, 
     advisableTimeslots: function() {
       if (typeof this.advisableTimeslots != "string") {
@@ -251,7 +264,7 @@ export default {
 
     addUser() {
       if (!this.user.username) {
-        this.answer = "Please fill out a username.";
+        this.answer = "Please fill out an username or an email.";
       } else {
         //prevent javascript or html injection
         this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -261,7 +274,7 @@ export default {
           username: this.username
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/add" || `${process.env.VUE_APP_BE_URL}/events/add`, data,
+          .post(process.env.VUE_APP_BE_URL + "events/add" || "https://chingutime.herokuapp.com/api/events/add", data,
           //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
           {
             headers: {
@@ -287,7 +300,7 @@ export default {
           username: this.userDelete
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/remove" || `${process.env.VUE_APP_BE_URL}/events/remove`, data,
+          .post(process.env.VUE_APP_BE_URL + "events/remove" || "https://chingutime.herokuapp.com/api/events/remove", data,
           //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
@@ -300,6 +313,29 @@ export default {
           .catch(error => (console.log(error), (this.answer = error)));
       }
     },
+    removeSelf() {
+      let confirmation = confirm("Are you sure you want to remove yourself from this event?");
+      console.log(this.user.username);
+      if (confirmation == true) {
+        const data = {
+          event_id: this.url,
+          username: this.user.username
+        };
+        this.axios
+          .post(process.env.VUE_APP_BE_URL + "events/remove" || "https://chingutime.herokuapp.com/api/events/remove", data,
+          //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
+          {
+            headers: {
+              "x-access-token": localStorage
+                .getItem("usertoken")
+                .replace(/"/g, "")
+            }
+          })
+          .then(response => this.$router.push({ name: "Home", params: { user: this.user } }))
+          .catch(error => (console.log(error), (this.answer = error)));
+      }
+    },
+
 
     handleResponse(response) {
       if (response.data.success == true) {
@@ -317,7 +353,7 @@ export default {
           event_id: this.url
         };
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/delete" || `${process.env.VUE_APP_BE_URL}/events/delete`, data,
+          .post(process.env.VUE_APP_BE_URL + "events/delete" || "https://chingutime.herokuapp.com/api/events/delete", data,
           //.post(process.env.VUE_APP_BE_URL + "events/delete", data, 
           {
             headers: {
@@ -414,7 +450,7 @@ export default {
             end: end
           };
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update" || `${process.env.VUE_APP_BE_URL}/events/update`, data,
+            .post(process.env.VUE_APP_BE_URL + "events/update" || "https://chingutime.herokuapp.com/api/events/update", data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data,
              {
               headers: {
@@ -464,7 +500,7 @@ export default {
             end: null
           };
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update" || `${process.env.VUE_APP_BE_URL}/events/update`, data,
+            .post(process.env.VUE_APP_BE_URL + "events/update" || "https://chingutime.herokuapp.com/api/events/update", data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data, 
             {
               headers: {
@@ -481,7 +517,7 @@ export default {
 
     downloadIcs() {
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}` || `${process.env.VUE_APP_BE_URL}/events/download/${this.url}`,
+        .get(process.env.VUE_APP_BE_URL + "events/download/" + this.url || `https://chingutime.herokuapp.com/api/events/download/${this.url}`,
         //.get(process.env.VUE_APP_BE_URL + "events/download/" + this.url,
           {
             headers: {

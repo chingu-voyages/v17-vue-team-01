@@ -6,6 +6,9 @@ const passport = require('passport');
 const key = require('../../config/settings').secret;
 const User = require('../../model/User');
 const Event = require('../../model/Event');
+const { writeFileSync } = require('fs');
+const fs = require('fs');
+const ics = require('ics');
 
 /**
  * @route POST api/users/register
@@ -208,6 +211,75 @@ router.post('/update', (req, res) => {
         } 
     });
     });   
+  });
+
+/**
+ * @route GET api/users/export
+ * @desc Export calendar
+ * @access Public
+ */
+
+router.get('/export', function(req, res)  {
+    let token = req.headers['x-access-token'];
+    if (!token) return res.status(401).send({ success: false, message: 'No token was provided.' });
+    
+    jwt.verify(token, key, function(err, decoded) {
+      if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate the token.' });
+
+      
+        User.findOne( {_id: decoded._id}  ).then((result) => {
+          if (!result) {
+            return res.status(200).json({
+              success: false,
+              msg: "User not found."
+            });
+          }
+          let events_data = [];
+            Event.find({
+              _id: { $in: result.events }
+              }
+              , function(err, events){
+                events.forEach(function(event) { 
+                    if(event.scheduled == true){
+                        /*User.find({
+                        _id: { $in: event.users }
+                        }
+                        , function(err, users){
+                            users.forEach(function(user) { 
+                                users_data.push({name: user.name, email: user.email});
+                            });*/
+                            let hours = Math.abs(event.end - event.start) / 36e5;
+                            let hourStart = event.start.getHours();// - decoded.TZ;
+                            let day = event.start.getDate();
+                            let eventCal = {
+                                start: [event.start.getFullYear(), (event.start.getMonth()+1), day, parseInt(hourStart), event.start.getMinutes() ],
+                                duration: { hours: hours, minutes: 0 },
+                                title: event.title,
+                                description: event.details,
+                                status: 'CONFIRMED',
+                                busyStatus: 'BUSY',
+                                //attendees: users_data,
+                                productId: 'ChinguTime'
+                            }
+                            events_data.push(eventCal);
+                        //}); 
+                    }
+                });
+              console.log(events_data);
+              ics.createEvents(
+                (events_data), (error, value) => {
+              if (error) {
+                console.log(error)
+                return
+              }
+              const filename = 'calendar_export' + result.username;
+              writeFileSync(filename + '.ics', value);
+              console.log("ics file to download with calendar export for user " + result.username);
+              return res.download(filename + '.ics');
+            });
+          });
+        });  
+    }); 
   });
 
 /**
