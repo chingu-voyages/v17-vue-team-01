@@ -36,7 +36,7 @@
         <v-btn v-else large color="blue darken-2" dark to="/create-event">Create new Event</v-btn>
         <br>
         <br>
-        <v-btn large color="blue darken-2" dark @click="exportEvents">Export Events</v-btn>
+        <v-btn v-if="canExport" large color="blue darken-2" dark @click="exportEvents">Export Events</v-btn>
         <br>
         <br>
         <v-card class="mx-auto" max-width="360" v-if="answer">
@@ -80,7 +80,8 @@ export default {
     shaped: true,
     inactive: true,
     check: false,
-    answer: null
+    answer: null,
+    canExport: false
   }),
   mounted() {
     if (this.user) {
@@ -88,8 +89,10 @@ export default {
     }
     this.checkScheduled();
     if (this.usertoken) {
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/profile" : route = "https://chingutime.herokuapp.com/api/users/profile";  
       this.axios
-        .get("https://chingutime.herokuapp.com/api/users/profile", {
+        .get(route, {
         //.get(process.env.VUE_APP_BE_URL + "users/profile", {
           headers: { "x-access-token": this.usertoken }
         })
@@ -115,10 +118,20 @@ export default {
       return "/event/" + id;
     },
     checkScheduled() {
+      let exportCalendar = false;
+      this.canExport = false;
       if (_.isEmpty(this.events)) {
         this.check = true;
+        this.canExport = false;
       } else {
-        this.check = false
+        this.check = false;
+        this.events.forEach(function(event) {
+           if(event.scheduled == true){
+             return exportCalendar = true;
+           }  
+        });
+        this.canExport = exportCalendar;
+        //console.log(this.canExport)
       }
     },
     exportEvents() {
@@ -126,8 +139,10 @@ export default {
           "You will download ics file with scheduled events, do you want to continue?"
         );
         if (confirmation == true) {
+          let route;
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/export" : route = `https://chingutime.herokuapp.com/api/users/export`;  
           this.axios
-            .get(`https://chingutime.herokuapp.com/api/users/export`,
+            .get(route,
             //.get(process.env.VUE_APP_BE_URL + "events/export",
               {
                 headers: {
@@ -144,7 +159,7 @@ export default {
               link.href = url;
               link.setAttribute(
                 "download",
-                "ChinguTime_" +
+                "Chingu_Time_" +
                   this.user.username +
                   "_exportedEvents.ics"
               );

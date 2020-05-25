@@ -132,8 +132,10 @@ export default {
     this.today = this.getTodayDate();
     this.value = this.today;
     if (this.usertoken) {
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/profile" : route = "https://chingutime.herokuapp.com/api/users/profile";          
       this.axios
-        .get("https://chingutime.herokuapp.com/api/users/profile", {
+        .get(route, {
         //.get(process.env.VUE_APP_BE_URL + "users/profile", {
           headers: { "x-access-token": this.usertoken }
         })
@@ -154,8 +156,10 @@ export default {
         }
       }
       for (let j = 0; j < this.eventIDs.length; j++) {
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/show/" + this.eventIDs[j] : route = `https://chingutime.herokuapp.com/api/events/show/${this.eventIDs[j]}`;        
         this.axios
-          .get(`https://chingutime.herokuapp.com/api/events/show/${this.eventIDs[j]}`,{
+          .get(route,{
           //.get(process.env.VUE_APP_BE_URL + "events/show/" + this.eventIDs[j],{
               headers: {
                 "x-access-token": localStorage

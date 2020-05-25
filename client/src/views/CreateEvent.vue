@@ -72,6 +72,11 @@
                     createdEvent.eventDates[i][2] + " " + months[createdEvent.eventDates[i][1]].slice(0, 3)
                     }}
                   </h2>
+                  <h3 class="timeslotName">
+                    {{
+                    computedDay(createdEvent.eventDates[i][0] + "-" + createdEvent.eventDates[i][1] + "-" + createdEvent.eventDates[i][2])
+                    }}
+                  </h3>  
                   <v-col>
                     <template v-for="n in 24">
                       <label
@@ -167,6 +172,19 @@ export default {
   },
   methods: {
     reset() {},
+    computedDay(day){
+      console.log(day)
+      const d = new Date(day);
+      const weekday = new Array(7);
+      weekday[0] = "Sunday";
+      weekday[1] = "Monday";
+      weekday[2] = "Tuesday";
+      weekday[3] = "Wednesday";
+      weekday[4] = "Thursday";
+      weekday[5] = "Friday";
+      weekday[6] = "Saturday";
+      return weekday[d.getDay()];
+    },
     processFormFirst() {
       if (this.dates[0] == null || this.dates[1] == null) {
         this.answer =
@@ -220,9 +238,10 @@ export default {
           eventStart: this.dates[0],
           eventEnd: this.dates[1]
         };
-
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/create" : route = "https://chingutime.herokuapp.com/api/events/create";        
         this.axios
-            .post("https://chingutime.herokuapp.com/api/events/create",{
+            .post(route,{
           //.post(process.env.VUE_APP_BE_URL + "events/create",{
               title: this.createdEvent.eventName,
               details: this.createdEvent.eventDetails,
@@ -262,9 +281,10 @@ export default {
           this.createdEvent.eventTimeslots[j][l] = this.slotItems[j][l];
         }
       }
-
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "timeslots/create" : route = "https://chingutime.herokuapp.com/api/timeslots/create";        
       this.axios
-          .post("https://chingutime.herokuapp.com/api/timeslots/create",{
+          .post(route,{
         //.post(process.env.VUE_APP_BE_URL + "timeslots/create",{
             event_id: this.createdEvent.eventId,
             timeslots: this.createdEvent.eventTimeslots

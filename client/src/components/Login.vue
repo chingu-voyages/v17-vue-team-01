@@ -71,9 +71,10 @@ export default {
       } else {
         //prevent javascript or html injection
         this.username = this.username.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/login" : route = "https://chingutime.herokuapp.com/api/users/login";
         this.axios
-          .post("https://chingutime.herokuapp.com/api/users/login", {
-          //.post(process.env.VUE_APP_BE_URL + "users/login", {
+          .post(route, {
             username: this.username,
             password: this.password
           })
@@ -92,8 +93,10 @@ export default {
     },
     tokenReceived(value) {
       localStorage.setItem("usertoken", value);
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/profile" : route = "https://chingutime.herokuapp.com/api/users/profile";  
       this.axios
-        .get("https://chingutime.herokuapp.com/api/users/profile", {
+        .get(route, {
         //.get(process.env.VUE_APP_BE_URL + "users/profile", {
           headers: { "x-access-token": value }
         })

@@ -259,7 +259,7 @@ router.get('/export', function(req, res)  {
                                 status: 'CONFIRMED',
                                 busyStatus: 'BUSY',
                                 //attendees: users_data,
-                                productId: 'ChinguTime'
+                                productId: 'Chingu Time'
                             }
                             events_data.push(eventCal);
                         //}); 

@@ -122,8 +122,10 @@ export default {
   mounted() {
     this.user.events.forEach(event => {
       //axios get show route to see if user is the creator
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/show/" + this.url : route = `https://chingutime.herokuapp.com/api/events/show/${event._id}`;  
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/show/${event._id}`, {
+        .get(route, {
         //.get(process.env.VUE_APP_BE_URL + "events/show/" + this.url, {
           headers: {
             "x-access-token": localStorage
@@ -150,8 +152,10 @@ export default {
           this.answerValidate = "Please use a valid email address.";
         } 
         else{
+          let route;
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/update" + this.url : route = "https://chingutime.herokuapp.com/api/users/update";  
           this.axios
-            .post("https://chingutime.herokuapp.com/api/users/update",
+            .post(route,
             //.post(process.env.VUE_APP_BE_URL + "users/update",
               this.selectFields(),
               {
@@ -203,8 +207,10 @@ export default {
     },
     savingChanges(response) {
       if (this.usertoken) {
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/profile" + this.url : route = "https://chingutime.herokuapp.com/api/users/profile";    
         this.axios
-          .get("https://chingutime.herokuapp.com/api/users/profile", {
+          .get(route, {
           //.get(process.env.VUE_APP_BE_URL + "users/profile", {
             headers: { "x-access-token": this.usertoken }
           })

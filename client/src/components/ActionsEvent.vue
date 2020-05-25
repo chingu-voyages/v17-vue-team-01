@@ -62,7 +62,12 @@
           </select>
         </v-card-text>
         <v-card-text class="justify-center" v-else>
-          <p class="leftMargin" style="font-size: 1rem; margin-bottom: 0px;">Cannot schedule an event in the past</p>
+          <p v-if="!canSchedule" class="leftMargin" style="font-size: 1rem; margin-bottom: 0px;">
+            Cannot schedule an event in the past.
+          </p>
+          <p v-else class="leftMargin" style="font-size: 1rem; margin-bottom: 0px;">
+            Cannot schedule the event since you are the only user.
+          </p>
         </v-card-text>
         <v-card-actions class="justify-center topNegativeMargin" v-if="eventPart.users.length > 1 && canSchedule">
           <v-btn @click="scheduleEvent" class="center" color="primary">Schedule Event</v-btn>
@@ -192,7 +197,7 @@ export default {
       if(now.diff(this.eventPart.start) > 0) this.canUnschedule = false;
       let startForAsHours = this.eventPart.start;
       this.timeToEvent = moment.duration(now.diff(startForAsHours)).humanize();
-      if(now.diff(this.eventPart.possibleDays[0]) > 0 ) this.canSchedule = false;
+      if(now.diff(this.eventPart.possibleDays[0], 'milliseconds') > 86400000 ) this.canSchedule = false;
     }, 
     advisableTimeslots: function() {
       if (typeof this.advisableTimeslots != "string") {
@@ -273,8 +278,10 @@ export default {
           event_id: this.url,
           username: this.username
         };
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/add" : route = "https://chingutime.herokuapp.com/api/events/add";          
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/add", data,
+          .post(route, data,
           //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
           {
             headers: {
@@ -299,8 +306,10 @@ export default {
           event_id: this.url,
           username: this.userDelete
         };
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/remove" : route = "https://chingutime.herokuapp.com/api/events/remove";          
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/remove", data,
+          .post(route, data,
           //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
@@ -321,8 +330,10 @@ export default {
           event_id: this.url,
           username: this.user.username
         };
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/remove" : route = "https://chingutime.herokuapp.com/api/events/remove";          
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/remove", data,
+          .post(route, data,
           //.post(process.env.VUE_APP_BE_URL + "events/remove", data, 
           {
             headers: {
@@ -352,8 +363,10 @@ export default {
         const data = {
           event_id: this.url
         };
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/delete" : route = "https://chingutime.herokuapp.com/api/events/delete";          
         this.axios
-          .post("https://chingutime.herokuapp.com/api/events/delete", data,
+          .post(route, data,
           //.post(process.env.VUE_APP_BE_URL + "events/delete", data, 
           {
             headers: {
@@ -449,8 +462,10 @@ export default {
             start: start,
             end: end
           };
+          let route;
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/update" : route = "https://chingutime.herokuapp.com/api/events/update";          
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update", data,
+            .post(route, data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data,
              {
               headers: {
@@ -467,7 +482,7 @@ export default {
               link.href = url;
               link.setAttribute(
                 "download",
-                "ChinguTime_" +
+                "Chingu_Time_" +
                   this.toSnakeCase(this.eventPart.title) +
                   "_" +
                   this.dateSaved +
@@ -499,8 +514,10 @@ export default {
             start: null,
             end: null
           };
+          let route;
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/update" : route = "https://chingutime.herokuapp.com/api/events/update";          
           this.axios
-            .post("https://chingutime.herokuapp.com/api/events/update", data,
+            .post(route, data,
             //.post(process.env.VUE_APP_BE_URL + "events/update", data, 
             {
               headers: {
@@ -516,8 +533,10 @@ export default {
     },
 
     downloadIcs() {
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/download/" + this.url : route = `https://chingutime.herokuapp.com/api/events/download/${this.url}`;              
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/download/${this.url}`,
+        .get(route,
         //.get(process.env.VUE_APP_BE_URL + "events/download/" + this.url,
           {
             headers: {
@@ -534,7 +553,7 @@ export default {
           link.href = url;
           link.setAttribute(
             "download",
-            "ChinguTime_" +
+            "Chingu_Time_" +
               this.toSnakeCase(this.eventPart.title) +
               "_" +
               this.eventPart.start.substring(0, 13).replace(" ", "T") +
