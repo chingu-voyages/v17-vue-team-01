@@ -3,6 +3,70 @@
     <v-row>
     <v-col cols="12" md="4">
       <ActionsEvent :url="url" :eventPart="eventPart" :advisableTimeslots="advisableTimeslots"/>
+      <v-container>
+        <v-card v-if="eventPart && user.username == eventPart.users[0].username && eventPart.scheduled == false" class="mx-auto">
+          <h2 class="leftMargin">Edit Event</h2>
+          <p class="leftMargin">
+            You are the event creator
+          </p>
+            <v-divider></v-divider>
+            <h4 class="leftMargin">Title:</h4>
+            <v-card-text>
+              <input
+                class="input"
+                v-on:keyup.enter="editEvent"
+                type="text"
+                name="title"
+                v-model="title"
+                placeholder="Title"
+              >
+            </v-card-text>
+            <v-divider></v-divider>
+            <h4 class="leftMargin">Details:</h4>
+            <v-card-text>
+              <input
+                class="input"
+                v-on:keyup.enter="editEvent"
+                type="text"
+                name="details"
+                v-model="details"
+                placeholder="Details"
+              >
+            </v-card-text>
+            <v-col cols="12" justify="center" align="center">
+              <v-date-picker no-title v-model="dates" :min="nowDate" range></v-date-picker>
+              <br>
+              <br>
+              <input
+                class="input"
+                type="text"
+                name="Date range"
+                v-model="dateRangeText"
+                label="Date range"
+                disabled
+              >
+            </v-col>
+            <v-col cols="12" justify="center" align="center">
+              <v-color-picker
+                hide-inputs
+                hide-canvas
+                v-model="color"
+                show-swatches
+                swatches-max-height="226"
+              ></v-color-picker>
+            </v-col>
+
+          <v-card-actions class="justify-center">
+            <v-btn @click="editEvent" class="center" color="success">Edit Event</v-btn>
+          </v-card-actions>
+        </v-card>
+        <br>
+        <v-card class="mx-auto" max-width="360" v-if="answer">
+          <v-card-text>
+            <h3>{{ answer }}</h3>
+          </v-card-text>
+        </v-card>
+      </v-container>
     </v-col>
     <v-col cols="12" md="8">
       <DisplayEvent
@@ -18,6 +82,7 @@
 </template>
 
 <script>
+import moment from "moment";
 import ActionsEvent from "../components/ActionsEvent";
 import DisplayEvent from "../components/DisplayEvent";
 
@@ -25,7 +90,7 @@ export default {
   name: "Event",
   components: {
     ActionsEvent,
-    DisplayEvent
+    DisplayEvent,
   },
   created() {
     this.url = this.$route.params.id;
@@ -38,6 +103,10 @@ export default {
         this.eventPart = this.handleScheduled(this.event[0]);
         this.timeslotPart = this.event[1];
         this.advisableTimeslots = this.handleAdvisable(this.event[2]);
+        this.title = this.handleScheduled(this.event[0]).title;
+        this.details = this.handleScheduled(this.event[0]).details;
+        this.color = this.handleScheduled(this.event[0]).color;
+        this.dates = this.handleScheduled(this.event[0]).possibleDays;
       }
     }
   },
@@ -48,7 +117,20 @@ export default {
     eventPart: null,
     timeslotPart: null,
     advisableTimeslots: null,
+    username: null,
+    color: null,
+    details: "",
+    title: "",
+    dates: [null, null],
+    nowDate: moment().format('YYYY-MM-DD'),
   }),
+  computed: {
+    dateRangeText() {
+      if (this.dates) {
+        return this.dates.join(" ~ ");
+      }
+    },
+  },
   mounted() {
     //console.log(this.url);
     //console.log(localStorage.getItem("usertoken").replace(/"/g, ""));
@@ -69,6 +151,47 @@ export default {
     }
   },
   methods: {
+
+    editEvent() {
+      let confirmation = confirm(
+        "Are you sure you want to edit this event?"
+      );
+      console.log(this.dates)
+      if (confirmation == true) {
+        const data = {
+          event_id: this.url,
+          username: this.username,
+          title: this.title,
+          details: this.details,
+          color: this.color,
+          possibleDays: this.dates
+        };
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/update" : route = "https://chingutime.herokuapp.com/api/events/update";          
+        this.axios
+          .post(route, data,
+        //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
+        {
+          headers: {
+            "x-access-token": localStorage
+              .getItem("usertoken")
+              .replace(/"/g, "")
+          }
+        })
+        .then(response => this.handleResponse(response))
+        .catch(error => (console.log(error), (this.answer = error)));
+      }
+    },
+
+    handleResponse(response) {
+      if (response.data.success == true) {
+        this.answer = response.data.msg.replace(this.url, this.eventPart.title);
+        location.reload();
+      } else {
+        this.answer = response.data.msg;
+      }
+    },
+
     handleAdvisable(advisableTimeslots){
       //console.log(typeof(advisableTimeslots));
       if(typeof(advisableTimeslots) == 'object'){

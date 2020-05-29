@@ -22,6 +22,7 @@ router.post('/register', (req, res) => {
         email,
         password,
         //confirm_password,
+        emailOpt,
         TZ
     } = req.body;
     if (!name || !username || !email || !password) {
@@ -62,6 +63,7 @@ router.post('/register', (req, res) => {
                 username,
                 password,
                 email,
+                emailOpt,
                 TZ
             });
             // Hash the password
@@ -105,6 +107,7 @@ router.post('/login', (req, res) => {
                     username: user.username,
                     name: user.name,
                     email: user.email,
+                    emailOpt: user.emailOpt,
                     TZ: user.TZ,
                 }
                 jwt.sign(payload, key, {
@@ -140,7 +143,7 @@ router.get('/profile', function(req, res) {
       if (err) return res.status(500).send({ success: false, message: 'Failed to authenticate token.' });
       User.findOne({
         _id: decoded._id
-      }, { name: 1, username: 1, email: 1, TZ: 1, events: 1 })
+      }, { name: 1, username: 1, email: 1, emailOpt:1, TZ: 1, events: 1 })
       .populate({path: 'events', populate: { path: 'events' }, select: ['title', 'scheduled']})
       .then((result) => {
         if (!result) {
@@ -174,7 +177,10 @@ router.post('/update', (req, res) => {
         });
       }
       for(let prop in req.body) if(req.body[prop]) params[prop] = req.body[prop];
+      console.log(params)
       if(req.body.TZ == 0) params.TZ = 0;
+      if(req.body.emailOpt == false) params.emailOpt = false;
+      if(req.body.emailOpt == true) params.emailOpt = true;
       // Check for the Unique Email or unique username
       User.find({$or:[{email: params.email},{username: params.username}]}).then(user => {
         if (user.length != 0) {

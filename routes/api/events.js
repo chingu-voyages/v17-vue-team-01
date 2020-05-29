@@ -321,21 +321,22 @@ router.post('/add', (req, res) => {
                   console.log("Something went wrong when updating data!");
               }
               event ? console.log("This user was added to the event!") : console.log("The user is already part of this event!");
-            
-              sgMail.send({
-                to: user.email,
-                from: 'chingutime@gmail.com',
-                subject: 'You have been added to ' + event.title,
-                html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">Chingu Time</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
-              }, function(err, msg) {
-                if(err) {
-                  return res.status(200).json({
-                    success: false,
-                    msg: "The use was added, but could not send the email with an error: " + err
-                  });
-                }
-                console.log('Email sent!');
-              });
+              if(user.emailOpt == true){
+                sgMail.send({
+                  to: user.email,
+                  from: 'chingutime@gmail.com',
+                  subject: 'You have been added to ' + event.title,
+                  html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">Chingu Time</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
+                }, function(err, msg) {
+                  if(err) {
+                    return res.status(200).json({
+                      success: false,
+                      msg: "The use was added, but could not send the email with an error: " + err
+                    });
+                  }
+                  console.log('Email sent!');
+                });
+              }
             });
             return res.status(200).json({
               success: true,
@@ -577,7 +578,9 @@ router.post('/update', (req, res) => {
         });
           let toList = [];
           users.forEach(function(user) {
-            toList.push(user.email);   
+            if(user.emailOpt == true){
+              toList.push(user.email);   
+            }
           });
           const filename = doc.title.replace(/\s/g, '') + '_' + params.event_id;
           let attachment = fs.readFileSync(filename + '.ics').toString("base64");

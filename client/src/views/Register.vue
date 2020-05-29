@@ -46,6 +46,15 @@
               <option disabled value>Please select timezone</option>
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
+
+
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox" :checked="emailOpt" v-on:click="changeChecked()">
+              <span class="numbering">I want to receive emails</span>
+              <span class="checkmark"></span>
+            </label>
+
+
           </v-card-text>
           <v-card-actions class="justify-center">
             <v-btn @click="processForm" color="success">Create Account</v-btn>
@@ -109,9 +118,24 @@ export default {
       password: null,
       answer: null,
       success: false,
+      emailOpt: true,
+      emailOptDisplay: "checked",
     };
   },
   methods: {
+    changeChecked() {
+      if(this.emailOptDisplay == ""){
+        this.emailOptDisplay = "checked";
+        this.emailOpt = true;
+        return;
+      }
+      if(this.emailOptDisplay == "checked"){
+        this.emailOptDisplay = "";
+        this.emailOpt = false;
+        return;
+      } 
+    },
+
     processForm() {
       if (
         !this.name ||
@@ -142,7 +166,7 @@ export default {
 
           this.logging = true;
           let route;
-          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/register" + this.url : route = "https://chingutime.herokuapp.com/api/users/register";    
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/register" : route = "https://chingutime.herokuapp.com/api/users/register";    
           this.axios
             .post(route, {
             //.post(process.env.VUE_APP_BE_URL + "users/register", {
@@ -150,7 +174,8 @@ export default {
               email: this.email,
               username: this.username,
               password: this.password,
-              confirm_password: this.password,
+              //confirm_password: this.password,
+              emailOpt: this.emailOpt,
               TZ: zone
             })
             .then(response => {
@@ -188,5 +213,76 @@ export default {
   padding: 10px 5px;
   margin: 0 0 10px 0;
   font-size: 18px;
+}
+
+//-----------------------------------------
+
+/* The checkbox-label */
+.checkbox-label {
+  display: block;
+  position: relative;
+  padding: 1px 0 0 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox-label:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox-label input:checked ~ .checkmark {
+  background-color: #2196f3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox-label .checkmark:after {
+  left: 9px;
+  top: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 </style>

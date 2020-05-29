@@ -23,7 +23,7 @@
           >
           <v-row>
             <v-col cols="12" md="6">
-              <v-date-picker no-title v-model="dates" range></v-date-picker>
+              <v-date-picker no-title v-model="dates" :min="nowDate" range></v-date-picker>
               <br>
               <br>
               <input
@@ -122,6 +122,7 @@
 </template>
 
 <script>
+import moment from "moment";
 export default {
   name: "CreateEvent",
   data: () => ({
@@ -158,7 +159,8 @@ export default {
       "November",
       "December"
     ],
-    nameRules: [v => !!v || "Name is required"]
+    nameRules: [v => !!v || "Name is required"],
+    nowDate: moment().format('YYYY-MM-DD'),
   }),
   computed: {
     dateRangeText() {

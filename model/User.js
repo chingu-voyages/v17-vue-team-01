@@ -32,6 +32,10 @@ const UserSchema = new Schema({
     date: {
         type: Date,
         default: Date.now
+    },
+    emailOpt: {
+        type: Boolean,
+        default: true
     }
 });
 
