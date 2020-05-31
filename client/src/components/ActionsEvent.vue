@@ -10,7 +10,6 @@
         class="leftMargin"
         v-if="eventPart.users.length == 1"
       >Please add more users</p>
-
       <div v-if="eventPart.scheduled == false">
         <v-divider></v-divider>
         <v-card-text>
@@ -63,7 +62,7 @@
         </v-card-text>
         <v-card-text class="justify-center" v-else>
           <p v-if="!canSchedule" class="leftMargin" style="font-size: 1rem; margin-bottom: 0px;">
-            Cannot schedule an event in the past.
+            Cannot schedule an event with days in the past.
           </p>
           <p v-else class="leftMargin" style="font-size: 1rem; margin-bottom: 0px;">
             Cannot schedule the event since you are the only user.
@@ -102,8 +101,8 @@
       </div>
       <div v-else>
         <p class="leftMargin">{{eventPart.title}} has already been scheduled!</p>
-        <p class="leftMargin">Start: {{ (eventPart.start) }}</p>
-        <p class="leftMargin">End: {{ (eventPart.end) }}</p>
+        <p class="leftMargin">Start: {{ eventPart.start }}</p>
+        <p class="leftMargin">End: {{ eventPart.end }}</p>
         <p class="leftMargin" v-if="canUnschedule">Scheduled to start in {{ timeToEvent }} </p>
       <v-divider></v-divider>
       <v-card-actions class="justify-center">
@@ -194,6 +193,7 @@ export default {
   watch: {
     eventPart: function() {
       const now = moment();
+      //console.log(this.eventPart)
       if(now.diff(this.eventPart.start) > 0) this.canUnschedule = false;
       let startForAsHours = this.eventPart.start;
       this.timeToEvent = moment.duration(now.diff(startForAsHours)).humanize();

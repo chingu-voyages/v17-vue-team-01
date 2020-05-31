@@ -33,7 +33,7 @@
                 placeholder="Details"
               >
             </v-card-text>
-            <v-col cols="12" justify="center" align="center">
+            <!--<v-col cols="12" justify="center" align="center">
               <v-date-picker no-title v-model="dates" :min="nowDate" range></v-date-picker>
               <br>
               <br>
@@ -45,7 +45,7 @@
                 label="Date range"
                 disabled
               >
-            </v-col>
+            </v-col> -->
             <v-col cols="12" justify="center" align="center">
               <v-color-picker
                 hide-inputs
@@ -103,10 +103,10 @@ export default {
         this.eventPart = this.handleScheduled(this.event[0]);
         this.timeslotPart = this.event[1];
         this.advisableTimeslots = this.handleAdvisable(this.event[2]);
-        this.title = this.handleScheduled(this.event[0]).title;
-        this.details = this.handleScheduled(this.event[0]).details;
-        this.color = this.handleScheduled(this.event[0]).color;
-        this.dates = this.handleScheduled(this.event[0]).possibleDays;
+        this.title = this.event[0].title;
+        this.details = this.event[0].details;
+        this.color = this.event[0].color;
+        this.dates = this.event[0].possibleDays;
       }
     }
   },
@@ -156,32 +156,65 @@ export default {
       let confirmation = confirm(
         "Are you sure you want to edit this event?"
       );
-      console.log(this.dates)
+      //edit possibleDays , not finished!!!
       if (confirmation == true) {
-        const data = {
-          event_id: this.url,
-          username: this.username,
-          title: this.title,
-          details: this.details,
-          color: this.color,
-          possibleDays: this.dates
-        };
-        let route;
-        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/update" : route = "https://chingutime.herokuapp.com/api/events/update";          
-        this.axios
-          .post(route, data,
-        //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
-        {
-          headers: {
-            "x-access-token": localStorage
-              .getItem("usertoken")
-              .replace(/"/g, "")
-          }
-        })
-        .then(response => this.handleResponse(response))
-        .catch(error => (console.log(error), (this.answer = error)));
-      }
+       /* let dateSplit1 = this.dates[0].split("-");
+        let dateSplit2 = this.dates[1].split("-");
+        let d1 = new Date(
+          Number(dateSplit1[0]),
+          Number(dateSplit1[1]) - 1,
+          Number(dateSplit1[2])
+        );
+        let d2 = new Date(
+          Number(dateSplit2[0]),
+          Number(dateSplit2[1]) - 1,
+          Number(dateSplit2[2])
+        );
+
+        if (d1.getTime() > d2.getTime()) {
+          this.answer =
+            "Please select the range with the earlier date first.<br> Ex: 21-04-2020 - 22-04-2020";
+        } else if (this.dateNames(d1, d2).length > 10) {
+          this.answer = "Currently only a range of 10 dates are selectable";
+        } else {*/
+          const data = {
+            event_id: this.url,
+            username: this.username,
+            title: this.title,
+            details: this.details,
+            color: this.color,
+            //possibleDays: this.dates
+          };
+          let route;
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/update" : route = "https://chingutime.herokuapp.com/api/events/update";          
+          this.axios
+            .post(route, data,
+          //.post(process.env.VUE_APP_BE_URL + "events/add", data, 
+          {
+            headers: {
+              "x-access-token": localStorage
+                .getItem("usertoken")
+                .replace(/"/g, "")
+            }
+          })
+          .then(response => this.handleResponse(response))
+          .catch(error => (console.log(error), (this.answer = error)));
+        }
+      //}  
     },
+
+    /*dateNames(d1, d2) {
+      let oneDay = 24 * 3600 * 1000;
+      let array = [];
+      for (let i = d1.getTime(); i <= d2.getTime(); i += oneDay) {
+        let date = new Date(i);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1;
+        const day = date.getDate();
+        array.push([year, month, day]);
+      }
+      return array;
+    },*/
 
     handleResponse(response) {
       if (response.data.success == true) {
@@ -226,14 +259,14 @@ export default {
         }       
       }
       
-      //console.log(typeof(advisableTimeslots));
+      //console.log(eventPart.possibleDays);
       if(eventPart.scheduled == true){
         
-          //console.log(eventPart.start);
+          //console.log(eventPart.end);
         
           let dateStart = eventPart.start.substring(0, eventPart.start.indexOf("T"));
           let timeStart = parseInt(eventPart.start.substring(eventPart.start.indexOf("T") + 1, eventPart.start.indexOf(":"))) + parseInt(this.user.TZ);
-          //console.log(timeStart);
+          //console.log(dateStart);
           if(timeStart < 0){
             let dateDay = new Date(dateStart);
             let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
@@ -251,7 +284,7 @@ export default {
         
           let dateEnd = eventPart.end.substring(0, eventPart.end.indexOf("T"));
           let timeEnd = parseInt(eventPart.end.substring(eventPart.end.indexOf("T") + 1, eventPart.end.indexOf(":"))) + parseInt(this.user.TZ);
-          //console.log(timeEnd);
+          //console.log(dateEnd);
           if(timeEnd < 0){
             let dateDay = new Date(dateEnd);
             let newDate = new Date(dateDay.setTime( dateDay.getTime() - 1 * 86400000 ));
