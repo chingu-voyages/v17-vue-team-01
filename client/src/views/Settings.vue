@@ -45,6 +45,12 @@
               <option v-for="zone in zones" v-bind:value="zone" :key="zone">{{zone}}</option>
             </select>
             <p v-else style="margin-bottom: 0px;">You are the creator of pending events, you cannot change your timezone right now</p>
+            <br>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox" :checked="user.emailOpt" v-on:click="changeChecked()">
+              <span class="numbering">I want to receive emails</span>
+              <span class="checkmark"></span>
+            </label>
           </v-card-text>
           <v-card-actions class="justify-center">
             <v-btn @click="processForm" color="success">Update Info</v-btn>
@@ -66,6 +72,13 @@
               Username: {{user.username}}
               <br>
               Timezone: {{"UTC " + user.TZ}}
+              <br>
+              <span v-if="user.emailOpt">
+                I want to receive emails
+              </span>
+              <span v-else>  
+                I do NOT want to receive emails
+              </span>  
             </h3>
           </v-card-text>
         </v-card>
@@ -85,6 +98,8 @@ export default {
       password: null,
       name: null,
       email: null,
+      emailOpt: null,
+      emailOptDisplay: "",
       time: "",
       canChangeTZ: true,
       settings: {},
@@ -120,11 +135,16 @@ export default {
     };
   },
   mounted() {
+    this.emailOpt = this.user.emailOpt;
+    if(this.emailOpt == false) this.emailOptDisplay = "";
+    if(this.emailOpt == true) this.emailOptDisplay = "checked";
     this.user.events.forEach(event => {
       //axios get show route to see if user is the creator
+      let route;
+      process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "events/show/" + event._id : route = `https://chingutime.herokuapp.com/api/events/show/${event._id}`;  
       this.axios
-        .get(`https://chingutime.herokuapp.com/api/events/show/${event._id}`, {
-        //.get(process.env.VUE_APP_BE_URL + "events/show/" + this.url, {
+        .get(route, {
+        //.get(process.env.VUE_APP_BE_URL + "events/show/" + event._id, {
           headers: {
             "x-access-token": localStorage
               .getItem("usertoken")
@@ -143,6 +163,18 @@ export default {
     });
   },
   methods: {
+    changeChecked() {
+      if(this.emailOptDisplay == ""){
+        this.emailOptDisplay = "checked";
+        this.emailOpt = true;
+        return;
+      }
+      if(this.emailOptDisplay == "checked"){
+        this.emailOptDisplay = "";
+        this.emailOpt = false;
+        return;
+      } 
+    },
     processForm() {
       let confirmation = confirm("Confirm changes?");
       if (confirmation == true) {
@@ -150,8 +182,10 @@ export default {
           this.answerValidate = "Please use a valid email address.";
         } 
         else{
+          let route;
+          process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/update" : route = "https://chingutime.herokuapp.com/api/users/update";  
           this.axios
-            .post("https://chingutime.herokuapp.com/api/users/update",
+            .post(route,
             //.post(process.env.VUE_APP_BE_URL + "users/update",
               this.selectFields(),
               {
@@ -199,12 +233,17 @@ export default {
       else{
         this.settings.email = null
       }
+
+      this.settings.emailOpt = this.emailOpt;
+      console.log(this.settings.emailOpt)
       return this.settings;
     },
     savingChanges(response) {
       if (this.usertoken) {
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "users/profile" : route = "https://chingutime.herokuapp.com/api/users/profile";    
         this.axios
-          .get("https://chingutime.herokuapp.com/api/users/profile", {
+          .get(route, {
           //.get(process.env.VUE_APP_BE_URL + "users/profile", {
             headers: { "x-access-token": this.usertoken }
           })
@@ -236,5 +275,76 @@ export default {
   padding: 10px 5px;
   margin: 0 0 10px 0;
   font-size: 18px;
+}
+
+//-----------------------------------------
+
+/* The checkbox-label */
+.checkbox-label {
+  display: block;
+  position: relative;
+  padding: 1px 0 0 30px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Hide the browser's default checkbox */
+.checkbox-label input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 24px;
+  width: 24px;
+  background-color: #eee;
+}
+
+/* On mouse-over, add a grey background color */
+.checkbox-label:hover input ~ .checkmark {
+  background-color: #ccc;
+}
+
+/* When the checkbox is checked, add a blue background */
+.checkbox-label input:checked ~ .checkmark {
+  background-color: #2196f3;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.checkbox-label input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.checkbox-label .checkmark:after {
+  left: 9px;
+  top: 6px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
 }
 </style>

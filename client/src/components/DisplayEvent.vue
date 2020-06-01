@@ -39,9 +39,14 @@
               <v-card class="mx-auto" max-width="110" :value="day">
                 <h3 class="timeslotName">
                   {{
-                  day
+                  computedDay(day)
                   }}
                 </h3>
+                <h4 class="timeslotName">
+                  {{
+                  computedDayWeek(day)
+                  }}
+                </h4>  
                 <v-col>
                   <template v-for="n in 24">
                     <label
@@ -134,6 +139,35 @@ export default {
         return `0${n}`;
       }
       return n;
+    },
+    computedDay(day){
+      const m = new Date(day);
+      const month = new Array();
+      month[0] = "January";
+      month[1] = "February";
+      month[2] = "March";
+      month[3] = "April";
+      month[4] = "May";
+      month[5] = "June";
+      month[6] = "July";
+      month[7] = "August";
+      month[8] = "September";
+      month[9] = "October";
+      month[10] = "November";
+      month[11] = "December";
+      return m.getDate() + " " + month[m.getMonth()];
+    },
+    computedDayWeek(day){
+      const d = new Date(day);
+      const weekday = new Array(7);
+      weekday[0] = "Sunday";
+      weekday[1] = "Monday";
+      weekday[2] = "Tuesday";
+      weekday[3] = "Wednesday";
+      weekday[4] = "Thursday";
+      weekday[5] = "Friday";
+      weekday[6] = "Saturday";
+      return weekday[d.getDay()];
     },
     computedClass(i, n, c, numberUsers) {
       const colorBase = this.pSBC(0.9,c,false,true);
@@ -241,8 +275,10 @@ export default {
           timeslots: this.slotItems
         };
         //console.log(this.slotItems);
+        let route;
+        process.env.VUE_APP_BE_URL ? route = process.env.VUE_APP_BE_URL + "timeslots/create" : route = "https://chingutime.herokuapp.com/api/timeslots/create";        
         this.axios
-          .post("https://chingutime.herokuapp.com/api/timeslots/create", data, {
+          .post(route, data, {
           //.post(process.env.VUE_APP_BE_URL + "timeslots/create", data, {
             headers: {
               "x-access-token": localStorage

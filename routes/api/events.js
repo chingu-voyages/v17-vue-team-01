@@ -176,7 +176,7 @@ router.get('/download/:id', function(req, res)  {
             busyStatus: 'BUSY',
             organizer: { name: decoded.name, email: decoded.email },
             attendees: users_data,
-            productId: 'ChinguTime'
+            productId: 'Chingu Time'
           }
           ics.createEvent(event, (error, value) => {
             if (error) {
@@ -244,7 +244,7 @@ router.get('/send/:id', function(req, res)  {
           //   busyStatus: 'BUSY',
           //   organizer: { name: decoded.name, email: decoded.email },
           //   // attendees: users_data,
-          //   productId: 'ChinguTime'
+          //   productId: 'Chingu Time'
           // }
           
           let toList = [];
@@ -253,6 +253,7 @@ router.get('/send/:id', function(req, res)  {
           });
 
           sgMail.send({
+            isMultiple: true,
             to: toList,
             from: 'chingutime@gmail.com',
             subject: result.title,
@@ -320,21 +321,22 @@ router.post('/add', (req, res) => {
                   console.log("Something went wrong when updating data!");
               }
               event ? console.log("This user was added to the event!") : console.log("The user is already part of this event!");
-            
-              sgMail.send({
-                to: user.email,
-                from: 'chingutime@gmail.com',
-                subject: 'You have been added to ' + event.title,
-                html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">ChinguTime</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
-              }, function(err, msg) {
-                if(err) {
-                  return res.status(200).json({
-                    success: false,
-                    msg: "The use was added, but could not send the email with an error: " + err
-                  });
-                }
-                console.log('Email sent!');
-              });
+              if(user.emailOpt == true){
+                sgMail.send({
+                  to: user.email,
+                  from: 'chingutime@gmail.com',
+                  subject: 'You have been added to ' + event.title,
+                  html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">Chingu Time</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
+                }, function(err, msg) {
+                  if(err) {
+                    return res.status(200).json({
+                      success: false,
+                      msg: "The use was added, but could not send the email with an error: " + err
+                    });
+                  }
+                  console.log('Email sent!');
+                });
+              }
             });
             return res.status(200).json({
               success: true,
@@ -387,7 +389,7 @@ router.post('/add', (req, res) => {
                 to: user.email,
                 from: 'chingutime@gmail.com',
                 subject: 'You have been added to ' + event.title,
-                html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">ChinguTime</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
+                html: `<h3>You've been added to ` + event.title + ` on <a href="https://chingutime.netlify.app/#/">Chingu Time</a>! <br>Want to add your timeslots? Continue <a href="https://chingutime.netlify.app/#/event/`+ event_id+`">HERE</a></h3>`
               }, function(err, msg) {
                 if(err) {
                   return res.status(200).json({
@@ -564,7 +566,7 @@ router.post('/update', (req, res) => {
           busyStatus: 'BUSY',
           organizer: { name: decoded.name, email: decoded.email },
           attendees: users_data,
-          productId: 'ChinguTime'
+          productId: 'Chingu Time'
         }
         ics.createEvent(event, (error, value) => {
           if (error) {
@@ -576,15 +578,19 @@ router.post('/update', (req, res) => {
         });
           let toList = [];
           users.forEach(function(user) {
-            toList.push(user.email);   
+            if(user.emailOpt == true){
+              toList.push(user.email);   
+            }
           });
           const filename = doc.title.replace(/\s/g, '') + '_' + params.event_id;
+          let attachment = fs.readFileSync(filename + '.ics').toString("base64");
+          //console.log(toList);
           sgMail.send({
-            to: users[0].email,
-            bcc: toList,
+            isMultiple: true,
+            to: toList,
             from: 'chingutime@gmail.com',
             subject: doc.title + ' scheduled!',
-            html: `<h3>Event `+ doc.title +` from <a href="https://chingutime.netlify.app/#/">ChinguTime</a> in which you are a participant is now scheduled! <br>You can find the attached ics file for the calendar update.</h3>`,
+            html: `<h3>Event `+ doc.title +` from <a href="https://chingutime.netlify.app/#/">Chingu Time</a> in which you are a participant is now scheduled! <br>You can find the attached ics file for the calendar update.</h3>`,
               attachments: [
               {
                 content: attachment,
@@ -595,6 +601,8 @@ router.post('/update', (req, res) => {
             ]
           }, function(err, msg) {
             if(err) {
+              //console.log(err)
+              //console.log(msg)
               return res.status(200).json({
                 success: false,
                 msg: "The event has been scheduled but couldn't send the email with an error: " + err
