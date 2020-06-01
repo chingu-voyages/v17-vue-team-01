@@ -34,10 +34,11 @@ Live website can be found under: [chingutime](https://chingutime.netlify.app/)
   * Schedule the event and download ics file for gmail or outlook calendar 
   * View all your scheduled events in calendar
   * Mobile App (PWA)
-* Future
-  * Work with non hourly timezones
   * Unschedule events/Edit scheduled events
   * Send emails on schedule 
+* Future
+  * Work with non hourly timezones
+  * Handling daylight saving changes
 
 ## Roadmap
 
